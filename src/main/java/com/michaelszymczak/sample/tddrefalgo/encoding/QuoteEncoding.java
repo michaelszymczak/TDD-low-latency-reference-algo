@@ -1,9 +1,9 @@
-package com.michaelszymczak.sample.tddrefalgo.quote;
+package com.michaelszymczak.sample.tddrefalgo.encoding;
 
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.MutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.Quote;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
-
-import java.nio.ByteOrder;
 
 import static org.agrona.BitUtil.SIZE_OF_INT;
 import static org.agrona.BitUtil.SIZE_OF_LONG;
@@ -30,12 +30,16 @@ public class QuoteEncoding {
         }
 
         public int encode(Quote quote) {
-            for (int i = ISIN_OFFSET; i < ISIN_LENGTH; i++) {
+            int isinLength = quote.isin().length();
+            for (int i = ISIN_OFFSET; i < ISIN_LENGTH && i < isinLength; i++) {
                 buffer.putChar(offset + i, quote.isin().charAt(i));
             }
+            for (int i = ISIN_OFFSET + isinLength; i < ISIN_LENGTH; i++) {
+                buffer.putChar(offset + i, ' ');
+            }
             buffer.putInt(offset + PRICE_TIER_OFFSET, quote.priceTier());
-            buffer.putLong(offset + BID_PRICE_OFFSET, quote.bidPrice(), ByteOrder.BIG_ENDIAN);
-            buffer.putLong(offset + ASK_PRICE_OFFSET, quote.askPrice(), ByteOrder.BIG_ENDIAN);
+            buffer.putLong(offset + BID_PRICE_OFFSET, quote.bidPrice());
+            buffer.putLong(offset + ASK_PRICE_OFFSET, quote.askPrice());
             return offset + TOTAL_LENGTH;
         }
     }
@@ -55,17 +59,17 @@ public class QuoteEncoding {
             return this;
         }
 
-        public MutableQuote decode(MutableQuote result) {
+        public int decode(MutableQuote result) {
             stringBuilder.setLength(0);
             buffer.getStringWithoutLengthAscii(offset + ISIN_OFFSET, ISIN_LENGTH, stringBuilder);
             result.set(
                     stringBuilder.toString(),
                     buffer.getInt(offset + PRICE_TIER_OFFSET),
-                    buffer.getLong(offset + BID_PRICE_OFFSET, ByteOrder.BIG_ENDIAN),
-                    buffer.getLong(offset + ASK_PRICE_OFFSET, ByteOrder.BIG_ENDIAN)
+                    buffer.getLong(offset + BID_PRICE_OFFSET),
+                    buffer.getLong(offset + ASK_PRICE_OFFSET)
 
             );
-            return result;
+            return offset + TOTAL_LENGTH;
         }
     }
 }

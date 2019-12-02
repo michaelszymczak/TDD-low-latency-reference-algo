@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.quote;
+package com.michaelszymczak.sample.tddrefalgo.domain.messages;
 
 import java.util.Objects;
 

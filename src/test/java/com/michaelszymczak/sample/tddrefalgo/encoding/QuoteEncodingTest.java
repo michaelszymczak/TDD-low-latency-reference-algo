@@ -1,8 +1,7 @@
-package com.michaelszymczak.sample.tddrefalgo.quote;
+package com.michaelszymczak.sample.tddrefalgo.encoding;
 
-import com.michaelszymczak.sample.tddrefalgo.quote.ImmutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.quote.MutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.quote.QuoteEncoding;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.ImmutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.MutableQuote;
 import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,23 @@ class QuoteEncodingTest {
     }
 
     @Test
+    void shouldEncodeQuoteWithShortIsin() {
+        encoder.wrap(buffer, 3)
+                .encode(new ImmutableQuote("isin", 1, 200_98, 200_95));
+
+
+        decoder.wrap(buffer, 3)
+                .decode(mutableQuote);
+
+
+        assertEquals(
+                new ImmutableQuote("isin        ", 1, 200_98, 200_95),
+                new ImmutableQuote(mutableQuote));
+    }
+
+    @Test
     void shouldWriteMultipleQuotes() {
+        // When
         int positionAfterFirstQuote = encoder.wrap(buffer, 3)
                 .encode(new ImmutableQuote("GB00BD0PCK91", 1, 100_11, 100_12));
         int positionAfterSecondQuote = encoder.wrap(buffer, positionAfterFirstQuote)
@@ -42,12 +57,16 @@ class QuoteEncodingTest {
                 .encode(new ImmutableQuote("GB00BD0PCK93", 3, 100_31, 100_32));
 
 
+        // Then
+        int positionAfterDecoded = decoder.wrap(buffer, positionAfterFirstQuote).decode(mutableQuote);
         assertEquals(
                 new ImmutableQuote("GB00BD0PCK92", 2, 100_21, 100_22),
-                new ImmutableQuote(decoder.wrap(buffer, positionAfterFirstQuote).decode(mutableQuote)));
+                new ImmutableQuote(mutableQuote));
+        decoder.wrap(buffer, positionAfterSecondQuote).decode(mutableQuote);
         assertEquals(
                 new ImmutableQuote("GB00BD0PCK93", 3, 100_31, 100_32),
-                new ImmutableQuote(decoder.wrap(buffer, positionAfterSecondQuote).decode(mutableQuote)));
+                new ImmutableQuote(mutableQuote));
+        assertEquals(positionAfterSecondQuote, positionAfterDecoded);
 
 
     }

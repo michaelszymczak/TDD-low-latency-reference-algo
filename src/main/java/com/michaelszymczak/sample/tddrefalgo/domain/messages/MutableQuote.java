@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.quote;
+package com.michaelszymczak.sample.tddrefalgo.domain.messages;
 
 public class MutableQuote implements Quote {
 
@@ -7,7 +7,7 @@ public class MutableQuote implements Quote {
     private long bidPrice;
     private long askPrice;
 
-    void set(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
+    public void set(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
         if (isin.length() > 12) {
             throw new IllegalArgumentException();
         }
