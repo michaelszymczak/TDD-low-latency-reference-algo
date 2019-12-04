@@ -19,7 +19,7 @@ class AppTest {
 
     @Test
     void shouldNotDoAnythingUnprompted() {
-        int outputPosition = app.onInput(in, 0, 0);
+        int outputPosition = app.onInput(in, IN_OFFSET, 0);
 
         assertEquals(0, outputPosition);
         assertEquals(0, app.outputOffset());
