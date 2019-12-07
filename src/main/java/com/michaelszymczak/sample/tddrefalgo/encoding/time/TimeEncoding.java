@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.time;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Time.Time;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 

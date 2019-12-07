@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.domain.messages.Time;
+package com.michaelszymczak.sample.tddrefalgo.domain.messages.time;
 
 public class Time {
     private long timeNanos;

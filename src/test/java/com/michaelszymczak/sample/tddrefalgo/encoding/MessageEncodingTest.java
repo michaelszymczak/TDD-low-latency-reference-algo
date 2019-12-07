@@ -1,8 +1,9 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Message;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Time.Time;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
@@ -26,7 +27,7 @@ class MessageEncodingTest {
     @Test
     void shouldNotDoAnythingIfToldThatNoData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new Message<>(6, PLAIN_TEXT, String.class, "fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5).decode(0, messageSpy);
@@ -39,7 +40,7 @@ class MessageEncodingTest {
     @Test
     void shouldDecodeMessage() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new Message<>(6, PLAIN_TEXT, String.class, "fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5).decode(12, messageSpy);
@@ -58,7 +59,7 @@ class MessageEncodingTest {
     @Test
     void shouldDecodeHeartbeatMessage() {
         // Given
-        assertEquals(19, encoder.wrap(buffer, 5).encode(new Message<>(8, TIME, Time.class, new Time(123456L))));
+        assertEquals(19, encoder.wrap(buffer, 5).encode(new MessageWithTime(new Time(123456L))));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5).decode(14, messageSpy);
@@ -76,7 +77,7 @@ class MessageEncodingTest {
     @Test
     void shouldNotDoAnythingIfNotEnoughData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new Message<>(6, PLAIN_TEXT, String.class, "fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5).decode(6, messageSpy);
@@ -88,6 +89,11 @@ class MessageEncodingTest {
     private static class DecodedMessageSpy implements MessageEncoding.DecodedMessageConsumer {
 
         final List<Entry> decoded = new ArrayList<>();
+
+        @Override
+        public void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
+            decoded.add(new Entry(payloadSchema, buffer, offset, length));
+        }
 
         static class Entry {
             PayloadSchema payloadSchema;
@@ -101,11 +107,6 @@ class MessageEncodingTest {
                 this.offset = offset;
                 this.length = length;
             }
-        }
-
-        @Override
-        public void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
-            decoded.add(new Entry(payloadSchema, buffer, offset, length));
         }
     }
 }

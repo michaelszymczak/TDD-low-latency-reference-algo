@@ -2,7 +2,8 @@ package com.michaelszymczak.sample.tddrefalgo.encoding;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.Message;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Time.Time;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.time.TimeEncoding;
 import org.agrona.BitUtil;
@@ -34,20 +35,18 @@ public class MessageEncoding {
         }
 
         public int encode(Message<?> message) {
-            if (message.payloadType().equals(String.class)) {
-                Message<String> msg = (Message<String>) message;
-                buffer.putInt(offset, message.payloadLength());
+            if (message instanceof MessageWithPlainText) {
                 buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PLAIN_TEXT.value);
-                plainTextEncoder.wrap(buffer, offset + HEADER_SIZE).encode(msg.payload());
-                return offset + HEADER_SIZE + message.payloadLength();
-            } else if (message.payloadType().equals(Time.class)) {
-                Message<Time> msg = (Message<Time>) message;
-                buffer.putInt(offset, message.payloadLength());
+                plainTextEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPlainText) message).payload());
+            } else if (message instanceof MessageWithTime) {
                 buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.TIME.value);
-                timeEncoder.wrap(buffer, offset + HEADER_SIZE).encode(msg.payload());
-                return offset + HEADER_SIZE + message.payloadLength();
+                timeEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithTime) message).payload());
+            } else {
+                throw new IllegalArgumentException();
             }
-            return offset;
+
+            buffer.putInt(offset, message.payloadLength());
+            return offset + HEADER_SIZE + message.payloadLength();
         }
     }
 
