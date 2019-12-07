@@ -3,8 +3,10 @@ package com.michaelszymczak.sample.tddrefalgo.encoding;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.Message;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.time.TimeEncoding;
 import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
@@ -23,6 +25,7 @@ public class MessageEncoding {
     public static class Encoder {
 
         private final PlainTextEncoding.Encoder plainTextEncoder = new PlainTextEncoding.Encoder();
+        private final PricingProtocolEncoding.Encoder pricingEncoder = new PricingProtocolEncoding.Encoder();
         private final TimeEncoding.Encoder timeEncoder = new TimeEncoding.Encoder();
 
         private MutableDirectBuffer buffer;
@@ -35,7 +38,10 @@ public class MessageEncoding {
         }
 
         public int encode(Message<?> message) {
-            if (message instanceof MessageWithPlainText) {
+            if (message instanceof MessageWithPricingProtocol) {
+                buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PLAIN_TEXT.value);
+                pricingEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPricingProtocol) message).payload());
+            } else if (message instanceof MessageWithPlainText) {
                 buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PLAIN_TEXT.value);
                 plainTextEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPlainText) message).payload());
             } else if (message instanceof MessageWithTime) {
