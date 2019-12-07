@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Heartbeat;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Quote;
-import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Heartbeat;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Quote;
+import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableDirectByteBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -10,8 +10,8 @@ import org.agrona.MutableDirectBuffer;
 public class App {
 
     private final MutableDirectBuffer out = new ExpandableDirectByteBuffer();
-    private final MessageEncoding.Decoder decoder = new MessageEncoding.Decoder();
-    private final MessageEncoding.Encoder encoder = new MessageEncoding.Encoder();
+    private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
+    private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder();
     private final MyDecodedMessageConsumer messageConsumer = new MyDecodedMessageConsumer();
     private int outputWrittenPosition = 0;
 
@@ -29,7 +29,7 @@ public class App {
         return out;
     }
 
-    public long outputOffset() {
+    public int outputOffset() {
         return 0;
     }
 
@@ -37,7 +37,7 @@ public class App {
         return outputWrittenPosition;
     }
 
-    private static class MyDecodedMessageConsumer implements MessageEncoding.DecodedMessageConsumer {
+    private static class MyDecodedMessageConsumer implements PricingProtocolEncoding.DecodedMessageConsumer {
 
         Heartbeat heartbeat;
         Quote quote;

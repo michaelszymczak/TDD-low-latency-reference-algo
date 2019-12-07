@@ -1,7 +1,7 @@
-package com.michaelszymczak.sample.tddrefalgo.encoding;
+package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.MutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Quote;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Quote;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 

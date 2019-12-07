@@ -1,7 +1,7 @@
-package com.michaelszymczak.sample.tddrefalgo.encoding;
+package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.Heartbeat;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.MutableHeartbeat;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Heartbeat;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MutableHeartbeat;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 

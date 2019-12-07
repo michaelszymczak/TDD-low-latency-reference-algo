@@ -1,12 +1,12 @@
-package com.michaelszymczak.sample.tddrefalgo.domain.messages;
+package com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol;
 
-public enum MessageType {
+public enum PricingMessageType {
     HEARTBEAT('H'),
     QUOTE('Q');
 
     private final char type;
 
-    MessageType(char type) {
+    PricingMessageType(char type) {
         this.type = type;
     }
 

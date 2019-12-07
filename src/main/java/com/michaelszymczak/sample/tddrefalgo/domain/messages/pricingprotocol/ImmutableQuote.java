@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.domain.messages;
+package com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol;
 
 import java.util.Objects;
 
