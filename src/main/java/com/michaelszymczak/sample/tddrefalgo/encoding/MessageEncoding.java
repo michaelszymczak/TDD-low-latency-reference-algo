@@ -63,7 +63,7 @@ public class MessageEncoding {
             return this;
         }
 
-        public int decode(final int length, final DecodedMessageConsumer consumer) {
+        public int decode(final int length, final DecodedAppMessageConsumer consumer) {
             if (length - HEADER_SIZE <= 0) {
                 return offset;
             }

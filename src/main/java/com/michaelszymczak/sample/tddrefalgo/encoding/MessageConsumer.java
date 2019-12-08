@@ -5,7 +5,7 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Pri
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import org.agrona.DirectBuffer;
 
-class MessageConsumer implements DecodedMessageConsumer {
+class MessageConsumer implements DecodedAppMessageConsumer {
 
     private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
     private PricingProtocolListener pricingProtocolListener;

@@ -2,10 +2,11 @@ package com.michaelszymczak.sample.tddrefalgo;
 
 import com.michaelszymczak.sample.tddrefalgo.api.App;
 import com.michaelszymczak.sample.tddrefalgo.api.Output;
+import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
-import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingApp;
+import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import org.agrona.ExpandableArrayBuffer;
@@ -17,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AppTest {
 
     private static final int IN_OFFSET = 55;
-    private final App app = new EncodingApp();
-    private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder();
+    private final App app = new EncodingApp(SamplePricingApp::new);
     private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
     private final MessageEncoding.Encoder enc = new MessageEncoding.Encoder();
     private final MessageEncoding.Decoder dec = new MessageEncoding.Decoder();
