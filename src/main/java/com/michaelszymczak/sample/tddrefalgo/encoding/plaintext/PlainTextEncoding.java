@@ -1,13 +1,11 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.plaintext;
 
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
 public class PlainTextEncoding {
-    public interface DecodedMessageConsumer {
-        void onPlainTextMessage(String message);
-    }
 
     public static class Encoder {
         private MutableDirectBuffer buffer;
@@ -40,9 +38,9 @@ public class PlainTextEncoding {
             return this;
         }
 
-        public int decode(DecodedMessageConsumer consumer) {
+        public int decode(PlainTextListener listener) {
             String decoded = asciiSequenceView.wrap(buffer, offset, length).toString();
-            consumer.onPlainTextMessage(decoded);
+            listener.onPlainTextMessage(decoded);
             return offset + decoded.length();
         }
     }
