@@ -24,7 +24,7 @@ public class TimeEncoding {
 
         public int encode(Time message) {
             buffer.putLong(offset, message.timeNanos());
-            return SIZE_OF_LONG;
+            return offset + SIZE_OF_LONG;
         }
     }
 

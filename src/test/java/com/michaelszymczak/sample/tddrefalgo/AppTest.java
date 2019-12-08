@@ -1,6 +1,9 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.DecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
+import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Test;
@@ -10,18 +13,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AppTest {
 
-    private static final int IN_OFFSET = 5;
+    private static final int IN_OFFSET = 55;
     private final App app = new App();
     private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder();
     private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
+    private final MessageEncoding.Encoder enc = new MessageEncoding.Encoder();
+    private final MessageEncoding.Decoder dec = new MessageEncoding.Decoder();
     private final ExpandableArrayBuffer in = new ExpandableArrayBuffer();
-    private final DecodedMessageSpy decodedMessageSpy = new DecodedMessageSpy();
+    private final PricingProtocolDecodedMessageSpy decodedMessageSpy = new PricingProtocolDecodedMessageSpy();
 
     @Test
     void shouldNotDoAnythingUnprompted() {
-        int outputPosition = app.onInput(in, IN_OFFSET, 0);
+        int read = app.onInput(in, IN_OFFSET, 0);
 
-        assertEquals(0, outputPosition);
+        assertEquals(IN_OFFSET, read);
         assertEquals(0, app.outputOffset());
         assertEquals(0, app.outputPosition());
     }
@@ -29,18 +34,21 @@ class AppTest {
     @Test
     void shouldRespondToHeartBeat() {
         long nanoTime = System.nanoTime();
-        int inputEndPosition = encoder.wrap(in, IN_OFFSET).encode(heartbeat(nanoTime));
+        int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(new MessageWithPricingProtocol().withPayload(heartbeat(nanoTime)));
 
         // When
-        int read = app.onInput(in, IN_OFFSET, inputEndPosition);
+        int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
 
         // Then
-        decoder.wrap(app.output(), app.outputOffset()).decode(decodedMessageSpy);
+        dec.wrap(app.output(), app.outputOffset()).decode(app.outputPosition(), (payloadSchema, buffer, offset, length) -> {
+            assertEquals(PayloadSchema.PRICING, payloadSchema);
+            decoder.wrap(buffer, offset).decode(decodedMessageSpy);
+        });
         assertEquals(1, decodedMessageSpy.messages().size());
         assertEquals(heartbeat(nanoTime), decodedMessageSpy.messages().get(0));
 
         assertEquals(inputEndPosition, read);
         assertEquals(0, app.outputOffset());
-        assertEquals(read - IN_OFFSET, app.outputPosition());
+        assertEquals(15, app.outputPosition());
     }
 }

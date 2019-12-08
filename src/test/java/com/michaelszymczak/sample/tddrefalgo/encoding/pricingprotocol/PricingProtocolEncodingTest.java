@@ -13,7 +13,7 @@ class PricingProtocolEncodingTest {
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
     private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder();
     private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
-    private final DecodedMessageSpy decodedMessageSpy = new DecodedMessageSpy();
+    private final PricingProtocolDecodedMessageSpy decodedMessageSpy = new PricingProtocolDecodedMessageSpy();
 
     @Test
     void shouldEncodeAndDecodeHeartbeat() {

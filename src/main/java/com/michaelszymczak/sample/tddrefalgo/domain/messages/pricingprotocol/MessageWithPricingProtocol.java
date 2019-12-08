@@ -6,8 +6,9 @@ public class MessageWithPricingProtocol implements Message<PricingMessage> {
 
     private PricingMessage payload;
 
-    public MessageWithPricingProtocol(PricingMessage payload) {
+    public MessageWithPricingProtocol withPayload(PricingMessage payload) {
         this.payload = payload;
+        return this;
     }
 
     @Override

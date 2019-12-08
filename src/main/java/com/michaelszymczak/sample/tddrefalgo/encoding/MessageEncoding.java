@@ -39,20 +39,20 @@ public class MessageEncoding {
 
         public int encode(Message<?> message) {
             if (message instanceof MessageWithPricingProtocol) {
-                buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PLAIN_TEXT.value);
-                pricingEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPricingProtocol) message).payload());
+                buffer.putInt(offset, message.payloadLength());
+                buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PRICING.value);
+                return pricingEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPricingProtocol) message).payload());
             } else if (message instanceof MessageWithPlainText) {
+                buffer.putInt(offset, message.payloadLength());
                 buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.PLAIN_TEXT.value);
-                plainTextEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPlainText) message).payload());
+                return plainTextEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithPlainText) message).payload());
             } else if (message instanceof MessageWithTime) {
+                buffer.putInt(offset, message.payloadLength());
                 buffer.putInt(offset + SIZE_OF_INT, PayloadSchema.TIME.value);
-                timeEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithTime) message).payload());
+                return timeEncoder.wrap(buffer, offset + HEADER_SIZE).encode(((MessageWithTime) message).payload());
             } else {
                 throw new IllegalArgumentException();
             }
-
-            buffer.putInt(offset, message.payloadLength());
-            return offset + HEADER_SIZE + message.payloadLength();
         }
     }
 

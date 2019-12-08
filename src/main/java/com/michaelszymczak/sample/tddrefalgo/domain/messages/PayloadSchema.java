@@ -4,7 +4,8 @@ public enum PayloadSchema {
 
     UNDEFINED((short) 0),
     PLAIN_TEXT((short) 1),
-    TIME((short) 2);
+    TIME((short) 2),
+    PRICING((short) 3);
 
     public final short value;
 

@@ -22,7 +22,7 @@ public class PlainTextEncoding {
 
         public int encode(String message) {
             buffer.putStringWithoutLengthAscii(offset, message);
-            return message.length();
+            return offset + message.length();
         }
     }
 
