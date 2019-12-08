@@ -1,7 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol;
 
-import org.agrona.BitUtil;
-
 import static org.agrona.BitUtil.SIZE_OF_LONG;
 
 public interface Heartbeat extends PricingMessage {

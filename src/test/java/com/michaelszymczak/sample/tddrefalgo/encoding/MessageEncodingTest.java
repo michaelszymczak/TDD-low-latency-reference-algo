@@ -86,7 +86,7 @@ class MessageEncodingTest {
         assertTrue(messageSpy.decoded.isEmpty());
     }
 
-    private static class DecodedMessageSpy implements MessageEncoding.DecodedMessageConsumer {
+    private static class DecodedMessageSpy implements DecodedMessageConsumer {
 
         final List<Entry> decoded = new ArrayList<>();
 

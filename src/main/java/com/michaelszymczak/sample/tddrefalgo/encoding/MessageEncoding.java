@@ -18,10 +18,6 @@ public class MessageEncoding {
 
     private static final int HEADER_SIZE = SIZE_OF_INT + BitUtil.SIZE_OF_SHORT;
 
-    public interface DecodedMessageConsumer {
-        void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length);
-    }
-
     public static class Encoder {
 
         private final PlainTextEncoding.Encoder plainTextEncoder = new PlainTextEncoding.Encoder();

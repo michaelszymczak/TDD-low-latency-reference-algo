@@ -5,7 +5,7 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PricingProtocolDecodedMessageSpy implements PricingProtocolEncoding.DecodedMessageConsumer {
+public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener {
 
     private List<PricingMessage> pricingMessages = new ArrayList<>();
 
