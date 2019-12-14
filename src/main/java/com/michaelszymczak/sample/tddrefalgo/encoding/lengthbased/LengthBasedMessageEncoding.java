@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.Message;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
+import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
@@ -57,10 +57,19 @@ public class LengthBasedMessageEncoding {
         }
     }
 
+    public interface PayloadSchemaById {
+        PayloadSchema get(int schemaId);
+    }
+
     public static class Decoder {
 
+        private final PayloadSchemaById payloadSchemaById;
         private DirectBuffer buffer;
         private int offset;
+
+        public Decoder(PayloadSchemaById payloadSchemaById) {
+            this.payloadSchemaById = payloadSchemaById;
+        }
 
         public Decoder wrap(DirectBuffer buffer, int offset) {
             this.buffer = buffer;
@@ -73,8 +82,8 @@ public class LengthBasedMessageEncoding {
                 return offset;
             }
             int payloadLength = buffer.getInt(offset);
-            int schemaCode = buffer.getShort(offset + SIZE_OF_INT);
-            consumer.onMessage(SupportedPayloadSchemas.of(schemaCode), buffer, offset + HEADER_SIZE, payloadLength);
+            int schemaId = buffer.getShort(offset + SIZE_OF_INT);
+            consumer.onMessage(payloadSchemaById.get(schemaId), buffer, offset + HEADER_SIZE, payloadLength);
 
             return offset + length;
         }

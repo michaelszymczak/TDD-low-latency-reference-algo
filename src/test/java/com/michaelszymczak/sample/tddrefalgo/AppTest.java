@@ -3,11 +3,9 @@ package com.michaelszymczak.sample.tddrefalgo;
 import com.michaelszymczak.sample.tddrefalgo.api.App;
 import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
-import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingApp;
 import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
@@ -26,7 +24,7 @@ class AppTest {
     private static final int IN_OFFSET = 55;
     private final App app = new EncodingApp(SamplePricingApp::new, EchoApp::new);
     private final LengthBasedMessageEncoding.Encoder enc = Setup.encoder();
-    private final LengthBasedMessageEncoding.Decoder dec = new LengthBasedMessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Decoder dec = new LengthBasedMessageEncoding.Decoder(Setup.SupportedPayloadSchemas::of);
     private final ExpandableArrayBuffer in = new ExpandableArrayBuffer();
 
     private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();
@@ -54,7 +52,7 @@ class AppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(), (payloadSchema, buffer, offset, length) -> {
-            assertEquals(SupportedPayloadSchemas.PRICING, payloadSchema);
+            assertEquals(Setup.SupportedPayloadSchemas.PRICING, payloadSchema);
             pricingDecoder.wrap(buffer, offset).decode(pricingDecodedMessageSpy);
         });
         assertEquals(1, pricingDecodedMessageSpy.messages().size());
@@ -74,7 +72,7 @@ class AppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(), (payloadSchema, buffer, offset, length) -> {
-            assertEquals(SupportedPayloadSchemas.PLAIN_TEXT, payloadSchema);
+            assertEquals(Setup.SupportedPayloadSchemas.PLAIN_TEXT, payloadSchema);
             textDecoder.wrap(buffer, offset, length).decode(textDecodedMessageSpy);
         });
         assertEquals(1, textDecodedMessageSpy.messages().size());

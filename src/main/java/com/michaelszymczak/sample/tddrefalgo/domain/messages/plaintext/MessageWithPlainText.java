@@ -11,11 +11,6 @@ public class MessageWithPlainText implements Message<String> {
     }
 
     @Override
-    public int payloadLength() {
-        return payload.length();
-    }
-
-    @Override
     public String payload() {
         return payload;
     }

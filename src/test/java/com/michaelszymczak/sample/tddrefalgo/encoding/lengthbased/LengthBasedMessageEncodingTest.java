@@ -1,12 +1,13 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased;
 
-import com.michaelszymczak.sample.tddrefalgo.Setup;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
 import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.time.TimeEncoding;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
@@ -14,6 +15,7 @@ import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,8 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class LengthBasedMessageEncodingTest {
 
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
-    private final LengthBasedMessageEncoding.Encoder encoder = Setup.encoder();
-    private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder(Arrays.asList(
+            new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+            new PricingProtocolEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 2)),
+            new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 3))
+    ));
+    private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder(
+            schemaCode -> new PayloadSchema.KnownPayloadSchema((short) schemaCode));
     private final DecodedMessageSpy messageSpy = new DecodedMessageSpy();
 
     @Test
@@ -49,7 +56,6 @@ class LengthBasedMessageEncodingTest {
         assertEquals(17, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
-        assertSame(SupportedPayloadSchemas.PLAIN_TEXT, decodedEntry.payloadSchema);
         assertSame(buffer, decodedEntry.buffer);
         assertSame(11, decodedEntry.offset);
         assertSame(6, decodedEntry.length);
@@ -68,7 +74,6 @@ class LengthBasedMessageEncodingTest {
         assertEquals(12, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
-        assertSame(SupportedPayloadSchemas.PLAIN_TEXT, decodedEntry.payloadSchema);
         assertSame(buffer, decodedEntry.buffer);
         assertSame(6, decodedEntry.offset);
         assertSame(6, decodedEntry.length);
@@ -87,7 +92,6 @@ class LengthBasedMessageEncodingTest {
         assertEquals(19, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
-        assertSame(SupportedPayloadSchemas.TIME, decodedEntry.payloadSchema);
         assertSame(buffer, decodedEntry.buffer);
         assertSame(11, decodedEntry.offset);
         assertSame(8, decodedEntry.length);

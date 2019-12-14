@@ -12,11 +12,6 @@ public class MessageWithPricingProtocol implements Message<PricingMessage> {
     }
 
     @Override
-    public int payloadLength() {
-        return payload.length();
-    }
-
-    @Override
     public PricingMessage payload() {
         return payload;
     }

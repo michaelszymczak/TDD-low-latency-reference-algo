@@ -1,12 +1,14 @@
-package com.michaelszymczak.sample.tddrefalgo.encoding;
+package com.michaelszymczak.sample.tddrefalgo;
 
 import com.michaelszymczak.sample.tddrefalgo.api.App;
 import com.michaelszymczak.sample.tddrefalgo.api.Output;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolPublisher;
+import com.michaelszymczak.sample.tddrefalgo.encoding.AppPublisher;
+import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
+import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.EncodingPlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
@@ -18,7 +20,7 @@ import java.util.function.Function;
 
 public class EncodingApp implements App {
 
-    private final LengthBasedMessageEncoding.Decoder appMessageDecoder = new LengthBasedMessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Decoder appMessageDecoder = new LengthBasedMessageEncoding.Decoder(Setup.SupportedPayloadSchemas::of);
     private final AppMessageConsumer consumer = new AppMessageConsumer();
     private final AppPublisher appPublisher = new AppPublisher();
 
@@ -31,8 +33,8 @@ public class EncodingApp implements App {
             Function<PricingProtocolPublisher, PricingProtocolListener> pricingAppFactory,
             Function<PlainTextPublisher, PlainTextListener> plainTextAppFactory
     ) {
-        pricingApp = pricingAppFactory.apply(new EncodingPricingProtocolPublisher(appPublisher));
-        plainTextApp = plainTextAppFactory.apply(new EncodingPlainTextPublisher(appPublisher));
+        pricingApp = pricingAppFactory.apply(new EncodingPricingProtocolPublisher(appPublisher, Setup.encoder()));
+        plainTextApp = plainTextAppFactory.apply(new EncodingPlainTextPublisher(appPublisher, Setup.encoder()));
     }
 
     @Override
@@ -49,9 +51,9 @@ public class EncodingApp implements App {
     private class AppMessageConsumer implements DecodedAppMessageConsumer {
         @Override
         public void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
-            if (payloadSchema == SupportedPayloadSchemas.PRICING) {
+            if (payloadSchema == Setup.SupportedPayloadSchemas.PRICING) {
                 pricingDecoder.wrap(buffer, offset).decode(pricingApp);
-            } else if (payloadSchema == SupportedPayloadSchemas.PLAIN_TEXT) {
+            } else if (payloadSchema == Setup.SupportedPayloadSchemas.PLAIN_TEXT) {
                 textDecoder.wrap(buffer, offset, length).decode(plainTextApp);
             }
         }
