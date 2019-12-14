@@ -20,23 +20,20 @@ import java.util.function.Function;
 public class EncodingApp implements App {
 
     private final LengthBasedMessageEncoding.Decoder decoder;
-    private final AppMessageConsumer consumer = new AppMessageConsumer();
+    private final AppMessageConsumer consumer;
     private final AppPublisher appPublisher = new AppPublisher();
-
-
-    private final PricingProtocolListener pricingApp;
-    private final PlainTextListener plainTextApp;
 
 
     EncodingApp(
             Function<PricingProtocolPublisher, PricingProtocolListener> pricingAppFactory,
             Function<PlainTextPublisher, PlainTextListener> plainTextAppFactory,
-            LengthBasedMessageEncoding.Encoder encoder,
-            LengthBasedMessageEncoding.Decoder decoder
+            LengthBasedMessageEncoding.Encoder encoder
     ) {
-        pricingApp = pricingAppFactory.apply(new EncodingPricingProtocolPublisher(appPublisher, encoder));
-        plainTextApp = plainTextAppFactory.apply(new EncodingPlainTextPublisher(appPublisher, encoder));
-        this.decoder = decoder;
+        this.decoder = new LengthBasedMessageEncoding.Decoder();
+        consumer = new AppMessageConsumer(
+                new RegisteredApp<>(Setup.SupportedPayloadSchemas.PRICING.id(), new PricingProtocolEncoding.Decoder(), pricingAppFactory.apply(new EncodingPricingProtocolPublisher(appPublisher, encoder))),
+                new RegisteredApp<>(Setup.SupportedPayloadSchemas.PLAIN_TEXT.id(), new PlainTextEncoding.Decoder(), plainTextAppFactory.apply(new EncodingPlainTextPublisher(appPublisher, encoder)))
+        );
     }
 
     @Override
@@ -50,18 +47,24 @@ public class EncodingApp implements App {
         return appPublisher;
     }
 
-    private class AppMessageConsumer implements DecodedAppMessageConsumer {
+    private static class AppMessageConsumer implements DecodedAppMessageConsumer {
 
-        private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();
-        private final PlainTextEncoding.Decoder textDecoder = new PlainTextEncoding.Decoder();
+        private final RegisteredApp<PricingProtocolEncoding.Decoder, PricingProtocolListener> registeredPricingApp;
+        private final RegisteredApp<PlainTextEncoding.Decoder, PlainTextListener> registeredPlainTextApp;
+
+        private AppMessageConsumer(RegisteredApp<PricingProtocolEncoding.Decoder, PricingProtocolListener> registeredPricingApp, RegisteredApp<PlainTextEncoding.Decoder, PlainTextListener> registeredPlainTextApp) {
+            this.registeredPricingApp = registeredPricingApp;
+            this.registeredPlainTextApp = registeredPlainTextApp;
+        }
 
         @Override
         public void onMessage(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
-            if (payloadSchemaId == Setup.SupportedPayloadSchemas.PRICING.id()) {
-                pricingDecoder.wrap(buffer, offset, length).decode(pricingApp);
-            } else if (payloadSchemaId == Setup.SupportedPayloadSchemas.PLAIN_TEXT.id()) {
-                textDecoder.wrap(buffer, offset, length).decode(plainTextApp);
+            if (payloadSchemaId == registeredPricingApp.getProtocolSchemaId()) {
+                registeredPricingApp.getProtocolDecoder().wrap(buffer, offset, length).decode(registeredPricingApp.getDecodedMessageListener());
+            } else if (payloadSchemaId == registeredPlainTextApp.getProtocolSchemaId()) {
+                registeredPlainTextApp.getProtocolDecoder().wrap(buffer, offset, length).decode(registeredPlainTextApp.getDecodedMessageListener());
             }
         }
     }
+
 }

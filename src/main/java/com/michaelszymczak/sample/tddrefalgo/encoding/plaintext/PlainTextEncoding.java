@@ -44,7 +44,7 @@ public class PlainTextEncoding {
         }
     }
 
-    public static class Decoder implements ProtocolDecoder<Decoder> {
+    public static class Decoder implements ProtocolDecoder<Decoder, PlainTextListener> {
         private final AsciiSequenceView asciiSequenceView = new AsciiSequenceView();
         private DirectBuffer buffer;
         private int offset;
@@ -59,9 +59,10 @@ public class PlainTextEncoding {
             return this;
         }
 
-        public int decode(PlainTextListener listener) {
+        @Override
+        public int decode(PlainTextListener decodedMessageListener) {
             String decoded = asciiSequenceView.wrap(buffer, offset, length).toString();
-            listener.onMessage(decoded);
+            decodedMessageListener.onMessage(decoded);
             return offset + decoded.length();
         }
     }

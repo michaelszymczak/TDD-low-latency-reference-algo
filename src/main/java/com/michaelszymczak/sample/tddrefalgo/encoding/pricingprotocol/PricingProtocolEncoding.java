@@ -78,7 +78,7 @@ public class PricingProtocolEncoding {
         }
     }
 
-    public static class Decoder implements ProtocolDecoder<Decoder> {
+    public static class Decoder implements ProtocolDecoder<Decoder, PricingProtocolListener> {
 
         private final HeartbeatEncoding.Decoder heartbeatDecoder = new HeartbeatEncoding.Decoder();
         private final QuoteEncoding.Decoder quoteDecoder = new QuoteEncoding.Decoder();
@@ -97,17 +97,18 @@ public class PricingProtocolEncoding {
             return this;
         }
 
-        public int decode(PricingProtocolListener consumer) {
+        @Override
+        public int decode(PricingProtocolListener decodedMessageListener) {
             PricingMessageType type = toType(buffer.getByte(offset));
             int position;
             switch (type) {
                 case HEARTBEAT:
                     position = heartbeatDecoder.wrap(buffer, offset + SIZE_OF_BYTE).decode(mutableHeartbeat);
-                    consumer.onHeartbeat(mutableHeartbeat);
+                    decodedMessageListener.onHeartbeat(mutableHeartbeat);
                     return position;
                 case QUOTE:
                     position = quoteDecoder.wrap(buffer, offset + SIZE_OF_BYTE).decode(mutableQuote);
-                    consumer.onQuote(mutableQuote);
+                    decodedMessageListener.onQuote(mutableQuote);
                     return position;
             }
             return offset;

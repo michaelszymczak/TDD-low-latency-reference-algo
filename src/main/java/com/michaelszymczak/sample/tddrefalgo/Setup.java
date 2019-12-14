@@ -28,8 +28,7 @@ class Setup {
         return new EncodingApp(
                 SamplePricingApp::new,
                 EchoApp::new,
-                encoder(),
-                decoder()
+                encoder()
         );
     }
 
