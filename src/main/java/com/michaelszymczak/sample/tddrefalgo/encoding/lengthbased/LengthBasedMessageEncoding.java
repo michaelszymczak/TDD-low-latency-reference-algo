@@ -82,8 +82,8 @@ public class LengthBasedMessageEncoding {
                 return offset;
             }
             int payloadLength = buffer.getInt(offset);
-            int schemaId = buffer.getShort(offset + SIZE_OF_INT);
-            consumer.onMessage(payloadSchemaById.get(schemaId), buffer, offset + HEADER_SIZE, payloadLength);
+            short schemaId = buffer.getShort(offset + SIZE_OF_INT);
+            consumer.onMessage(schemaId, buffer, offset + HEADER_SIZE, payloadLength);
 
             return offset + length;
         }

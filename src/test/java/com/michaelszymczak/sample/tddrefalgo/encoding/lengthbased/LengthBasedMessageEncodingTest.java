@@ -115,18 +115,18 @@ class LengthBasedMessageEncodingTest {
         final List<Entry> decoded = new ArrayList<>();
 
         @Override
-        public void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
-            decoded.add(new Entry(payloadSchema, buffer, offset, length));
+        public void onMessage(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
+            decoded.add(new Entry(payloadSchemaId, buffer, offset, length));
         }
 
         static class Entry {
-            PayloadSchema payloadSchema;
+            short payloadSchemaId;
             DirectBuffer buffer;
             int offset;
             int length;
 
-            Entry(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
-                this.payloadSchema = payloadSchema;
+            Entry(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
+                this.payloadSchemaId = payloadSchemaId;
                 this.buffer = buffer;
                 this.offset = offset;
                 this.length = length;

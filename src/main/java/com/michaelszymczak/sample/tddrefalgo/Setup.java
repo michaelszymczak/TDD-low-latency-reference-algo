@@ -1,5 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
+import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
+import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
@@ -16,6 +18,19 @@ class Setup {
                 new PricingProtocolEncoding.Encoder(SupportedPayloadSchemas.PRICING),
                 new TimeEncoding.Encoder(SupportedPayloadSchemas.TIME)
         ));
+    }
+
+    static LengthBasedMessageEncoding.Decoder decoder() {
+        return new LengthBasedMessageEncoding.Decoder(SupportedPayloadSchemas::of);
+    }
+
+    static EncodingApp createApp() {
+        return new EncodingApp(
+                SamplePricingApp::new,
+                EchoApp::new,
+                encoder(),
+                decoder()
+        );
     }
 
     enum SupportedPayloadSchemas implements PayloadSchema {
