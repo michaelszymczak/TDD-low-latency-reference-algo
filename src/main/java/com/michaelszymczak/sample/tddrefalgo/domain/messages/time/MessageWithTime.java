@@ -22,5 +22,10 @@ public class MessageWithTime implements Message<Time> {
         return payload;
     }
 
+    @Override
+    public Class<Time> payloadType() {
+        return Time.class;
+    }
+
 
 }

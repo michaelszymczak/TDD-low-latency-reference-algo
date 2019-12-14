@@ -7,6 +7,7 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainText
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolPublisher;
+import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.EncodingPlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.EncodingPricingProtocolPublisher;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 
 public class EncodingApp implements App {
 
-    private final MessageEncoding.Decoder appMessageDecoder = new MessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Decoder appMessageDecoder = new LengthBasedMessageEncoding.Decoder();
     private final AppMessageConsumer consumer = new AppMessageConsumer();
     private final AppPublisher appPublisher = new AppPublisher();
 

@@ -1,9 +1,11 @@
-package com.michaelszymczak.sample.tddrefalgo.encoding;
+package com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased;
 
+import com.michaelszymczak.sample.tddrefalgo.Setup;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
@@ -17,11 +19,11 @@ import static com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchem
 import static com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema.TIME;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessageEncodingTest {
+class LengthBasedMessageEncodingTest {
 
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
-    private final MessageEncoding.Encoder encoder = new MessageEncoding.Encoder();
-    private final MessageEncoding.Decoder decoder = new MessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Encoder encoder = Setup.encoder();
+    private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
     private final DecodedMessageSpy messageSpy = new DecodedMessageSpy();
 
     @Test

@@ -8,7 +8,7 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWi
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
 import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingApp;
-import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
@@ -25,8 +25,8 @@ class AppTest {
 
     private static final int IN_OFFSET = 55;
     private final App app = new EncodingApp(SamplePricingApp::new, EchoApp::new);
-    private final MessageEncoding.Encoder enc = new MessageEncoding.Encoder();
-    private final MessageEncoding.Decoder dec = new MessageEncoding.Decoder();
+    private final LengthBasedMessageEncoding.Encoder enc = Setup.encoder();
+    private final LengthBasedMessageEncoding.Decoder dec = new LengthBasedMessageEncoding.Decoder();
     private final ExpandableArrayBuffer in = new ExpandableArrayBuffer();
 
     private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();

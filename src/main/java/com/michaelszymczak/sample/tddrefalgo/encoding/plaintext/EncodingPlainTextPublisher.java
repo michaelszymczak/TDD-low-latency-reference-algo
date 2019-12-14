@@ -1,13 +1,14 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.plaintext;
 
+import com.michaelszymczak.sample.tddrefalgo.Setup;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.AppPublisher;
-import com.michaelszymczak.sample.tddrefalgo.encoding.MessageEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 
 public class EncodingPlainTextPublisher implements PlainTextPublisher {
 
-    private final MessageEncoding.Encoder encoder = new MessageEncoding.Encoder();
+    private final LengthBasedMessageEncoding.Encoder encoder = Setup.encoder();
     private final AppPublisher appPublisher;
 
     public EncodingPlainTextPublisher(AppPublisher appPublisher) {

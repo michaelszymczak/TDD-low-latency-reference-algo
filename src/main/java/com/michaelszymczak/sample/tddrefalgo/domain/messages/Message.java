@@ -5,4 +5,6 @@ public interface Message<Payload> {
     int payloadLength();
 
     Payload payload();
+
+    Class<Payload> payloadType();
 }

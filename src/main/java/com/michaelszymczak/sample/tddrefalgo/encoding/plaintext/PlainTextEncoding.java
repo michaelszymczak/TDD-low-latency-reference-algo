@@ -1,26 +1,40 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.plaintext;
 
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
+import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
 public class PlainTextEncoding {
 
-    public static class Encoder {
+    public static class Encoder implements ProtocolEncoder<PlainTextEncoding.Encoder, String> {
         private MutableDirectBuffer buffer;
         private int offset;
 
 
+        @Override
         public Encoder wrap(MutableDirectBuffer buffer, int offset) {
             this.buffer = buffer;
             this.offset = offset;
             return this;
         }
 
+        @Override
         public int encode(String message) {
             buffer.putStringWithoutLengthAscii(offset, message);
             return offset + message.length();
+        }
+
+        @Override
+        public PayloadSchema payloadSchema() {
+            return PayloadSchema.PLAIN_TEXT;
+        }
+
+        @Override
+        public Class<String> messageType() {
+            return String.class;
         }
     }
 

@@ -21,4 +21,9 @@ public class MessageWithPricingProtocol implements Message<PricingMessage> {
         return payload;
     }
 
+    @Override
+    public Class<PricingMessage> payloadType() {
+        return PricingMessage.class;
+    }
+
 }

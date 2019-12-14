@@ -20,4 +20,9 @@ public class MessageWithPlainText implements Message<String> {
         return payload;
     }
 
+    @Override
+    public Class<String> payloadType() {
+        return String.class;
+    }
+
 }
