@@ -21,7 +21,8 @@ public class EncodingPricingProtocolPublisher implements PricingProtocolPublishe
 
     @Override
     public void publish(PricingMessage message) {
-        appPublisher.setWrittenPosition(encoder.wrap(appPublisher.buffer(), appPublisher.writtenPosition())
-                .encode(messageWithPricingProtocol.withPayload(message)));
+        int encode = encoder.wrap(appPublisher.buffer(), appPublisher.writtenPosition())
+                .encode(messageWithPricingProtocol.withPayload(message));
+        appPublisher.setWrittenPosition(encode);
     }
 }

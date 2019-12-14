@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.agrona.BitUtil.SIZE_OF_INT;
 
 public class LengthBasedMessageEncoding {
@@ -22,6 +23,10 @@ public class LengthBasedMessageEncoding {
         private final Map<Class<?>, ProtocolEncoder<?, ?>> encoderByProtocol = new HashMap<>();
         private MutableDirectBuffer buffer;
         private int offset;
+
+        public Encoder(ProtocolEncoder<?, ?> protocolEncoder) {
+            this(singletonList(protocolEncoder));
+        }
 
         public Encoder(List<ProtocolEncoder<?, ?>> protocolEncoders) {
             protocolEncoders.forEach(this::register);
