@@ -1,7 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.time;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -15,8 +15,13 @@ public class TimeEncoding {
     }
 
     public static class Encoder implements ProtocolEncoder<Encoder, Time> {
+        private final PayloadSchema payloadSchema;
         private MutableDirectBuffer buffer;
         private int offset;
+
+        public Encoder(PayloadSchema payloadSchema) {
+            this.payloadSchema = payloadSchema;
+        }
 
 
         @Override
@@ -34,7 +39,7 @@ public class TimeEncoding {
 
         @Override
         public PayloadSchema payloadSchema() {
-            return PayloadSchema.TIME;
+            return payloadSchema;
         }
 
         @Override

@@ -1,7 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.plaintext;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
+import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
@@ -10,8 +10,13 @@ import org.agrona.MutableDirectBuffer;
 public class PlainTextEncoding {
 
     public static class Encoder implements ProtocolEncoder<PlainTextEncoding.Encoder, String> {
+        private final PayloadSchema payloadSchema;
         private MutableDirectBuffer buffer;
         private int offset;
+
+        public Encoder(PayloadSchema payloadSchema) {
+            this.payloadSchema = payloadSchema;
+        }
 
 
         @Override
@@ -29,7 +34,7 @@ public class PlainTextEncoding {
 
         @Override
         public PayloadSchema payloadSchema() {
-            return PayloadSchema.PLAIN_TEXT;
+            return payloadSchema;
         }
 
         @Override

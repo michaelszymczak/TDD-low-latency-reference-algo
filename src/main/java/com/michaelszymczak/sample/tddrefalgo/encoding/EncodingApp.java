@@ -2,7 +2,7 @@ package com.michaelszymczak.sample.tddrefalgo.encoding;
 
 import com.michaelszymczak.sample.tddrefalgo.api.App;
 import com.michaelszymczak.sample.tddrefalgo.api.Output;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolListener;
@@ -49,9 +49,9 @@ public class EncodingApp implements App {
     private class AppMessageConsumer implements DecodedAppMessageConsumer {
         @Override
         public void onMessage(PayloadSchema payloadSchema, DirectBuffer buffer, int offset, int length) {
-            if (payloadSchema == PayloadSchema.PRICING) {
+            if (payloadSchema == SupportedPayloadSchemas.PRICING) {
                 pricingDecoder.wrap(buffer, offset).decode(pricingApp);
-            } else if (payloadSchema == PayloadSchema.PLAIN_TEXT) {
+            } else if (payloadSchema == SupportedPayloadSchemas.PLAIN_TEXT) {
                 textDecoder.wrap(buffer, offset, length).decode(plainTextApp);
             }
         }

@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
@@ -11,9 +12,9 @@ public class Setup {
 
     public static LengthBasedMessageEncoding.Encoder encoder() {
         return new LengthBasedMessageEncoding.Encoder(Arrays.asList(
-                new PlainTextEncoding.Encoder(),
-                new PricingProtocolEncoding.Encoder(),
-                new TimeEncoding.Encoder()
+                new PlainTextEncoding.Encoder(SupportedPayloadSchemas.PLAIN_TEXT),
+                new PricingProtocolEncoding.Encoder(SupportedPayloadSchemas.PRICING),
+                new TimeEncoding.Encoder(SupportedPayloadSchemas.TIME)
         ));
     }
 }

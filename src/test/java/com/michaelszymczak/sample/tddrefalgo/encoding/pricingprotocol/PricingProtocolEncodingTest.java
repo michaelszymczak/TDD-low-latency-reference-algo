@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.ImmutableHeartbeat;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.ImmutableQuote;
 import org.agrona.ExpandableArrayBuffer;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PricingProtocolEncodingTest {
 
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
-    private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder();
+    private final PricingProtocolEncoding.Encoder encoder = new PricingProtocolEncoding.Encoder(SupportedPayloadSchemas.PRICING);
     private final PricingProtocolEncoding.Decoder decoder = new PricingProtocolEncoding.Decoder();
     private final PricingProtocolDecodedMessageSpy decodedMessageSpy = new PricingProtocolDecodedMessageSpy();
 

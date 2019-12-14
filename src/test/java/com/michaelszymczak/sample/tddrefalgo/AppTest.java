@@ -3,7 +3,7 @@ package com.michaelszymczak.sample.tddrefalgo;
 import com.michaelszymczak.sample.tddrefalgo.api.App;
 import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.SupportedPayloadSchemas;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
@@ -54,7 +54,7 @@ class AppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(), (payloadSchema, buffer, offset, length) -> {
-            assertEquals(PayloadSchema.PRICING, payloadSchema);
+            assertEquals(SupportedPayloadSchemas.PRICING, payloadSchema);
             pricingDecoder.wrap(buffer, offset).decode(pricingDecodedMessageSpy);
         });
         assertEquals(1, pricingDecodedMessageSpy.messages().size());
@@ -74,7 +74,7 @@ class AppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(), (payloadSchema, buffer, offset, length) -> {
-            assertEquals(PayloadSchema.PLAIN_TEXT, payloadSchema);
+            assertEquals(SupportedPayloadSchemas.PLAIN_TEXT, payloadSchema);
             textDecoder.wrap(buffer, offset, length).decode(textDecodedMessageSpy);
         });
         assertEquals(1, textDecodedMessageSpy.messages().size());
