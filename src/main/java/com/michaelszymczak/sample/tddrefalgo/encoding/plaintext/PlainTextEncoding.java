@@ -2,6 +2,7 @@ package com.michaelszymczak.sample.tddrefalgo.encoding.plaintext;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolDecoder;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
@@ -43,13 +44,14 @@ public class PlainTextEncoding {
         }
     }
 
-    public static class Decoder {
+    public static class Decoder implements ProtocolDecoder<Decoder> {
         private final AsciiSequenceView asciiSequenceView = new AsciiSequenceView();
         private DirectBuffer buffer;
         private int offset;
         private int length;
 
 
+        @Override
         public Decoder wrap(DirectBuffer buffer, int offset, int length) {
             this.buffer = buffer;
             this.offset = offset;
@@ -59,7 +61,7 @@ public class PlainTextEncoding {
 
         public int decode(PlainTextListener listener) {
             String decoded = asciiSequenceView.wrap(buffer, offset, length).toString();
-            listener.onPlainTextMessage(decoded);
+            listener.onMessage(decoded);
             return offset + decoded.length();
         }
     }

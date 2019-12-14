@@ -21,7 +21,7 @@ class Setup {
     }
 
     static LengthBasedMessageEncoding.Decoder decoder() {
-        return new LengthBasedMessageEncoding.Decoder(SupportedPayloadSchemas::of);
+        return new LengthBasedMessageEncoding.Decoder();
     }
 
     static EncodingApp createApp() {

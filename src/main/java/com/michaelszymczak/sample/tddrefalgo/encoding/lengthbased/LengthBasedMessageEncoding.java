@@ -2,7 +2,6 @@ package com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.Message;
 import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
-import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
@@ -57,18 +56,11 @@ public class LengthBasedMessageEncoding {
         }
     }
 
-    public interface PayloadSchemaById {
-        PayloadSchema get(int schemaId);
-    }
-
     public static class Decoder {
-
-        private final PayloadSchemaById payloadSchemaById;
         private DirectBuffer buffer;
         private int offset;
 
-        public Decoder(PayloadSchemaById payloadSchemaById) {
-            this.payloadSchemaById = payloadSchemaById;
+        public Decoder() {
         }
 
         public Decoder wrap(DirectBuffer buffer, int offset) {

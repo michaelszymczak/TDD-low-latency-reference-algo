@@ -2,6 +2,7 @@ package com.michaelszymczak.sample.tddrefalgo.encoding.time;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolDecoder;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -11,7 +12,7 @@ import static org.agrona.BitUtil.SIZE_OF_LONG;
 public class TimeEncoding {
 
     public interface DecodedMessageConsumer {
-        void onTimeMessage(Time message);
+        void onMessage(Time message);
     }
 
     public static class Encoder implements ProtocolEncoder<Encoder, Time> {
@@ -48,12 +49,13 @@ public class TimeEncoding {
         }
     }
 
-    public static class Decoder {
+    public static class Decoder implements ProtocolDecoder<Decoder> {
         private final Time time = new Time(0);
         private DirectBuffer buffer;
         private int offset;
         private int length;
 
+        @Override
         public Decoder wrap(DirectBuffer buffer, int offset, int length) {
             this.buffer = buffer;
             this.offset = offset;
@@ -63,7 +65,7 @@ public class TimeEncoding {
 
         public int decode(DecodedMessageConsumer consumer) {
             time.set(buffer.getLong(offset));
-            consumer.onTimeMessage(time);
+            consumer.onMessage(time);
             return offset + SIZE_OF_LONG;
         }
     }

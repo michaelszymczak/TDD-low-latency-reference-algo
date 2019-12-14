@@ -58,7 +58,7 @@ public class EncodingApp implements App {
         @Override
         public void onMessage(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
             if (payloadSchemaId == Setup.SupportedPayloadSchemas.PRICING.id()) {
-                pricingDecoder.wrap(buffer, offset).decode(pricingApp);
+                pricingDecoder.wrap(buffer, offset, length).decode(pricingApp);
             } else if (payloadSchemaId == Setup.SupportedPayloadSchemas.PLAIN_TEXT.id()) {
                 textDecoder.wrap(buffer, offset, length).decode(plainTextApp);
             }

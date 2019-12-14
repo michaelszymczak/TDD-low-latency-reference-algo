@@ -2,6 +2,7 @@ package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.*;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolDecoder;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -77,7 +78,7 @@ public class PricingProtocolEncoding {
         }
     }
 
-    public static class Decoder {
+    public static class Decoder implements ProtocolDecoder<Decoder> {
 
         private final HeartbeatEncoding.Decoder heartbeatDecoder = new HeartbeatEncoding.Decoder();
         private final QuoteEncoding.Decoder quoteDecoder = new QuoteEncoding.Decoder();
@@ -85,11 +86,14 @@ public class PricingProtocolEncoding {
         private final MutableQuote mutableQuote = new MutableQuote();
         private DirectBuffer buffer;
         private int offset;
+        private int length;
 
 
-        public Decoder wrap(DirectBuffer buffer, int offset) {
+        @Override
+        public Decoder wrap(DirectBuffer buffer, int offset, int length) {
             this.buffer = buffer;
             this.offset = offset;
+            this.length = length;
             return this;
         }
 

@@ -12,7 +12,7 @@ public class EchoApp implements PlainTextListener {
     }
 
     @Override
-    public void onPlainTextMessage(String message) {
+    public void onMessage(String message) {
         publisher.publish(message);
     }
 }

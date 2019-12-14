@@ -53,7 +53,7 @@ class AppTest {
         dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(),
                 (payloadSchemaId, buffer, offset, length) -> {
                     assertEquals(Setup.SupportedPayloadSchemas.PRICING.id(), payloadSchemaId);
-                    pricingDecoder.wrap(buffer, offset).decode(pricingDecodedMessageSpy);
+                    pricingDecoder.wrap(buffer, offset, length).decode(pricingDecodedMessageSpy);
                 });
         assertEquals(1, pricingDecodedMessageSpy.messages().size());
         assertEquals(heartbeat(nanoTime), pricingDecodedMessageSpy.messages().get(0));
@@ -90,7 +90,7 @@ class AppTest {
         List<String> messages = new ArrayList<>();
 
         @Override
-        public void onPlainTextMessage(String message) {
+        public void onMessage(String message) {
             messages.add(message);
         }
 

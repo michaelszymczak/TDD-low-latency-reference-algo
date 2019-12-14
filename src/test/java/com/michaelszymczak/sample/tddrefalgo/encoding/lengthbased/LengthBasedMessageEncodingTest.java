@@ -28,8 +28,7 @@ class LengthBasedMessageEncodingTest {
             new PricingProtocolEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 2)),
             new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 3))
     ));
-    private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder(
-            schemaCode -> new PayloadSchema.KnownPayloadSchema((short) schemaCode));
+    private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
     private final DecodedMessageSpy messageSpy = new DecodedMessageSpy();
 
     @Test
