@@ -9,4 +9,9 @@ public interface Output {
     int offset();
 
     int writtenPosition();
+
+    default int totalLength()
+    {
+        return writtenPosition() - offset();
+    }
 }

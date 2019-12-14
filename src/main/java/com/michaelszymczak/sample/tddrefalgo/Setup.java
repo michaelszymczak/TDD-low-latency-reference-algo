@@ -29,6 +29,7 @@ class Setup {
 
     static EncodingApp createApp() {
         return new EncodingApp(
+                new LengthBasedMessageEncoding.Decoder(),
                 asList(
                         appPublisher -> new RegisteredApp<>(
                                 PRICING,

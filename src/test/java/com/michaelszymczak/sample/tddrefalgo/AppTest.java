@@ -50,7 +50,7 @@ class AppTest {
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
 
         // Then
-        dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(),
+        dec.wrap(app.output().buffer(), app.output().offset(), app.output().totalLength()).decode(
                 (payloadSchemaId, buffer, offset, length) -> {
                     assertEquals(Setup.SupportedPayloadSchemas.PRICING.id(), payloadSchemaId);
                     pricingDecoder.wrap(buffer, offset, length).decode(pricingDecodedMessageSpy);
@@ -71,7 +71,7 @@ class AppTest {
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
 
         // Then
-        dec.wrap(app.output().buffer(), app.output().offset()).decode(app.output().writtenPosition(),
+        dec.wrap(app.output().buffer(), app.output().offset(), app.output().totalLength()).decode(
                 (payloadSchemaId, buffer, offset, length) -> {
                     assertEquals(Setup.SupportedPayloadSchemas.PLAIN_TEXT.id(), payloadSchemaId);
                     textDecoder.wrap(buffer, offset, length).decode(textDecodedMessageSpy);

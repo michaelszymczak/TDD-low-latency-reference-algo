@@ -18,17 +18,17 @@ public class EncodingApp implements App {
     private final List<RegisteredApp<?, ?>> registeredApps = new ArrayList<>();
     private final AppPublisher appPublisher;
 
-    EncodingApp(List<Function<AppPublisher, RegisteredApp<?, ?>>> appPublisherListFunction) {
+    EncodingApp(LengthBasedMessageEncoding.Decoder decoder, List<Function<AppPublisher, RegisteredApp<?, ?>>> appPublisherListFunction) {
         this.appPublisher = new AppPublisher();
-        this.decoder = new LengthBasedMessageEncoding.Decoder();
         appPublisherListFunction.stream().map(factory -> factory.apply(appPublisher)).forEach(registeredApps::add);
+        this.decoder = decoder;
         this.consumer = this::onMessage;
     }
 
 
     @Override
     public int onInput(DirectBuffer input, int offset, int length) {
-        decoder.wrap(input, offset).decode(length, consumer);
+        decoder.wrap(input, offset, length).decode(consumer);
         return offset + length;
     }
 

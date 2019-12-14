@@ -37,7 +37,7 @@ class LengthBasedMessageEncodingTest {
         assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5).decode(0, messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 0).decode(messageSpy);
 
         // Then
         assertTrue(messageSpy.decoded.isEmpty());
@@ -50,7 +50,7 @@ class LengthBasedMessageEncodingTest {
         assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5).decode(12, messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 12).decode(messageSpy);
 
         assertEquals(17, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
@@ -68,7 +68,7 @@ class LengthBasedMessageEncodingTest {
         assertEquals(12, encoder.wrap(buffer, 0).encode(new MessageWithPlainText("fooBar")));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 0).decode(12, messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 0, 12).decode(messageSpy);
 
         assertEquals(12, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
@@ -86,7 +86,7 @@ class LengthBasedMessageEncodingTest {
         assertEquals(19, encoder.wrap(buffer, 5).encode(new MessageWithTime(new Time(123456L))));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5).decode(14, messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 14).decode(messageSpy);
 
         assertEquals(19, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
@@ -103,7 +103,7 @@ class LengthBasedMessageEncodingTest {
         assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5).decode(6, messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 6).decode(messageSpy);
 
         assertEquals(5, decodedLastPosition);
         assertTrue(messageSpy.decoded.isEmpty());

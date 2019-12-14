@@ -64,17 +64,19 @@ public class LengthBasedMessageEncoding {
     public static class Decoder {
         private DirectBuffer buffer;
         private int offset;
+        private int length;
 
         public Decoder() {
         }
 
-        public Decoder wrap(DirectBuffer buffer, int offset) {
+        public Decoder wrap(DirectBuffer buffer, int offset, int length) {
             this.buffer = buffer;
             this.offset = offset;
+            this.length = length;
             return this;
         }
 
-        public int decode(final int length, final DecodedAppMessageConsumer consumer) {
+        public int decode(final DecodedAppMessageConsumer consumer) {
             if (length - HEADER_SIZE <= 0) {
                 return offset;
             }
