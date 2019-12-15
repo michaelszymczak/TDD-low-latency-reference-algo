@@ -1,6 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.pingpong;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -26,7 +25,6 @@ class PingAppTest {
     }
 
     @Test
-    @Disabled
     void shouldGenerateHeartbeats() {
         PingApp pingApp = new PingApp(1024 * 1024);
         PongApp pongApp = new PongApp();
