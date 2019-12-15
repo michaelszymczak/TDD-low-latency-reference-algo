@@ -6,7 +6,6 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
 import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.time.TimeEncoding;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
@@ -15,7 +14,6 @@ import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,18 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class LengthBasedMessageEncodingTest {
 
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
-    private final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder(Arrays.asList(
-            new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-            new PricingProtocolEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 2)),
-            new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 3))
-    ));
+    private final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder();
     private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
     private final DecodedMessageSpy messageSpy = new DecodedMessageSpy();
 
     @Test
     void shouldNotDoAnythingIfToldThatNoData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(
+                new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+                new MessageWithPlainText("fooBar")));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5, 0).decode(messageSpy);
@@ -47,7 +43,10 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeMessage() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(
+                new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+                new MessageWithPlainText("fooBar")
+        ));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5, 12).decode(messageSpy);
@@ -65,7 +64,10 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeMessageWithoutOffset() {
         // Given
-        assertEquals(12, encoder.wrap(buffer, 0).encode(new MessageWithPlainText("fooBar")));
+        assertEquals(12, encoder.wrap(buffer, 0).encode(
+                new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+                new MessageWithPlainText("fooBar")
+        ));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 0, 12).decode(messageSpy);
@@ -83,7 +85,10 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeHeartbeatMessage() {
         // Given
-        assertEquals(19, encoder.wrap(buffer, 5).encode(new MessageWithTime(new Time(123456L))));
+        assertEquals(19, encoder.wrap(buffer, 5).encode(
+                new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+                new MessageWithTime(new Time(123456L)))
+        );
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5, 14).decode(messageSpy);
@@ -100,7 +105,10 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldNotDoAnythingIfNotEnoughData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(new MessageWithPlainText("fooBar")));
+        assertEquals(17, encoder.wrap(buffer, 5).encode(
+                new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
+                new MessageWithPlainText("fooBar"))
+        );
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5, 6).decode(messageSpy);

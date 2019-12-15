@@ -7,11 +7,6 @@ import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
 import static org.agrona.BitUtil.SIZE_OF_INT;
 
 public class LengthBasedMessageEncoding {
@@ -20,17 +15,9 @@ public class LengthBasedMessageEncoding {
 
     public static class Encoder {
 
-        private final Map<Class<?>, ProtocolEncoder<?, ?>> encoderByProtocol = new HashMap<>();
         private MutableDirectBuffer buffer;
         private int offset;
 
-        public Encoder(ProtocolEncoder<?, ?> protocolEncoder) {
-            this(singletonList(protocolEncoder));
-        }
-
-        public Encoder(List<ProtocolEncoder<?, ?>> protocolEncoders) {
-            protocolEncoders.forEach(this::register);
-        }
 
         public Encoder wrap(MutableDirectBuffer buffer, int offset) {
             this.buffer = buffer;
@@ -38,27 +25,14 @@ public class LengthBasedMessageEncoding {
             return this;
         }
 
-        public <M> int encode(Message<M> message) {
-            final ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> protocolEncoder = encoderFor(message);
+        public <M> int encode(ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> protocolEncoder, Message<M> message) {
             int position = protocolEncoder.wrap(buffer, offset + HEADER_SIZE).encode(message.payload());
             buffer.putInt(offset, position - (offset + HEADER_SIZE));
             buffer.putShort(offset + SIZE_OF_INT, protocolEncoder.payloadSchema().id());
             return position;
-
         }
 
-        private void register(ProtocolEncoder encoder) {
-            encoderByProtocol.put(encoder.messageType(), encoder);
-        }
 
-        @SuppressWarnings("unchecked")
-        private <M> ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> encoderFor(Message<M> message) {
-            ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> protocolEncoder = (ProtocolEncoder<? extends ProtocolEncoder<?, M>, M>) encoderByProtocol.get(message.payloadType());
-            if (protocolEncoder == null) {
-                throw new IllegalArgumentException();
-            }
-            return protocolEncoder;
-        }
     }
 
     public static class Decoder {

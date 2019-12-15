@@ -10,10 +10,11 @@ public class EncodingPricingProtocolPublisher implements PricingProtocolPublishe
 
     private final MessageWithPricingProtocol messageWithPricingProtocol = new MessageWithPricingProtocol();
     private final LengthBasedMessageEncoding.Encoder encoder;
+    private final PricingProtocolEncoding.Encoder protocolEncoder;
     private final AppPublisher appPublisher;
 
-    public EncodingPricingProtocolPublisher(AppPublisher appPublisher, LengthBasedMessageEncoding.Encoder encoder) {
-
+    public EncodingPricingProtocolPublisher(PricingProtocolEncoding.Encoder protocolEncoder, AppPublisher appPublisher, LengthBasedMessageEncoding.Encoder encoder) {
+        this.protocolEncoder = protocolEncoder;
         this.appPublisher = appPublisher;
         this.encoder = encoder;
     }
@@ -21,8 +22,9 @@ public class EncodingPricingProtocolPublisher implements PricingProtocolPublishe
 
     @Override
     public void publish(PricingMessage message) {
-        int encode = encoder.wrap(appPublisher.buffer(), appPublisher.writtenPosition())
-                .encode(messageWithPricingProtocol.withPayload(message));
-        appPublisher.setWrittenPosition(encode);
+        appPublisher.setWrittenPosition(encoder
+                .wrap(appPublisher.buffer(), appPublisher.writtenPosition())
+                .encode(protocolEncoder, messageWithPricingProtocol.withPayload(message)));
     }
+
 }

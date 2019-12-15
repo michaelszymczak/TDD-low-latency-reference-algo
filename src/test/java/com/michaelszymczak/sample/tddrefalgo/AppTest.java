@@ -22,8 +22,8 @@ class AppTest {
     private static final int IN_OFFSET = 55;
     private final App app = Setup.createApp();
 
-    private final LengthBasedMessageEncoding.Encoder enc = Setup.encoder();
-    private final LengthBasedMessageEncoding.Decoder dec = Setup.decoder();
+    private final LengthBasedMessageEncoding.Encoder enc = new LengthBasedMessageEncoding.Encoder();
+    private final LengthBasedMessageEncoding.Decoder dec = new LengthBasedMessageEncoding.Decoder();
     private final ExpandableArrayBuffer in = new ExpandableArrayBuffer();
 
     private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();
@@ -44,7 +44,8 @@ class AppTest {
     @Test
     void shouldHandlePricingMessage() {
         long nanoTime = System.nanoTime();
-        int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(new MessageWithPricingProtocol().withPayload(heartbeat(nanoTime)));
+        int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(
+                new PricingProtocolEncoding.Encoder(Setup.SupportedPayloadSchemas.PRICING), new MessageWithPricingProtocol().withPayload(heartbeat(nanoTime)));
 
         // When
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
@@ -65,7 +66,9 @@ class AppTest {
 
     @Test
     void shouldHandlePlainTextMessage() {
-        int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(new MessageWithPlainText("foo"));
+        int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(
+                new PlainTextEncoding.Encoder(Setup.SupportedPayloadSchemas.PLAIN_TEXT),
+                new MessageWithPlainText("foo"));
 
         // When
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);

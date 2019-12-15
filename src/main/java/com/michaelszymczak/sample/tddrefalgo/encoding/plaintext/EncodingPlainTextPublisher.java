@@ -8,10 +8,11 @@ import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMes
 public class EncodingPlainTextPublisher implements PlainTextPublisher {
 
     private final LengthBasedMessageEncoding.Encoder encoder;
+    private final PlainTextEncoding.Encoder protocolEncoder;
     private final AppPublisher appPublisher;
 
-    public EncodingPlainTextPublisher(AppPublisher appPublisher, LengthBasedMessageEncoding.Encoder encoder) {
-
+    public EncodingPlainTextPublisher(PlainTextEncoding.Encoder protocolEncoder, AppPublisher appPublisher, LengthBasedMessageEncoding.Encoder encoder) {
+        this.protocolEncoder = protocolEncoder;
         this.appPublisher = appPublisher;
         this.encoder = encoder;
     }
@@ -20,6 +21,6 @@ public class EncodingPlainTextPublisher implements PlainTextPublisher {
     @Override
     public void publish(String message) {
         appPublisher.setWrittenPosition(encoder.wrap(appPublisher.buffer(), appPublisher.writtenPosition())
-                .encode(new MessageWithPlainText(message)));
+                .encode(protocolEncoder, new MessageWithPlainText(message)));
     }
 }
