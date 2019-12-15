@@ -6,7 +6,7 @@ public interface AppIO {
 
     default void onInput(Output output)
     {
-        onInput(output.buffer(), output.offset(), output.totalLength());
+        onInput(output.buffer(), output.offset(), output.length());
     }
 
     default void onSingleReaderInput(Output output)

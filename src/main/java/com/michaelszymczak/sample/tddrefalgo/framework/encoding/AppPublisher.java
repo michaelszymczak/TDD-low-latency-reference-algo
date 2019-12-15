@@ -2,7 +2,6 @@ package com.michaelszymczak.sample.tddrefalgo.framework.encoding;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.Output;
 import org.agrona.MutableDirectBuffer;
-import org.agrona.collections.MutableInteger;
 import org.agrona.concurrent.UnsafeBuffer;
 
 import java.nio.ByteBuffer;
@@ -10,7 +9,8 @@ import java.nio.ByteBuffer;
 public class AppPublisher implements Output {
 
     private final MutableDirectBuffer out;
-    private final MutableInteger outputWrittenPosition = new MutableInteger(0);
+    private int outputWrittenPosition = 0;
+    private int outputReadPosition = 0;
 
     public AppPublisher(final int capacity) {
         out = new UnsafeBuffer(ByteBuffer.allocateDirect(capacity));
@@ -23,25 +23,43 @@ public class AppPublisher implements Output {
 
     @Override
     public int writtenPosition() {
-        return outputWrittenPosition.get();
+        return outputWrittenPosition;
+    }
+
+    @Override
+    public int length() {
+        return writtenPosition() - offset();
     }
 
     @Override
     public void reset() {
-        outputWrittenPosition.set(0);
+        setWrittenPosition(0);
     }
 
     @Override
-    public int capacity() {
+    public int initialCapacity() {
         return out.capacity();
     }
 
     void setWrittenPosition(int position) {
-        outputWrittenPosition.set(position);
+        outputWrittenPosition = position;
     }
 
     @Override
     public int offset() {
-        return 0;
+        return outputReadPosition;
+    }
+
+    public void setReadPosition(int position) {
+        if (position > outputWrittenPosition)
+        {
+            throw new IllegalStateException("unable to mark as read beyond what has been written");
+        }
+        outputReadPosition = position;
+    }
+
+    @Override
+    public int remainingCapacity() {
+        return out.capacity() - outputWrittenPosition + outputReadPosition;
     }
 }

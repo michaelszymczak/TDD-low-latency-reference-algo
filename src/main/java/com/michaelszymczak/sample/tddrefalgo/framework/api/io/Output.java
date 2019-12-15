@@ -10,11 +10,11 @@ public interface Output {
 
     int writtenPosition();
 
-    default int totalLength() {
-        return writtenPosition() - offset();
-    }
+    int length();
 
     void reset();
 
-    int capacity();
+    int initialCapacity();
+
+    int remainingCapacity();
 }

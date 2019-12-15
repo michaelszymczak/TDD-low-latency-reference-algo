@@ -15,7 +15,9 @@ public class LengthEncodingPublisher<M> implements EncodingPublisher<M> {
 
     @Override
     public void publish(M message) {
-        appPublisher.setWrittenPosition(encoder.wrap(appPublisher.buffer(), appPublisher.writtenPosition())
-                .encode(protocolEncoder, message));
+        int writeStartPosition = appPublisher.writtenPosition();
+        int writeEndPosition = encoder.wrap(appPublisher.buffer(), writeStartPosition)
+                .encode(protocolEncoder, message);
+        appPublisher.setWrittenPosition(writeEndPosition);
     }
 }
