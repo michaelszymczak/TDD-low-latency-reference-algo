@@ -1,28 +1,31 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
+import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolDecoder;
 import com.michaelszymczak.sample.tddrefalgo.encoding.ProtocolEncoder;
 
-class RegisteredApp<D extends ProtocolDecoder<D, L>, E extends ProtocolEncoder<E, M>, L, M> {
+import java.util.function.Function;
+
+class RegisteredAppFactory<D extends ProtocolDecoder<D, L>, E extends ProtocolEncoder<E, M>, L, M> {
     private final PayloadSchema protocolSchemaId;
     private final D protocolDecoder;
     private final E protocolEncoder;
-    private final L decodedMessageListener;
+    private final Function<EncodingPublisher<M>, L> appFactory;
 
-    RegisteredApp(
+    RegisteredAppFactory(
             PayloadSchema payloadSchema,
             D protocolDecoder,
             E protocolEncoder,
-            L decodedMessageListener) {
+            Function<EncodingPublisher<M>, L> appFactory) {
         this.protocolSchemaId = payloadSchema;
         this.protocolDecoder = protocolDecoder;
         this.protocolEncoder = protocolEncoder;
-        this.decodedMessageListener = decodedMessageListener;
+        this.appFactory = appFactory;
     }
 
-    int getProtocolSchemaId() {
-        return protocolSchemaId.id();
+    PayloadSchema getProtocolSchema() {
+        return protocolSchemaId;
     }
 
     D getProtocolDecoder() {
@@ -33,7 +36,7 @@ class RegisteredApp<D extends ProtocolDecoder<D, L>, E extends ProtocolEncoder<E
         return protocolEncoder;
     }
 
-    L getDecodedMessageListener() {
-        return decodedMessageListener;
+    Function<EncodingPublisher<M>, L> getAppFactory() {
+        return appFactory;
     }
 }

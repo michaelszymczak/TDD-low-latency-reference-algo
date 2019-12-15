@@ -4,13 +4,13 @@ import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Hea
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolListener;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Quote;
-import com.michaelszymczak.sample.tddrefalgo.encoding.LengthEncodingPublisher;
+import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingPublisher;
 
 public class SamplePricingApp implements PricingProtocolListener {
 
-    private final LengthEncodingPublisher<PricingMessage> publisher;
+    private final EncodingPublisher<PricingMessage> publisher;
 
-    public SamplePricingApp(LengthEncodingPublisher<PricingMessage> publisher) {
+    public SamplePricingApp(EncodingPublisher<PricingMessage> publisher) {
         this.publisher = publisher;
     }
 

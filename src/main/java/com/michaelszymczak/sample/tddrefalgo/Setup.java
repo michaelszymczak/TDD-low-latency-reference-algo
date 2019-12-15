@@ -2,38 +2,31 @@ package com.michaelszymczak.sample.tddrefalgo;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
-import com.michaelszymczak.sample.tddrefalgo.encoding.LengthEncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 
+import static com.michaelszymczak.sample.tddrefalgo.Setup.SupportedPayloadSchemas.PLAIN_TEXT;
 import static com.michaelszymczak.sample.tddrefalgo.Setup.SupportedPayloadSchemas.PRICING;
 import static java.util.Arrays.asList;
 
 class Setup {
 
     static EncodingApp createApp() {
-        return new EncodingApp(
-                new LengthBasedMessageEncoding.Decoder(),
-                asList(
-                        appPublisher -> new RegisteredApp<>(
-                                PRICING,
-                                new PricingProtocolEncoding.Decoder(),
-                                new SamplePricingApp(
-                                        new LengthEncodingPublisher<>(
-                                                new PricingProtocolEncoding.Encoder(PRICING),
-                                                appPublisher,
-                                                new LengthBasedMessageEncoding.Encoder()))),
-                        appPublisher -> new RegisteredApp<>(
-                                SupportedPayloadSchemas.PLAIN_TEXT,
-                                new PlainTextEncoding.Decoder(),
-                                new EchoApp(
-                                        new LengthEncodingPublisher<>(
-                                                new PlainTextEncoding.Encoder(SupportedPayloadSchemas.PLAIN_TEXT),
-                                                appPublisher,
-                                                new LengthBasedMessageEncoding.Encoder()))))
-        );
+        return new EncodingApp(asList(
+                new RegisteredAppFactory<>(
+                        PRICING,
+                        new PricingProtocolEncoding.Decoder(),
+                        new PricingProtocolEncoding.Encoder(PRICING),
+                        SamplePricingApp::new
+                ),
+                new RegisteredAppFactory<>(
+                        PLAIN_TEXT,
+                        new PlainTextEncoding.Decoder(),
+                        new PlainTextEncoding.Encoder(PLAIN_TEXT),
+                        EchoApp::new
+                )
+        ));
     }
 
     enum SupportedPayloadSchemas implements PayloadSchema {
