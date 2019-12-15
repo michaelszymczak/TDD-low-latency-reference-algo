@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LengthBasedMessageEncodingTest {
 
+    public static final PlainTextEncoding.Encoder TEXT_ENCODER = new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1));
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
     private final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder();
     private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
@@ -114,6 +115,32 @@ class LengthBasedMessageEncodingTest {
 
         assertEquals(5, decodedLastPosition);
         assertTrue(messageSpy.decoded.isEmpty());
+    }
+
+    @Test
+    void shouldDecodeAsLongAsMessagesAvailable() {
+        // Given
+        int encoded1 = encoder.wrap(buffer, 0).encode(TEXT_ENCODER, "fooBar");
+        int encoded2 = encoder.wrap(buffer, encoded1).encode(TEXT_ENCODER, "BARBAZZ");
+
+        // When
+        int decodedLastPosition = decoder.wrap(buffer, 0, encoded2).decode(messageSpy);
+
+        assertEquals(encoded2, decodedLastPosition);
+        assertEquals(2, messageSpy.decoded.size());
+        DecodedMessageSpy.Entry decodedEntry1 = messageSpy.decoded.get(0);
+        assertSame(buffer, decodedEntry1.buffer);
+        assertSame(6, decodedEntry1.offset);
+        assertSame(6, decodedEntry1.length);
+        assertEquals("fooBar",
+                new AsciiSequenceView(decodedEntry1.buffer, decodedEntry1.offset, decodedEntry1.length).toString());
+        DecodedMessageSpy.Entry decodedEntry2 = messageSpy.decoded.get(1);
+        assertSame(buffer, decodedEntry2.buffer);
+        assertSame(18, decodedEntry2.offset);
+        assertSame(7, decodedEntry2.length);
+        assertEquals("BARBAZZ",
+                new AsciiSequenceView(decodedEntry2.buffer, decodedEntry2.offset, decodedEntry2.length).toString());
+
     }
 
     private static class DecodedMessageSpy implements DecodedAppMessageConsumer {

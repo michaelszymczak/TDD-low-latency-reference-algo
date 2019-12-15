@@ -48,14 +48,14 @@ public class LengthBasedMessageEncoding {
         }
 
         public int decode(final DecodedAppMessageConsumer consumer) {
-            if (length - HEADER_SIZE <= 0) {
-                return offset;
+            while (length > HEADER_SIZE) {
+                int payloadLength = buffer.getInt(offset);
+                short schemaId = buffer.getShort(offset + SIZE_OF_INT);
+                consumer.onMessage(schemaId, buffer, offset + HEADER_SIZE, payloadLength);
+                offset = offset + HEADER_SIZE + payloadLength;
+                length = length - HEADER_SIZE - payloadLength;
             }
-            int payloadLength = buffer.getInt(offset);
-            short schemaId = buffer.getShort(offset + SIZE_OF_INT);
-            consumer.onMessage(schemaId, buffer, offset + HEADER_SIZE, payloadLength);
-
-            return offset + length;
+            return offset;
         }
     }
 }
