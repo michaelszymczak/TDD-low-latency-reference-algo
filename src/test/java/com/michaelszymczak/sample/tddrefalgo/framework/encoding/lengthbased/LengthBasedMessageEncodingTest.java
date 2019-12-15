@@ -38,7 +38,7 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeMessage() {
         // Given
-        assertEquals(25, encoder.wrap(buffer, 5).encode(
+        assertEquals(25, encoder.wrap(buffer, 5).updateTime(1234L).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 "fooBar"
         ));
@@ -49,9 +49,10 @@ class LengthBasedMessageEncodingTest {
         assertEquals(25, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
+        assertEquals(1234L, decodedEntry.timeNs);
         assertSame(buffer, decodedEntry.buffer);
-        assertSame(19, decodedEntry.offset);
-        assertSame(6, decodedEntry.length);
+        assertEquals(19, decodedEntry.offset);
+        assertEquals(6, decodedEntry.length);
         assertEquals("fooBar",
                 new AsciiSequenceView(decodedEntry.buffer, decodedEntry.offset, decodedEntry.length).toString());
     }

@@ -19,7 +19,7 @@ class MultiProtocolApp implements AppIO {
         this.appPublisher = new AppPublisher(appFactoryRegistry.getPublisherBufferCapacity());
         appFactoryRegistry.getAppFactories().stream().map(factory -> createApp(appPublisher, factory)).forEach(registeredApps::add);
         this.decoder = new LengthBasedMessageEncoding.Decoder();
-        this.consumer = this::onMessage;
+        this.consumer = (payloadSchemaId, timeNs, buffer, offset, length) -> onMessage(payloadSchemaId, buffer, offset, length);
     }
 
     private static <M> void decodeAndHandle(short payloadSchemaId, DirectBuffer buffer, int offset, int length, RegisteredApp<?, M> app) {

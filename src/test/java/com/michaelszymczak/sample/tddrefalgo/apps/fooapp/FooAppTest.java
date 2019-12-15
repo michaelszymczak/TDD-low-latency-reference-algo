@@ -50,7 +50,7 @@ class FooAppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset(), app.output().totalLength()).decode(
-                (payloadSchemaId, buffer, offset, length) -> {
+                (payloadSchemaId, timeNs, buffer, offset, length) -> {
                     assertEquals(FooApp.PRICING.id(), payloadSchemaId);
                     pricingDecoder.wrap(buffer, offset, length).decode(pricingDecodedMessageSpy);
                 });
@@ -73,7 +73,7 @@ class FooAppTest {
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset(), app.output().totalLength()).decode(
-                (payloadSchemaId, buffer, offset, length) -> {
+                (payloadSchemaId, timeNs, buffer, offset, length) -> {
                     assertEquals(FooApp.PLAIN_TEXT.id(), payloadSchemaId);
                     textDecoder.wrap(buffer, offset, length).decode(textDecodedMessageSpy);
                 });

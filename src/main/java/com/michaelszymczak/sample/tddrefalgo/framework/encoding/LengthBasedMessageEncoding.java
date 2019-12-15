@@ -31,7 +31,7 @@ public class LengthBasedMessageEncoding {
             int positionAfterPayloadWritten = protocolEncoder.wrap(buffer, payloadOffset).encode(message);
             int payloadLength = positionAfterPayloadWritten - payloadOffset;
             buffer.putInt(this.offset, payloadLength);
-//            buffer.putLong(this.offset + SIZE_OF_INT, 0);
+            buffer.putLong(this.offset + SIZE_OF_INT, timeNanos);
             buffer.putShort(this.offset + SIZE_OF_INT + SIZE_OF_LONG, protocolEncoder.payloadSchema().id());
             return positionAfterPayloadWritten;
         }
@@ -57,8 +57,9 @@ public class LengthBasedMessageEncoding {
         public int decode(final DecodedAppMessageConsumer consumer) {
             while (length > HEADER_SIZE) {
                 int payloadLength = buffer.getInt(offset);
+                long timeNs = buffer.getLong(offset + SIZE_OF_INT);
                 short schemaId = buffer.getShort(offset + SIZE_OF_INT + SIZE_OF_LONG);
-                consumer.onMessage(schemaId, buffer, offset + HEADER_SIZE, payloadLength);
+                consumer.onMessage(schemaId, timeNs, buffer, offset + HEADER_SIZE, payloadLength);
                 offset = offset + HEADER_SIZE + payloadLength;
                 length = length - HEADER_SIZE - payloadLength;
             }
