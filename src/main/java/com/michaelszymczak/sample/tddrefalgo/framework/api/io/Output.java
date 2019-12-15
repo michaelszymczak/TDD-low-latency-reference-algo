@@ -13,4 +13,8 @@ public interface Output {
     default int totalLength() {
         return writtenPosition() - offset();
     }
+
+    void reset();
+
+    int capacity();
 }

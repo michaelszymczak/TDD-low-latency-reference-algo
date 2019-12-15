@@ -16,7 +16,7 @@ class MultiProtocolApp implements AppIO {
     private final AppPublisher appPublisher;
 
     MultiProtocolApp(AppFactoryRegistry appFactoryRegistry) {
-        this.appPublisher = new AppPublisher();
+        this.appPublisher = new AppPublisher(appFactoryRegistry.getPublisherBufferCapacity());
         appFactoryRegistry.getAppFactories().stream().map(factory -> createApp(appPublisher, factory)).forEach(registeredApps::add);
         this.decoder = new LengthBasedMessageEncoding.Decoder();
         this.consumer = this::onMessage;

@@ -1,25 +1,20 @@
 package com.michaelszymczak.sample.tddrefalgo.framework.encoding.lengthbased;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.framework.encoding.DecodedAppMessageConsumer;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.modules.time.Time;
 import com.michaelszymczak.sample.tddrefalgo.modules.time.TimeEncoding;
 import org.agrona.AsciiSequenceView;
-import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LengthBasedMessageEncodingTest {
 
-    public static final PlainTextEncoding.Encoder TEXT_ENCODER = new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1));
+    private static final PlainTextEncoding.Encoder TEXT_ENCODER = new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1));
     private final MutableDirectBuffer buffer = new ExpandableArrayBuffer();
     private final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder();
     private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
@@ -143,27 +138,4 @@ class LengthBasedMessageEncodingTest {
 
     }
 
-    private static class DecodedMessageSpy implements DecodedAppMessageConsumer {
-
-        final List<Entry> decoded = new ArrayList<>();
-
-        @Override
-        public void onMessage(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
-            decoded.add(new Entry(payloadSchemaId, buffer, offset, length));
-        }
-
-        static class Entry {
-            short payloadSchemaId;
-            DirectBuffer buffer;
-            int offset;
-            int length;
-
-            Entry(short payloadSchemaId, DirectBuffer buffer, int offset, int length) {
-                this.payloadSchemaId = payloadSchemaId;
-                this.buffer = buffer;
-                this.offset = offset;
-                this.length = length;
-            }
-        }
-    }
 }

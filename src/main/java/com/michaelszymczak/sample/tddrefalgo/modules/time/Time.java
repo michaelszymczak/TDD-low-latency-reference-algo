@@ -11,7 +11,8 @@ public class Time {
         return timeNanos;
     }
 
-    void set(long timeNanos) {
+    public Time set(long timeNanos) {
         this.timeNanos = timeNanos;
+        return this;
     }
 }

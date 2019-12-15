@@ -10,10 +10,6 @@ import static org.agrona.BitUtil.SIZE_OF_LONG;
 
 public class TimeEncoding {
 
-    public interface DecodedMessageListener {
-        void onMessage(Time message);
-    }
-
     public static class Encoder implements ProtocolEncoder<Encoder, Time> {
         private final PayloadSchema payloadSchema;
         private MutableDirectBuffer buffer;
@@ -44,7 +40,7 @@ public class TimeEncoding {
 
     }
 
-    public static class Decoder implements ProtocolDecoder<Decoder, DecodedMessageListener> {
+    public static class Decoder implements ProtocolDecoder<Decoder, TimeMessageListener> {
         private final Time time = new Time(0);
         private DirectBuffer buffer;
         private int offset;
@@ -59,9 +55,9 @@ public class TimeEncoding {
         }
 
         @Override
-        public int decode(DecodedMessageListener decodedMessageListener) {
+        public int decode(TimeMessageListener timeMessageListener) {
             time.set(buffer.getLong(offset));
-            decodedMessageListener.onMessage(time);
+            timeMessageListener.onMessage(time);
             return offset + SIZE_OF_LONG;
         }
     }

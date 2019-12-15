@@ -22,7 +22,7 @@ class FooApp implements AppIO {
     private final AppIO app;
 
     public FooApp() {
-        app = AppFactory.createApp(new AppFactoryRegistry(asList(
+        app = AppFactory.createApp(new AppFactoryRegistry(1024 * 1024, asList(
                 new RegisteredAppFactory<>(
                         PRICING,
                         new PricingProtocolEncoding.Decoder(),
