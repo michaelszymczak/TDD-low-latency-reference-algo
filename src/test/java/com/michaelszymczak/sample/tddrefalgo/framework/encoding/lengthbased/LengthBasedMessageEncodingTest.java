@@ -23,7 +23,7 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldNotDoAnythingIfToldThatNoData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(
+        assertEquals(25, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 "fooBar"));
 
@@ -38,19 +38,19 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeMessage() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(
+        assertEquals(25, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 "fooBar"
         ));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5, 12).decode(messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 25).decode(messageSpy);
 
-        assertEquals(17, decodedLastPosition);
+        assertEquals(25, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
         assertSame(buffer, decodedEntry.buffer);
-        assertSame(11, decodedEntry.offset);
+        assertSame(19, decodedEntry.offset);
         assertSame(6, decodedEntry.length);
         assertEquals("fooBar",
                 new AsciiSequenceView(decodedEntry.buffer, decodedEntry.offset, decodedEntry.length).toString());
@@ -59,19 +59,19 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeMessageWithoutOffset() {
         // Given
-        assertEquals(12, encoder.wrap(buffer, 0).encode(
+        assertEquals(20, encoder.wrap(buffer, 0).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 "fooBar"
         ));
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 0, 12).decode(messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 0, 20).decode(messageSpy);
 
-        assertEquals(12, decodedLastPosition);
+        assertEquals(20, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
         assertSame(buffer, decodedEntry.buffer);
-        assertSame(6, decodedEntry.offset);
+        assertSame(14, decodedEntry.offset);
         assertSame(6, decodedEntry.length);
         assertEquals("fooBar",
                 new AsciiSequenceView(decodedEntry.buffer, decodedEntry.offset, decodedEntry.length).toString());
@@ -80,27 +80,27 @@ class LengthBasedMessageEncodingTest {
     @Test
     void shouldDecodeHeartbeatMessage() {
         // Given
-        assertEquals(19, encoder.wrap(buffer, 5).encode(
+        assertEquals(27, encoder.wrap(buffer, 5).encode(
                 new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 new Time(123456L))
         );
 
         // When
-        int decodedLastPosition = decoder.wrap(buffer, 5, 14).decode(messageSpy);
+        int decodedLastPosition = decoder.wrap(buffer, 5, 27).decode(messageSpy);
 
-        assertEquals(19, decodedLastPosition);
+        assertEquals(27, decodedLastPosition);
         assertEquals(1, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry = messageSpy.decoded.get(0);
         assertSame(buffer, decodedEntry.buffer);
-        assertSame(11, decodedEntry.offset);
+        assertSame(19, decodedEntry.offset);
         assertSame(8, decodedEntry.length);
-        assertEquals(123456, buffer.getLong(11));
+        assertEquals(123456, buffer.getLong(19));
     }
 
     @Test
     void shouldNotDoAnythingIfNotEnoughData() {
         // Given
-        assertEquals(17, encoder.wrap(buffer, 5).encode(
+        assertEquals(25, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
                 "fooBar")
         );
@@ -125,13 +125,13 @@ class LengthBasedMessageEncodingTest {
         assertEquals(2, messageSpy.decoded.size());
         DecodedMessageSpy.Entry decodedEntry1 = messageSpy.decoded.get(0);
         assertSame(buffer, decodedEntry1.buffer);
-        assertSame(6, decodedEntry1.offset);
+        assertSame(14, decodedEntry1.offset);
         assertSame(6, decodedEntry1.length);
         assertEquals("fooBar",
                 new AsciiSequenceView(decodedEntry1.buffer, decodedEntry1.offset, decodedEntry1.length).toString());
         DecodedMessageSpy.Entry decodedEntry2 = messageSpy.decoded.get(1);
         assertSame(buffer, decodedEntry2.buffer);
-        assertSame(18, decodedEntry2.offset);
+        assertSame(34, decodedEntry2.offset);
         assertSame(7, decodedEntry2.length);
         assertEquals("BARBAZZ",
                 new AsciiSequenceView(decodedEntry2.buffer, decodedEntry2.offset, decodedEntry2.length).toString());

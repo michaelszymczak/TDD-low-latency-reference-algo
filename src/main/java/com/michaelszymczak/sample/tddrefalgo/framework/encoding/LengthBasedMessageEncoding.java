@@ -1,20 +1,24 @@
 package com.michaelszymczak.sample.tddrefalgo.framework.encoding;
 
-import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
-import static org.agrona.BitUtil.SIZE_OF_INT;
+import static org.agrona.BitUtil.*;
 
 public class LengthBasedMessageEncoding {
 
-    private static final int HEADER_SIZE = SIZE_OF_INT + BitUtil.SIZE_OF_SHORT;
+    private static final int HEADER_SIZE = SIZE_OF_INT + SIZE_OF_LONG + SIZE_OF_SHORT;
 
     public static class Encoder {
 
         private MutableDirectBuffer buffer;
         private int offset;
+        private long timeNanos;
 
+        public Encoder updateTime(long timeNanos) {
+            this.timeNanos = timeNanos;
+            return this;
+        }
 
         public Encoder wrap(MutableDirectBuffer buffer, int offset) {
             this.buffer = buffer;
@@ -23,10 +27,13 @@ public class LengthBasedMessageEncoding {
         }
 
         public <M> int encode(ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> protocolEncoder, M message) {
-            int position = protocolEncoder.wrap(buffer, offset + HEADER_SIZE).encode(message);
-            buffer.putInt(offset, position - (offset + HEADER_SIZE));
-            buffer.putShort(offset + SIZE_OF_INT, protocolEncoder.payloadSchema().id());
-            return position;
+            int payloadOffset = this.offset + HEADER_SIZE;
+            int positionAfterPayloadWritten = protocolEncoder.wrap(buffer, payloadOffset).encode(message);
+            int payloadLength = positionAfterPayloadWritten - payloadOffset;
+            buffer.putInt(this.offset, payloadLength);
+//            buffer.putLong(this.offset + SIZE_OF_INT, 0);
+            buffer.putShort(this.offset + SIZE_OF_INT + SIZE_OF_LONG, protocolEncoder.payloadSchema().id());
+            return positionAfterPayloadWritten;
         }
 
 
@@ -50,7 +57,7 @@ public class LengthBasedMessageEncoding {
         public int decode(final DecodedAppMessageConsumer consumer) {
             while (length > HEADER_SIZE) {
                 int payloadLength = buffer.getInt(offset);
-                short schemaId = buffer.getShort(offset + SIZE_OF_INT);
+                short schemaId = buffer.getShort(offset + SIZE_OF_INT + SIZE_OF_LONG);
                 consumer.onMessage(schemaId, buffer, offset + HEADER_SIZE, payloadLength);
                 offset = offset + HEADER_SIZE + payloadLength;
                 length = length - HEADER_SIZE - payloadLength;

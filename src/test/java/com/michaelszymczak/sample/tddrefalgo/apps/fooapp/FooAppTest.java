@@ -59,7 +59,7 @@ class FooAppTest {
 
         assertEquals(inputEndPosition, read);
         assertEquals(0, app.output().offset());
-        assertEquals(15, app.output().writtenPosition());
+        assertEquals(23, app.output().writtenPosition());
     }
 
     @Test
@@ -82,7 +82,7 @@ class FooAppTest {
 
         assertEquals(inputEndPosition, read);
         assertEquals(0, app.output().offset());
-        assertEquals(9, app.output().writtenPosition());
+        assertEquals(17, app.output().writtenPosition());
 
     }
 

@@ -39,7 +39,7 @@ class PingAppTest {
         // Then
         double usedPerCent = (double) ((long) pingApp.output().totalLength() * 100) / pingApp.output().capacity();
         assertEquals(heartbeatsToSend, pongApp.heartbeatCount());
-        assertEquals(1.33, usedPerCent, 0.01);
+        assertEquals(2.10, usedPerCent, 0.01);
     }
 
     @Test
@@ -47,7 +47,7 @@ class PingAppTest {
         PingApp pingApp = new PingApp(1024 * 1024);
         PongApp pongApp = new PongApp();
         final int rounds = 200;
-        final int heartbeatsToSendInOneRound = 50_000;
+        final int heartbeatsToSendInOneRound = 30_000;
 
         // When
         for (int round = 0; round < rounds; round++) {
@@ -55,7 +55,7 @@ class PingAppTest {
                 pingApp.heartbeat();
             }
             long usedPerCent = ((long) pingApp.output().totalLength() * 100) / pingApp.output().capacity();
-            assertEquals(66, usedPerCent);
+            assertEquals(62, usedPerCent);
             pongApp.onSingleReaderInput(pingApp.output());
         }
 
