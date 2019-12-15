@@ -32,6 +32,13 @@ public class LengthBasedMessageEncoding {
             return position;
         }
 
+        public <M> int encode(ProtocolEncoder<? extends ProtocolEncoder<?, M>, M> protocolEncoder, M message) {
+            int position = protocolEncoder.wrap(buffer, offset + HEADER_SIZE).encode(message);
+            buffer.putInt(offset, position - (offset + HEADER_SIZE));
+            buffer.putShort(offset + SIZE_OF_INT, protocolEncoder.payloadSchema().id());
+            return position;
+        }
+
 
     }
 

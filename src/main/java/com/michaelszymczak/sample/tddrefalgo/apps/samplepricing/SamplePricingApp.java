@@ -1,21 +1,22 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.samplepricing;
 
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Heartbeat;
+import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolListener;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.PricingProtocolPublisher;
 import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Quote;
+import com.michaelszymczak.sample.tddrefalgo.encoding.LengthEncodingPublisher;
 
 public class SamplePricingApp implements PricingProtocolListener {
 
-    private PricingProtocolPublisher output;
+    private final LengthEncodingPublisher<PricingMessage> publisher;
 
-    public SamplePricingApp(PricingProtocolPublisher output) {
-        this.output = output;
+    public SamplePricingApp(LengthEncodingPublisher<PricingMessage> publisher) {
+        this.publisher = publisher;
     }
 
     @Override
     public void onHeartbeat(Heartbeat message) {
-        output.publish(message);
+        publisher.publish(message);
     }
 
     @Override

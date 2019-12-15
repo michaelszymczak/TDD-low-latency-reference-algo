@@ -2,11 +2,10 @@ package com.michaelszymczak.sample.tddrefalgo;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
+import com.michaelszymczak.sample.tddrefalgo.encoding.LengthEncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.EncodingPlainTextPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.EncodingPricingProtocolPublisher;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 
 import static com.michaelszymczak.sample.tddrefalgo.Setup.SupportedPayloadSchemas.PRICING;
@@ -22,7 +21,7 @@ class Setup {
                                 PRICING,
                                 new PricingProtocolEncoding.Decoder(),
                                 new SamplePricingApp(
-                                        new EncodingPricingProtocolPublisher(
+                                        new LengthEncodingPublisher<>(
                                                 new PricingProtocolEncoding.Encoder(PRICING),
                                                 appPublisher,
                                                 new LengthBasedMessageEncoding.Encoder()))),
@@ -30,7 +29,7 @@ class Setup {
                                 SupportedPayloadSchemas.PLAIN_TEXT,
                                 new PlainTextEncoding.Decoder(),
                                 new EchoApp(
-                                        new EncodingPlainTextPublisher(
+                                        new LengthEncodingPublisher<>(
                                                 new PlainTextEncoding.Encoder(SupportedPayloadSchemas.PLAIN_TEXT),
                                                 appPublisher,
                                                 new LengthBasedMessageEncoding.Encoder()))))
@@ -40,7 +39,6 @@ class Setup {
     enum SupportedPayloadSchemas implements PayloadSchema {
 
         PLAIN_TEXT((short) 1),
-        TIME((short) 2),
         PRICING((short) 3);
 
         private final short id;
