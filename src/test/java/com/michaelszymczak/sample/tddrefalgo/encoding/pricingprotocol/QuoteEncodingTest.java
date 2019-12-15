@@ -1,7 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.ImmutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.ImmutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.MutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.QuoteEncoding;
 import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.*;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.*;
 
 import java.util.ArrayList;
 import java.util.List;

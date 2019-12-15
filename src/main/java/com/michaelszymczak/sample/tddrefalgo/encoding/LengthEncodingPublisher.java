@@ -1,7 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding;
 
-import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
-
 public class LengthEncodingPublisher<M> implements EncodingPublisher<M> {
 
     private final LengthBasedMessageEncoding.Encoder encoder;

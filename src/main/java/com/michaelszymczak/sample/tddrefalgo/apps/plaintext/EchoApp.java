@@ -1,6 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.plaintext;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.encoding.EncodingPublisher;
 
 public class EchoApp implements PlainTextListener {

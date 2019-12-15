@@ -1,10 +1,14 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
+import com.michaelszymczak.sample.tddrefalgo.api.io.AppIO;
+import com.michaelszymczak.sample.tddrefalgo.api.setup.AppFactory;
+import com.michaelszymczak.sample.tddrefalgo.api.setup.AppFactoryRegistry;
+import com.michaelszymczak.sample.tddrefalgo.api.setup.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.api.setup.RegisteredAppFactory;
 import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.EchoApp;
-import com.michaelszymczak.sample.tddrefalgo.apps.samplepricing.SamplePricingApp;
-import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.SamplePricingApp;
 
 import static com.michaelszymczak.sample.tddrefalgo.Setup.SupportedPayloadSchemas.PLAIN_TEXT;
 import static com.michaelszymczak.sample.tddrefalgo.Setup.SupportedPayloadSchemas.PRICING;
@@ -12,8 +16,8 @@ import static java.util.Arrays.asList;
 
 class Setup {
 
-    static EncodingApp createApp() {
-        return new EncodingApp(asList(
+    static AppIO createApp() {
+        return AppFactory.createApp(new AppFactoryRegistry(asList(
                 new RegisteredAppFactory<>(
                         PRICING,
                         new PricingProtocolEncoding.Decoder(),
@@ -26,7 +30,7 @@ class Setup {
                         new PlainTextEncoding.Encoder(PLAIN_TEXT),
                         EchoApp::new
                 )
-        ));
+        )));
     }
 
     enum SupportedPayloadSchemas implements PayloadSchema {

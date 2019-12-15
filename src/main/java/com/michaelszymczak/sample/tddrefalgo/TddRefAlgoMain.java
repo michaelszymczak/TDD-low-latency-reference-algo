@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.ImmutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.QuoteEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.ImmutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.MutableQuote;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.QuoteEncoding;
 import org.agrona.ExpandableDirectByteBuffer;
 
 public class TddRefAlgoMain {

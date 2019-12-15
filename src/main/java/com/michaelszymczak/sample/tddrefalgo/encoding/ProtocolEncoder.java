@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding;
 
+import com.michaelszymczak.sample.tddrefalgo.api.setup.PayloadSchema;
 import org.agrona.MutableDirectBuffer;
 
 public interface ProtocolEncoder<E extends ProtocolEncoder<E, M>, M> {
@@ -10,5 +11,4 @@ public interface ProtocolEncoder<E extends ProtocolEncoder<E, M>, M> {
 
     PayloadSchema payloadSchema();
 
-    Class<M> messageType();
 }

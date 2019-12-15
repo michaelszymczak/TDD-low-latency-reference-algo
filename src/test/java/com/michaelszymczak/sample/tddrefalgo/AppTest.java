@@ -1,26 +1,24 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.api.App;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.PlainTextListener;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MessageWithPricingProtocol;
-import com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.api.io.AppIO;
+import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.PlainTextListener;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
-import com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol.PricingProtocolEncoding;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.Heartbeat.heartbeat;
+import static com.michaelszymczak.sample.tddrefalgo.apps.pricing.Heartbeat.heartbeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AppTest {
 
     private static final int IN_OFFSET = 55;
-    private final App app = Setup.createApp();
+    private final AppIO app = Setup.createApp();
 
     private final LengthBasedMessageEncoding.Encoder enc = new LengthBasedMessageEncoding.Encoder();
     private final LengthBasedMessageEncoding.Decoder dec = new LengthBasedMessageEncoding.Decoder();
@@ -45,7 +43,7 @@ class AppTest {
     void shouldHandlePricingMessage() {
         long nanoTime = System.nanoTime();
         int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(
-                new PricingProtocolEncoding.Encoder(Setup.SupportedPayloadSchemas.PRICING), new MessageWithPricingProtocol().withPayload(heartbeat(nanoTime)));
+                new PricingProtocolEncoding.Encoder(Setup.SupportedPayloadSchemas.PRICING), heartbeat(nanoTime));
 
         // When
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
@@ -68,7 +66,7 @@ class AppTest {
     void shouldHandlePlainTextMessage() {
         int inputEndPosition = enc.wrap(in, IN_OFFSET).encode(
                 new PlainTextEncoding.Encoder(Setup.SupportedPayloadSchemas.PLAIN_TEXT),
-                new MessageWithPlainText("foo"));
+                "foo");
 
         // When
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);

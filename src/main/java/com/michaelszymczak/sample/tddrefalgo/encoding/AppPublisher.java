@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding;
 
-import com.michaelszymczak.sample.tddrefalgo.api.Output;
+import com.michaelszymczak.sample.tddrefalgo.api.io.Output;
 import org.agrona.ExpandableDirectByteBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.collections.MutableInteger;
@@ -20,7 +20,7 @@ public class AppPublisher implements Output {
         return outputWrittenPosition.get();
     }
 
-    public void setWrittenPosition(int position) {
+    void setWrittenPosition(int position) {
         outputWrittenPosition.set(position);
     }
 

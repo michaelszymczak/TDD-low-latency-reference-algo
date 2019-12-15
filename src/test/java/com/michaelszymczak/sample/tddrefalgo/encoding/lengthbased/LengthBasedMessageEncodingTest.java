@@ -1,12 +1,11 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.lengthbased;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.plaintext.MessageWithPlainText;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.MessageWithTime;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.api.setup.PayloadSchema;
+import com.michaelszymczak.sample.tddrefalgo.apps.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.apps.time.TimeEncoding;
 import com.michaelszymczak.sample.tddrefalgo.encoding.DecodedAppMessageConsumer;
-import com.michaelszymczak.sample.tddrefalgo.encoding.PayloadSchema;
-import com.michaelszymczak.sample.tddrefalgo.encoding.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.encoding.time.TimeEncoding;
+import com.michaelszymczak.sample.tddrefalgo.encoding.LengthBasedMessageEncoding;
 import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
@@ -30,7 +29,7 @@ class LengthBasedMessageEncodingTest {
         // Given
         assertEquals(17, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-                new MessageWithPlainText("fooBar")));
+                "fooBar"));
 
         // When
         int decodedLastPosition = decoder.wrap(buffer, 5, 0).decode(messageSpy);
@@ -45,7 +44,7 @@ class LengthBasedMessageEncodingTest {
         // Given
         assertEquals(17, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-                new MessageWithPlainText("fooBar")
+                "fooBar"
         ));
 
         // When
@@ -66,7 +65,7 @@ class LengthBasedMessageEncodingTest {
         // Given
         assertEquals(12, encoder.wrap(buffer, 0).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-                new MessageWithPlainText("fooBar")
+                "fooBar"
         ));
 
         // When
@@ -87,7 +86,7 @@ class LengthBasedMessageEncodingTest {
         // Given
         assertEquals(19, encoder.wrap(buffer, 5).encode(
                 new TimeEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-                new MessageWithTime(new Time(123456L)))
+                new Time(123456L))
         );
 
         // When
@@ -107,7 +106,7 @@ class LengthBasedMessageEncodingTest {
         // Given
         assertEquals(17, encoder.wrap(buffer, 5).encode(
                 new PlainTextEncoding.Encoder(new PayloadSchema.KnownPayloadSchema((short) 1)),
-                new MessageWithPlainText("fooBar"))
+                "fooBar")
         );
 
         // When

@@ -1,7 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.ImmutableHeartbeat;
-import com.michaelszymczak.sample.tddrefalgo.domain.messages.pricingprotocol.MutableHeartbeat;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.HeartbeatEncoding;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.ImmutableHeartbeat;
+import com.michaelszymczak.sample.tddrefalgo.apps.pricing.MutableHeartbeat;
 import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
