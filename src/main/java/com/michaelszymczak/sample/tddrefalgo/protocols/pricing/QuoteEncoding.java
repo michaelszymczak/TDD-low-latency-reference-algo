@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -27,17 +27,17 @@ public class QuoteEncoding {
             return this;
         }
 
-        public int encode(Quote quote) {
-            int isinLength = quote.isin().length();
+        public int encode(QuotePricingMessage quotePricingMessage) {
+            int isinLength = quotePricingMessage.isin().length();
             for (int i = ISIN_OFFSET; i < ISIN_LENGTH && i < isinLength; i++) {
-                buffer.putChar(offset + i, quote.isin().charAt(i));
+                buffer.putChar(offset + i, quotePricingMessage.isin().charAt(i));
             }
             for (int i = ISIN_OFFSET + isinLength; i < ISIN_LENGTH; i++) {
                 buffer.putChar(offset + i, ' ');
             }
-            buffer.putInt(offset + PRICE_TIER_OFFSET, quote.priceTier());
-            buffer.putLong(offset + BID_PRICE_OFFSET, quote.bidPrice());
-            buffer.putLong(offset + ASK_PRICE_OFFSET, quote.askPrice());
+            buffer.putInt(offset + PRICE_TIER_OFFSET, quotePricingMessage.priceTier());
+            buffer.putLong(offset + BID_PRICE_OFFSET, quotePricingMessage.bidPrice());
+            buffer.putLong(offset + ASK_PRICE_OFFSET, quotePricingMessage.askPrice());
             return offset + TOTAL_LENGTH;
         }
     }
@@ -57,7 +57,7 @@ public class QuoteEncoding {
             return this;
         }
 
-        public int decode(MutableQuote result) {
+        public int decode(MutableQuotePricingMessage result) {
             stringBuilder.setLength(0);
             buffer.getStringWithoutLengthAscii(offset + ISIN_OFFSET, ISIN_LENGTH, stringBuilder);
             result.set(

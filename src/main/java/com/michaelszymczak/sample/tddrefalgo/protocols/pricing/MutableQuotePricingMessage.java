@@ -1,6 +1,6 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
-public class MutableQuote implements Quote {
+public class MutableQuotePricingMessage implements QuotePricingMessage {
 
     private final StringBuilder isin = new StringBuilder();
     private int priceTier;

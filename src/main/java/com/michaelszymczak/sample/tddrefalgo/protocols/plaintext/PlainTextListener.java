@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.plaintext;
+package com.michaelszymczak.sample.tddrefalgo.protocols.plaintext;
 
 public interface PlainTextListener {
 

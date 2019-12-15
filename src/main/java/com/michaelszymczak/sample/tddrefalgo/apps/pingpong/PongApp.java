@@ -6,11 +6,11 @@ import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactoryRegistry;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFactory;
-import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextListener;
-import com.michaelszymczak.sample.tddrefalgo.modules.time.Time;
-import com.michaelszymczak.sample.tddrefalgo.modules.time.TimeEncoding;
-import com.michaelszymczak.sample.tddrefalgo.modules.time.TimeMessageListener;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
+import com.michaelszymczak.sample.tddrefalgo.protocols.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.protocols.time.TimeEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.time.TimeMessageListener;
 import org.agrona.DirectBuffer;
 
 import java.util.ArrayList;
@@ -53,8 +53,7 @@ public class PongApp implements AppIO {
         return app.output();
     }
 
-    public List<String> received()
-    {
+    public List<String> received() {
         return Collections.unmodifiableList(pongModule.received);
     }
 

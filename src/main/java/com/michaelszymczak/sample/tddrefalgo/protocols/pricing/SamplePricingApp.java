@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
 
@@ -11,12 +11,12 @@ public class SamplePricingApp implements PricingProtocolListener {
     }
 
     @Override
-    public void onHeartbeat(Heartbeat message) {
+    public void onHeartbeat(HeartbeatPricingMessage message) {
         publisher.publish(message);
     }
 
     @Override
-    public void onQuote(Quote message) {
+    public void onQuote(QuotePricingMessage message) {
 
     }
 }

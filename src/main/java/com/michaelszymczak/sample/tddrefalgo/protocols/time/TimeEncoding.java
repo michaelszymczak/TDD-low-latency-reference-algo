@@ -1,15 +1,16 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.plaintext;
+package com.michaelszymczak.sample.tddrefalgo.protocols.time;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.ProtocolDecoder;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.ProtocolEncoder;
-import org.agrona.AsciiSequenceView;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
-public class PlainTextEncoding {
+import static org.agrona.BitUtil.SIZE_OF_LONG;
 
-    public static class Encoder implements ProtocolEncoder<PlainTextEncoding.Encoder, String> {
+public class TimeEncoding {
+
+    public static class Encoder implements ProtocolEncoder<Encoder, Time> {
         private final PayloadSchema payloadSchema;
         private MutableDirectBuffer buffer;
         private int offset;
@@ -27,9 +28,9 @@ public class PlainTextEncoding {
         }
 
         @Override
-        public int encode(String message) {
-            buffer.putStringWithoutLengthAscii(offset, message);
-            return offset + message.length();
+        public int encode(Time message) {
+            buffer.putLong(offset, message.timeNanos());
+            return offset + SIZE_OF_LONG;
         }
 
         @Override
@@ -39,12 +40,11 @@ public class PlainTextEncoding {
 
     }
 
-    public static class Decoder implements ProtocolDecoder<Decoder, PlainTextListener> {
-        private final AsciiSequenceView asciiSequenceView = new AsciiSequenceView();
+    public static class Decoder implements ProtocolDecoder<Decoder, TimeMessageListener> {
+        private final Time time = new Time(0);
         private DirectBuffer buffer;
         private int offset;
         private int length;
-
 
         @Override
         public Decoder wrap(DirectBuffer buffer, int offset, int length) {
@@ -55,10 +55,10 @@ public class PlainTextEncoding {
         }
 
         @Override
-        public int decode(PlainTextListener decodedMessageListener) {
-            String decoded = asciiSequenceView.wrap(buffer, offset, length).toString();
-            decodedMessageListener.onMessage(decoded);
-            return offset + decoded.length();
+        public int decode(TimeMessageListener timeMessageListener) {
+            time.set(buffer.getLong(offset));
+            timeMessageListener.onMessage(time);
+            return offset + SIZE_OF_LONG;
         }
     }
 }

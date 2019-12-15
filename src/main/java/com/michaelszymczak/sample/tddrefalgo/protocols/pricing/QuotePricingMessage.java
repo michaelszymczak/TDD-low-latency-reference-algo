@@ -1,9 +1,9 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import static org.agrona.BitUtil.SIZE_OF_INT;
 import static org.agrona.BitUtil.SIZE_OF_LONG;
 
-public interface Quote extends PricingMessage {
+public interface QuotePricingMessage extends PricingMessage {
 
     @Override
     default PricingMessageType type() {

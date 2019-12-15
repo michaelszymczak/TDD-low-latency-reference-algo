@@ -1,15 +1,15 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import java.util.Objects;
 
-public class ImmutableQuote implements Quote {
+public class ImmutableQuotePricingMessage implements QuotePricingMessage {
 
     private final String isin;
     private final int priceTier;
     private final long bidPrice;
     private final long askPrice;
 
-    public ImmutableQuote(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
+    public ImmutableQuotePricingMessage(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
         if (isin.length() > 12) {
             throw new IllegalArgumentException();
         }
@@ -19,8 +19,8 @@ public class ImmutableQuote implements Quote {
         this.askPrice = askPrice;
     }
 
-    public ImmutableQuote(Quote quote) {
-        this(quote.isin(), quote.priceTier(), quote.bidPrice(), quote.askPrice());
+    public ImmutableQuotePricingMessage(QuotePricingMessage quotePricingMessage) {
+        this(quotePricingMessage.isin(), quotePricingMessage.priceTier(), quotePricingMessage.bidPrice(), quotePricingMessage.askPrice());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ImmutableQuote implements Quote {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ImmutableQuote that = (ImmutableQuote) o;
+        ImmutableQuotePricingMessage that = (ImmutableQuotePricingMessage) o;
         return priceTier == that.priceTier &&
                 bidPrice == that.bidPrice &&
                 askPrice == that.askPrice &&
@@ -61,7 +61,7 @@ public class ImmutableQuote implements Quote {
 
     @Override
     public String toString() {
-        return "Quote{" +
+        return "QuotePricingMessage{" +
                 "isin='" + isin + '\'' +
                 ", priceTier=" + priceTier +
                 ", bidPrice=" + bidPrice +

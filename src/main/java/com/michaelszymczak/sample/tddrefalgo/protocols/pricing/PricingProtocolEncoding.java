@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.ProtocolDecoder;
@@ -6,8 +6,8 @@ import com.michaelszymczak.sample.tddrefalgo.framework.encoding.ProtocolEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
-import static com.michaelszymczak.sample.tddrefalgo.modules.pricing.PricingMessageType.HEARTBEAT;
-import static com.michaelszymczak.sample.tddrefalgo.modules.pricing.PricingMessageType.QUOTE;
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessageType.HEARTBEAT;
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessageType.QUOTE;
 import static org.agrona.BitUtil.SIZE_OF_BYTE;
 
 public class PricingProtocolEncoding {
@@ -57,11 +57,11 @@ public class PricingProtocolEncoding {
         public int encode(PricingMessage pricingMessage) {
             if (pricingMessage.type() == HEARTBEAT) {
                 buffer.putByte(offset, toCharType(HEARTBEAT));
-                return heartbeatEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((Heartbeat) pricingMessage);
+                return heartbeatEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((HeartbeatPricingMessage) pricingMessage);
             }
             if (pricingMessage.type() == PricingMessageType.QUOTE) {
                 buffer.putByte(offset, toCharType(PricingMessageType.QUOTE));
-                return quoteEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((Quote) pricingMessage);
+                return quoteEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((QuotePricingMessage) pricingMessage);
             }
             return 0;
         }
@@ -77,8 +77,8 @@ public class PricingProtocolEncoding {
 
         private final HeartbeatEncoding.Decoder heartbeatDecoder = new HeartbeatEncoding.Decoder();
         private final QuoteEncoding.Decoder quoteDecoder = new QuoteEncoding.Decoder();
-        private final MutableHeartbeat mutableHeartbeat = new MutableHeartbeat();
-        private final MutableQuote mutableQuote = new MutableQuote();
+        private final MutableHeartbeatPricingMessage mutableHeartbeat = new MutableHeartbeatPricingMessage();
+        private final MutableQuotePricingMessage mutableQuote = new MutableQuotePricingMessage();
         private DirectBuffer buffer;
         private int offset;
         private int length;

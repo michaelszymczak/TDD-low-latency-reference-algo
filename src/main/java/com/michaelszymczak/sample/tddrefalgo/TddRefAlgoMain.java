@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.modules.pricing.ImmutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.modules.pricing.MutableQuote;
-import com.michaelszymczak.sample.tddrefalgo.modules.pricing.QuoteEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.MutableQuotePricingMessage;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuoteEncoding;
 import org.agrona.ExpandableDirectByteBuffer;
 
 public class TddRefAlgoMain {
@@ -13,14 +13,14 @@ public class TddRefAlgoMain {
 
     public String foo() {
         ExpandableDirectByteBuffer buffer = new ExpandableDirectByteBuffer();
-        MutableQuote quote = new MutableQuote();
+        MutableQuotePricingMessage quote = new MutableQuotePricingMessage();
         new QuoteEncoding.Encoder()
                 .wrap(buffer, 50)
-                .encode(new ImmutableQuote("GB00BD0PCK97", 2, 100_98, 100_95));
+                .encode(new ImmutableQuotePricingMessage("GB00BD0PCK97", 2, 100_98, 100_95));
         new QuoteEncoding.Decoder()
                 .wrap(buffer, 50)
                 .decode(quote);
-        return new ImmutableQuote(quote).toString();
+        return new ImmutableQuotePricingMessage(quote).toString();
     }
 
 }

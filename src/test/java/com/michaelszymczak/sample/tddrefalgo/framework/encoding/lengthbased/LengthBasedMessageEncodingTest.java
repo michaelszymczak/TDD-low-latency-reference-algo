@@ -2,9 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.framework.encoding.lengthbased;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.modules.time.Time;
-import com.michaelszymczak.sample.tddrefalgo.modules.time.TimeEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.time.Time;
+import com.michaelszymczak.sample.tddrefalgo.protocols.time.TimeEncoding;
 import org.agrona.AsciiSequenceView;
 import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;

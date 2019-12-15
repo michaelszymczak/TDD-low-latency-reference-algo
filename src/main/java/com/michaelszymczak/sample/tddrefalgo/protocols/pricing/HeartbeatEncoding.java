@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
@@ -22,8 +22,8 @@ public class HeartbeatEncoding {
             return this;
         }
 
-        public int encode(Heartbeat heartbeat) {
-            buffer.putLong(offset + NANO_TIME_OFFSET, heartbeat.nanoTime());
+        public int encode(HeartbeatPricingMessage heartbeatPricingMessage) {
+            buffer.putLong(offset + NANO_TIME_OFFSET, heartbeatPricingMessage.nanoTime());
             return offset + TOTAL_LENGTH;
         }
     }
@@ -38,7 +38,7 @@ public class HeartbeatEncoding {
             return this;
         }
 
-        public int decode(MutableHeartbeat result) {
+        public int decode(MutableHeartbeatPricingMessage result) {
             result.set(buffer.getLong(offset + NANO_TIME_OFFSET));
             return offset + TOTAL_LENGTH;
         }

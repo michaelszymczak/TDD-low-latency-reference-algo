@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 public interface PricingProtocolPublisher {
 

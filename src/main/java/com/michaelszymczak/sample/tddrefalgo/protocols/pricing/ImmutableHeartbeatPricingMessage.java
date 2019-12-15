@@ -1,17 +1,17 @@
-package com.michaelszymczak.sample.tddrefalgo.modules.pricing;
+package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 import java.util.Objects;
 
-public class ImmutableHeartbeat implements Heartbeat {
+public class ImmutableHeartbeatPricingMessage implements HeartbeatPricingMessage {
 
     private final long nanoTime;
 
-    public ImmutableHeartbeat(long nanoTime) {
+    public ImmutableHeartbeatPricingMessage(long nanoTime) {
         this.nanoTime = nanoTime;
     }
 
-    public ImmutableHeartbeat(Heartbeat heartbeat) {
-        this(heartbeat.nanoTime());
+    public ImmutableHeartbeatPricingMessage(HeartbeatPricingMessage heartbeatPricingMessage) {
+        this(heartbeatPricingMessage.nanoTime());
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ImmutableHeartbeat implements Heartbeat {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ImmutableHeartbeat that = (ImmutableHeartbeat) o;
+        ImmutableHeartbeatPricingMessage that = (ImmutableHeartbeatPricingMessage) o;
         return nanoTime == that.nanoTime;
     }
 
@@ -34,7 +34,7 @@ public class ImmutableHeartbeat implements Heartbeat {
 
     @Override
     public String toString() {
-        return "ImmutableHeartbeat{" +
+        return "ImmutableHeartbeatPricingMessage{" +
                 "nanoTime=" + nanoTime +
                 '}';
     }

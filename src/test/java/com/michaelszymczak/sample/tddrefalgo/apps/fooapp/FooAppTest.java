@@ -3,16 +3,16 @@ package com.michaelszymczak.sample.tddrefalgo.apps.fooapp;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
-import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextEncoding;
-import com.michaelszymczak.sample.tddrefalgo.modules.plaintext.PlainTextListener;
-import com.michaelszymczak.sample.tddrefalgo.modules.pricing.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.michaelszymczak.sample.tddrefalgo.modules.pricing.Heartbeat.heartbeat;
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.HeartbeatPricingMessage.heartbeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FooAppTest {

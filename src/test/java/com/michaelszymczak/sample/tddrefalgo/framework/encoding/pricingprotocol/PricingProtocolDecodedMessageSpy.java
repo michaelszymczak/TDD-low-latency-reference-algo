@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.framework.encoding.pricingprotocol;
 
-import com.michaelszymczak.sample.tddrefalgo.modules.pricing.*;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,13 @@ public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener
 
 
     @Override
-    public void onHeartbeat(Heartbeat message) {
-        pricingMessages.add(new ImmutableHeartbeat(message));
+    public void onHeartbeat(HeartbeatPricingMessage message) {
+        pricingMessages.add(new ImmutableHeartbeatPricingMessage(message));
     }
 
     @Override
-    public void onQuote(Quote message) {
-        pricingMessages.add(new ImmutableQuote(message));
+    public void onQuote(QuotePricingMessage message) {
+        pricingMessages.add(new ImmutableQuotePricingMessage(message));
     }
 
     public List<PricingMessage> messages() {
