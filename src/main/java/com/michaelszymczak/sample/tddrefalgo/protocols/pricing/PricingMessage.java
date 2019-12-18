@@ -2,7 +2,12 @@ package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 public interface PricingMessage {
 
-    PricingMessageType type();
+    Type type();
 
-    int length();
+    enum Type {
+        HEARTBEAT,
+        QUOTE,
+        ACK,
+
+    }
 }

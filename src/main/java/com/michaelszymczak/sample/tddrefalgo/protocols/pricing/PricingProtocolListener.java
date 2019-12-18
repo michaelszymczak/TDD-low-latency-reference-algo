@@ -2,7 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 public interface PricingProtocolListener {
 
-    void onHeartbeat(HeartbeatPricingMessage message);
+    void onMessage(HeartbeatPricingMessage message);
 
-    void onQuote(QuotePricingMessage message);
+    void onMessage(QuotePricingMessage message);
+
+    void onMessage(AckMessage message);
 }

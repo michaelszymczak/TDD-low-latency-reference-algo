@@ -8,6 +8,7 @@ import org.agrona.ExpandableArrayBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.junit.jupiter.api.Test;
 
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage.ACK_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PricingProtocolEncodingTest {
@@ -37,6 +38,17 @@ class PricingProtocolEncodingTest {
 
         assertEquals(1, decodedMessageSpy.messages().size());
         assertEquals(new ImmutableQuotePricingMessage("GB00BD0PCK97", 1, 11, 12), decodedMessageSpy.messages().get(0));
+        assertEquals(positionAfterEncoded, positionAfterDecoded);
+    }
+
+    @Test
+    void shouldEncodeAndDecodeAck() {
+        int positionAfterEncoded = encoder.wrap(buffer, 3).encode(ACK_MESSAGE);
+
+        int positionAfterDecoded = decoder.wrap(buffer, 3, LENGTH).decode(decodedMessageSpy);
+
+        assertEquals(1, decodedMessageSpy.messages().size());
+        assertEquals(ACK_MESSAGE, decodedMessageSpy.messages().get(0));
         assertEquals(positionAfterEncoded, positionAfterDecoded);
     }
 

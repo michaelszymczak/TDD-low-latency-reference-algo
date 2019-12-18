@@ -1,7 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
-import static org.agrona.BitUtil.SIZE_OF_LONG;
-
 public interface HeartbeatPricingMessage extends PricingMessage {
 
     static ImmutableHeartbeatPricingMessage heartbeat(long nanoTIme) {
@@ -13,13 +11,8 @@ public interface HeartbeatPricingMessage extends PricingMessage {
     }
 
     @Override
-    default PricingMessageType type() {
-        return PricingMessageType.HEARTBEAT;
-    }
-
-    @Override
-    default int length() {
-        return SIZE_OF_LONG;
+    default Type type() {
+        return Type.HEARTBEAT;
     }
 
     long nanoTime();

@@ -11,12 +11,17 @@ public class SamplePricingApp implements PricingProtocolListener {
     }
 
     @Override
-    public void onHeartbeat(HeartbeatPricingMessage message) {
+    public void onMessage(HeartbeatPricingMessage message) {
         publisher.publish(message);
     }
 
     @Override
-    public void onQuote(QuotePricingMessage message) {
+    public void onMessage(QuotePricingMessage message) {
+
+    }
+
+    @Override
+    public void onMessage(AckMessage message) {
 
     }
 }

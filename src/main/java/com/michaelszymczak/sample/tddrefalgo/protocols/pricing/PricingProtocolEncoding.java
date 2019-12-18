@@ -6,35 +6,40 @@ import com.michaelszymczak.sample.tddrefalgo.framework.encoding.ProtocolEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.MutableDirectBuffer;
 
-import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessageType.HEARTBEAT;
-import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessageType.QUOTE;
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage.ACK_MESSAGE;
+import static com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessage.Type.*;
 import static org.agrona.BitUtil.SIZE_OF_BYTE;
 
 public class PricingProtocolEncoding {
 
-    private static byte toCharType(final PricingMessageType type) {
+    private static byte toCharType(final PricingMessage.Type type) {
         switch (type) {
             case HEARTBEAT:
                 return 'H';
             case QUOTE:
                 return 'Q';
+            case ACK:
+                return 'A';
             default:
                 throw new IllegalArgumentException();
         }
     }
 
-    private static PricingMessageType toType(final byte type) {
+    private static PricingMessage.Type toType(final byte type) {
         switch (type) {
             case 'H':
                 return HEARTBEAT;
             case 'Q':
                 return QUOTE;
+            case 'A':
+                return ACK;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("" + type);
         }
     }
 
     public static class Encoder implements ProtocolEncoder<Encoder, PricingMessage> {
+        private final AckEncoding.Encoder ackEncoder = new AckEncoding.Encoder();
         private final HeartbeatEncoding.Encoder heartbeatEncoder = new HeartbeatEncoding.Encoder();
         private final QuoteEncoding.Encoder quoteEncoder = new QuoteEncoding.Encoder();
         private final PayloadSchema payloadSchema;
@@ -55,13 +60,17 @@ public class PricingProtocolEncoding {
 
         @Override
         public int encode(PricingMessage pricingMessage) {
-            if (pricingMessage.type() == HEARTBEAT) {
-                buffer.putByte(offset, toCharType(HEARTBEAT));
+            if (pricingMessage.type() == PricingMessage.Type.HEARTBEAT) {
+                buffer.putByte(offset, toCharType(PricingMessage.Type.HEARTBEAT));
                 return heartbeatEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((HeartbeatPricingMessage) pricingMessage);
             }
-            if (pricingMessage.type() == PricingMessageType.QUOTE) {
-                buffer.putByte(offset, toCharType(PricingMessageType.QUOTE));
+            if (pricingMessage.type() == PricingMessage.Type.QUOTE) {
+                buffer.putByte(offset, toCharType(PricingMessage.Type.QUOTE));
                 return quoteEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((QuotePricingMessage) pricingMessage);
+            }
+            if (pricingMessage.type() == PricingMessage.Type.ACK) {
+                buffer.putByte(offset, toCharType(PricingMessage.Type.ACK));
+                return ackEncoder.wrap(buffer, offset + SIZE_OF_BYTE).encode((AckMessage) pricingMessage);
             }
             return 0;
         }
@@ -76,6 +85,7 @@ public class PricingProtocolEncoding {
     public static class Decoder implements ProtocolDecoder<Decoder, PricingProtocolListener> {
 
         private final HeartbeatEncoding.Decoder heartbeatDecoder = new HeartbeatEncoding.Decoder();
+        private final AckEncoding.Decoder ackDecoder = new AckEncoding.Decoder();
         private final QuoteEncoding.Decoder quoteDecoder = new QuoteEncoding.Decoder();
         private final MutableHeartbeatPricingMessage mutableHeartbeat = new MutableHeartbeatPricingMessage();
         private final MutableQuotePricingMessage mutableQuote = new MutableQuotePricingMessage();
@@ -94,16 +104,20 @@ public class PricingProtocolEncoding {
 
         @Override
         public int decode(PricingProtocolListener decodedMessageListener) {
-            PricingMessageType type = toType(buffer.getByte(offset));
+            PricingMessage.Type type = toType(buffer.getByte(offset));
             int position;
             switch (type) {
                 case HEARTBEAT:
                     position = heartbeatDecoder.wrap(buffer, offset + SIZE_OF_BYTE).decode(mutableHeartbeat);
-                    decodedMessageListener.onHeartbeat(mutableHeartbeat);
+                    decodedMessageListener.onMessage(mutableHeartbeat);
                     return position;
                 case QUOTE:
                     position = quoteDecoder.wrap(buffer, offset + SIZE_OF_BYTE).decode(mutableQuote);
-                    decodedMessageListener.onQuote(mutableQuote);
+                    decodedMessageListener.onMessage(mutableQuote);
+                    return position;
+                case ACK:
+                    position = ackDecoder.wrap(buffer, offset + SIZE_OF_BYTE).decode();
+                    decodedMessageListener.onMessage(ACK_MESSAGE);
                     return position;
             }
             return offset;

@@ -11,13 +11,18 @@ public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener
 
 
     @Override
-    public void onHeartbeat(HeartbeatPricingMessage message) {
+    public void onMessage(HeartbeatPricingMessage message) {
         pricingMessages.add(new ImmutableHeartbeatPricingMessage(message));
     }
 
     @Override
-    public void onQuote(QuotePricingMessage message) {
+    public void onMessage(QuotePricingMessage message) {
         pricingMessages.add(new ImmutableQuotePricingMessage(message));
+    }
+
+    @Override
+    public void onMessage(AckMessage message) {
+        pricingMessages.add(message);
     }
 
     public List<PricingMessage> messages() {
