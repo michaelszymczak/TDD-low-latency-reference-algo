@@ -9,11 +9,17 @@ import java.nio.ByteBuffer;
 public class AppPublisher implements Output {
 
     private final MutableDirectBuffer out;
+    public final LengthBasedMessageEncoding.Encoder encoder = new LengthBasedMessageEncoding.Encoder();
+
     private int outputWrittenPosition = 0;
     private int outputReadPosition = 0;
 
     public AppPublisher(final int capacity) {
-        out = new UnsafeBuffer(ByteBuffer.allocateDirect(capacity));
+        this(new UnsafeBuffer(ByteBuffer.allocateDirect(capacity)));
+    }
+
+    AppPublisher(final MutableDirectBuffer buffer) {
+        out = buffer;
     }
 
     @Override
@@ -33,16 +39,12 @@ public class AppPublisher implements Output {
 
     @Override
     public void reset() {
-        setWrittenPosition(0);
+        outputWrittenPosition = 0;
     }
 
     @Override
     public int initialCapacity() {
         return out.capacity();
-    }
-
-    void setWrittenPosition(int position) {
-        outputWrittenPosition = position;
     }
 
     @Override
@@ -51,8 +53,7 @@ public class AppPublisher implements Output {
     }
 
     public void setReadPosition(int position) {
-        if (position > outputWrittenPosition)
-        {
+        if (position > outputWrittenPosition) {
             throw new IllegalStateException("unable to mark as read beyond what has been written");
         }
         outputReadPosition = position;
@@ -60,6 +61,10 @@ public class AppPublisher implements Output {
 
     @Override
     public int remainingCapacity() {
-        return out.capacity() - outputWrittenPosition + outputReadPosition;
+        return out.capacity() - outputWrittenPosition;
+    }
+
+    public <M> void publishMessage(final ProtocolEncoder<?, M> protocolEncoder, M message) {
+        outputWrittenPosition = encoder.wrap(buffer(), writtenPosition()).encode(protocolEncoder, message);
     }
 }

@@ -32,14 +32,10 @@ class MultiProtocolApp implements AppIO {
             AppPublisher appPublisher,
             RegisteredAppFactory<D, E, L, M> factory
     ) {
-        LengthEncodingPublisher<M> lengthEncodingPublisher = new LengthEncodingPublisher<>(
-                factory.getProtocolEncoder(),
-                appPublisher,
-                new LengthBasedMessageEncoding.Encoder());
         return new RegisteredApp<>(
                 factory.getProtocolSchema(),
                 factory.getProtocolDecoder(),
-                factory.getAppFactory().apply(lengthEncodingPublisher)
+                factory.getAppFactory().apply(new LengthEncodingPublisher<>(appPublisher, factory.getProtocolEncoder()))
         );
     }
 
