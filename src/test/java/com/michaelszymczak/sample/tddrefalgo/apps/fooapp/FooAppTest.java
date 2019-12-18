@@ -2,10 +2,10 @@ package com.michaelszymczak.sample.tddrefalgo.apps.fooapp;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.framework.encoding.pricingprotocol.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Test;
 

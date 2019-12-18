@@ -6,10 +6,8 @@ import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactoryRegistry;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFactory;
-import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.EchoApp;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.SamplePricingApp;
 import org.agrona.DirectBuffer;
 
 import static java.util.Arrays.asList;
@@ -27,13 +25,13 @@ class FooApp implements AppIO {
                         PRICING,
                         new PricingProtocolEncoding.Decoder(),
                         new PricingProtocolEncoding.Encoder(PRICING),
-                        SamplePricingApp::new
+                        SamplePricingModule::new
                 ),
                 new RegisteredAppFactory<>(
                         PLAIN_TEXT,
                         new PlainTextEncoding.Decoder(),
                         new PlainTextEncoding.Encoder(PLAIN_TEXT),
-                        EchoApp::new
+                        EchoModule::new
                 )
         )));
     }

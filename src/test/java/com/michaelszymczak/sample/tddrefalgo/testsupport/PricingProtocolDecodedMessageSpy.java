@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.framework.encoding.pricingprotocol;
+package com.michaelszymczak.sample.tddrefalgo.testsupport;
 
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 

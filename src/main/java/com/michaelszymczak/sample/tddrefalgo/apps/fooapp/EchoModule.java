@@ -1,12 +1,13 @@
-package com.michaelszymczak.sample.tddrefalgo.protocols.plaintext;
+package com.michaelszymczak.sample.tddrefalgo.apps.fooapp;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
+import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
 
-public class EchoApp implements PlainTextListener {
+public class EchoModule implements PlainTextListener {
 
     private final EncodingPublisher<String> publisher;
 
-    public EchoApp(EncodingPublisher<String> publisher) {
+    public EchoModule(EncodingPublisher<String> publisher) {
         this.publisher = publisher;
     }
 
