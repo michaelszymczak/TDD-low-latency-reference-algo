@@ -61,7 +61,6 @@ class MarketMakerAppTest {
         MarketMakerApp app = new MarketMakerApp();
 
         // When
-        app.newOutput();
         app.events("Q/   isin1/  1/     4455/   4466\n" +
                 "A\n"
         );
@@ -82,24 +81,20 @@ class MarketMakerAppTest {
         outputSpy.clear();
 
         outputSpy.onInput(app.output(1));
-        assertEquals(emptyList(), outputSpy.receivedMessages());
-        outputSpy.clear();
-
-        outputSpy.onInput(app.output(2));
         assertEquals(Arrays.asList(
                 new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
                 AckMessage.ACK_MESSAGE
         ), outputSpy.receivedMessages());
         outputSpy.clear();
 
-        outputSpy.onInput(app.output(3));
+        outputSpy.onInput(app.output(2));
         assertEquals(Arrays.asList(
                 new ImmutableQuotePricingMessage("isin2       ", 2, 5555L, 6666L),
                 AckMessage.ACK_MESSAGE
         ), outputSpy.receivedMessages());
         outputSpy.clear();
 
-        outputSpy.onInput(app.output(4));
+        outputSpy.onInput(app.output(3));
         assertEquals(emptyList(), outputSpy.receivedMessages());
         outputSpy.clear();
     }
