@@ -2,18 +2,23 @@ package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.CommandLines;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.OutputCopy;
+import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.Output;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactoryRegistry;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFactory;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
 import com.michaelszymczak.sample.tddrefalgo.supportingdomain.RelativeNanoClock;
 import org.agrona.DirectBuffer;
 import org.agrona.collections.Int2ObjectHashMap;
 
 import java.util.Collections;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 public class MarketMakerApp implements AppIO {
 
@@ -22,6 +27,7 @@ public class MarketMakerApp implements AppIO {
     private final AppIO app;
     private final MarketMakingModule marketMakingModule;
     private final Int2ObjectHashMap<Output> outputByNumber = new Int2ObjectHashMap<>();
+    private final Random random = new Random();
     private int nextOutputNumber = 1;
 
     public MarketMakerApp() {
@@ -71,4 +77,23 @@ public class MarketMakerApp implements AppIO {
         return this;
     }
 
+    public MarketMakerApp generateRandom(int attempts, Probabilities probabilities) {
+        IntStream.range(0, attempts).forEach(attempt -> {
+            if (random.nextInt(100) < probabilities.ackProbability.percentageProbability) {
+                marketMakingModule.onMessage(AckMessage.ACK_MESSAGE);
+            }
+            if (random.nextInt(100) < probabilities.quoteProbability.percentageProbability) {
+                int priceTier = random.nextInt(100) < probabilities.quoteProbability.noTierProbability ? 0 : 1;
+                String instrument = "isin" + random.nextInt(probabilities.quoteProbability.distinctInstruments);
+                if (random.nextInt(100) < probabilities.quoteProbability.noPriceProbability) {
+                    marketMakingModule.onMessage(new ImmutableQuotePricingMessage(
+                            instrument, priceTier, 0, 0));
+                } else {
+                    marketMakingModule.onMessage(new ImmutableQuotePricingMessage(
+                            instrument, priceTier, random.nextInt(1000), random.nextInt(1000)));
+                }
+            }
+        });
+        return this;
+    }
 }

@@ -1,30 +1,31 @@
 plugins {
-	id 'java'
-	id 'application'
-	id 'idea'
+    id 'java'
+    id 'application'
+    id 'idea'
 }
 
 repositories {
-	jcenter()
+    jcenter()
 }
 
 compileJava {
-	sourceCompatibility = '1.8'
-	targetCompatibility = '1.8'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 }
 
 test {
-	useJUnitPlatform()
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 application {
-	mainClassName = 'com.michaelszymczak.sample.tddrefalgo.TddRefAlgoMain'
+    mainClassName = 'com.michaelszymczak.sample.tddrefalgo.TddRefAlgoMain'
 }
 
 dependencies {
-	implementation('org.agrona:agrona:1.1.0')
-	testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
+    implementation('org.agrona:agrona:1.1.0')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
+    testImplementation('org.assertj:assertj-core:3.14.0')
 }

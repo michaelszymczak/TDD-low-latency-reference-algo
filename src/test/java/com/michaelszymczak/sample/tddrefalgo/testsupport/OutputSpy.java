@@ -8,6 +8,8 @@ import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEn
 import org.agrona.DirectBuffer;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class OutputSpy implements AppIO {
     private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
@@ -27,6 +29,14 @@ public class OutputSpy implements AppIO {
 
     public List<PricingMessage> receivedMessages() {
         return spy.messages();
+    }
+
+    public <T extends PricingMessage> List<T> receivedMessages(Class<T> type, Predicate<T> predicate) {
+        return spy.messages().stream()
+                .filter(msg -> type.isAssignableFrom(msg.getClass()))
+                .map(type::cast)
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     @Override
