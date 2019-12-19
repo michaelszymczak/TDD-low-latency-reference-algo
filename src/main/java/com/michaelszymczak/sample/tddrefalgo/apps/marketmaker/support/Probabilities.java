@@ -13,7 +13,7 @@ public class Probabilities {
 
     public Probabilities(
             AckProbability ackProbability) {
-        this(ackProbability, new QuoteProbability(10, 0, 0, 0));
+        this(ackProbability, new QuoteProbability(0, 10, 0, 0));
     }
 
     public Probabilities(
@@ -35,7 +35,7 @@ public class Probabilities {
         public final int noPriceProbability;
         public final int noTierProbability;
 
-        public QuoteProbability(int distinctInstruments, int percentageProbability, int noPriceProbability, int noTierProbability) {
+        public QuoteProbability(int percentageProbability, int distinctInstruments, int noPriceProbability, int noTierProbability) {
             this.distinctInstruments = distinctInstruments;
             this.percentageProbability = percentageProbability;
             this.noPriceProbability = noPriceProbability;

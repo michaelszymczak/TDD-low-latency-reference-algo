@@ -36,7 +36,7 @@ public class MarketMakerApp implements AppIO {
 
     public MarketMakerApp(final RelativeNanoClock nanoClock) {
         this.marketMakingModule = new MarketMakingModule(nanoClock);
-        this.app = AppFactory.createApp(new AppFactoryRegistry(1024 * 1024, Collections.singletonList(
+        this.app = AppFactory.createApp(new AppFactoryRegistry(5 * 1024 * 1024, Collections.singletonList(
                 new RegisteredAppFactory<>(
                         PRICING_SCHEMA,
                         new PricingProtocolEncoding.Decoder(),
@@ -83,7 +83,8 @@ public class MarketMakerApp implements AppIO {
                 marketMakingModule.onMessage(AckMessage.ACK_MESSAGE);
             }
             if (random.nextInt(100) < probabilities.quoteProbability.percentageProbability) {
-                int priceTier = random.nextInt(100) < probabilities.quoteProbability.noTierProbability ? 0 : 1;
+                int priceTier = random.nextInt(100) < probabilities.quoteProbability.noTierProbability ?
+                        0 : random.nextInt(5) + 1;
                 String instrument = "isin" + random.nextInt(probabilities.quoteProbability.distinctInstruments);
                 if (random.nextInt(100) < probabilities.quoteProbability.noPriceProbability) {
                     marketMakingModule.onMessage(new ImmutableQuotePricingMessage(

@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -146,7 +147,7 @@ class MarketMakerAppTest {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.AckProbability(50), new Probabilities.QuoteProbability(10, 50, 0, 0))
+                1000, new Probabilities(new Probabilities.AckProbability(50), new Probabilities.QuoteProbability(50, 10, 0, 0))
         ).output());
 
         assertThat(outputSpy.receivedMessages()).hasSizeBetween(900, 1100);
@@ -157,7 +158,7 @@ class MarketMakerAppTest {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(10, 100, 50, 0))
+                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 50, 0))
         ).output());
 
         assertThat(outputSpy.receivedMessages(
@@ -171,7 +172,7 @@ class MarketMakerAppTest {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(10, 100, 0, 30))
+                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 30))
         ).output());
 
         assertThat(outputSpy.receivedMessages(
@@ -185,7 +186,7 @@ class MarketMakerAppTest {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(10, 100, 0, 0))
+                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 0))
         ).output());
 
         Map<String, List<QuotePricingMessage>> quotesByIsin = outputSpy
@@ -193,5 +194,26 @@ class MarketMakerAppTest {
                 .collect(groupingBy(q -> q.isin().toString()));
         assertThat(quotesByIsin).hasSize(10);
         quotesByIsin.forEach((isin, quotes) -> assertThat(quotes).hasSizeBetween(50, 150));
+    }
+
+    @Test
+    void shouldBeAbleToGenerateManyMessages() {
+        final MarketMakerApp app = new MarketMakerApp();
+        final int samples = 50_000;
+        final int rounds = 10;
+        final int totalExpectedMessages = samples * rounds;
+
+        // When
+        range(1, rounds + 1).forEach(round -> app.generateRandom(samples, new Probabilities(
+                new Probabilities.AckProbability(1),
+                new Probabilities.QuoteProbability(99, 10, 30, 30))
+        ).newOutput());
+        range(1, rounds + 1).forEach(round -> outputSpy.onInput(app.output(round)));
+
+        // Then
+        assertThat(outputSpy.receivedMessages()).hasSizeBetween(
+                totalExpectedMessages - (int) (totalExpectedMessages * 0.2),
+                totalExpectedMessages + (int) (totalExpectedMessages * 0.2));
+        outputSpy.clear();
     }
 }
