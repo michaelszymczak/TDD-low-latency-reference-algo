@@ -28,4 +28,8 @@ public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener
     public List<PricingMessage> messages() {
         return pricingMessages;
     }
+
+    void clear() {
+        pricingMessages.clear();
+    }
 }

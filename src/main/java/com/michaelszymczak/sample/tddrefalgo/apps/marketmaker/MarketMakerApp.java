@@ -1,6 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.CommandLines;
+import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.OutputCopy;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.Output;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
@@ -10,6 +11,7 @@ import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFa
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
 import com.michaelszymczak.sample.tddrefalgo.supportingdomain.RelativeNanoClock;
 import org.agrona.DirectBuffer;
+import org.agrona.collections.Int2ObjectHashMap;
 
 import java.util.Collections;
 
@@ -19,6 +21,8 @@ public class MarketMakerApp implements AppIO {
 
     private final AppIO app;
     private final MarketMakingModule marketMakingModule;
+    private final Int2ObjectHashMap<Output> outputByNumber = new Int2ObjectHashMap<>();
+    private int nextOutputNumber = 1;
 
     public MarketMakerApp() {
         this(System::nanoTime);
@@ -34,7 +38,7 @@ public class MarketMakerApp implements AppIO {
                         marketMakingModule::registerPublisher
                 )
         )));
-
+        outputByNumber.put(0, app.output());
     }
 
     @Override
@@ -44,7 +48,11 @@ public class MarketMakerApp implements AppIO {
 
     @Override
     public Output output() {
-        return app.output();
+        return output(0);
+    }
+
+    public Output output(int outputNumber) {
+        return outputByNumber.get(outputNumber);
     }
 
     public MarketMakerApp heartbeat() {
@@ -54,6 +62,12 @@ public class MarketMakerApp implements AppIO {
 
     public MarketMakerApp events(String messages) {
         CommandLines.parseAll(messages).executeAgainst(marketMakingModule);
+        return this;
+    }
+
+    public MarketMakerApp newOutput() {
+        outputByNumber.put(nextOutputNumber++, new OutputCopy(app.output()));
+        app.output().reset();
         return this;
     }
 

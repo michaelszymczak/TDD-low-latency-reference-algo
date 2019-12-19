@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MarketMakerAppTest {
@@ -34,8 +35,7 @@ class MarketMakerAppTest {
     void shouldSendEventsWhenAskedTo() {
         MarketMakerApp app = new MarketMakerApp();
 
-        outputSpy.onInput(app
-                // TODO: parse from string
+        outputSpy.onSingleReaderInput(app
                 .events("Q/   isin1/  1/     4455/   4466\n" +
                         "Q/   isin2/  2/     7755/   8866\n" +
                         "Q/   isin3/  1/     0/         0\n" +
@@ -56,4 +56,51 @@ class MarketMakerAppTest {
         ), outputSpy.receivedMessages());
     }
 
+    @Test
+    void shouldGenerateEventsForLater() {
+        MarketMakerApp app = new MarketMakerApp();
+
+        // When
+        app.newOutput();
+        app.events("Q/   isin1/  1/     4455/   4466\n" +
+                "A\n"
+        );
+        app.newOutput();
+        app.events("Q/   isin2/  2/     5555/   6666\n" +
+                "A\n"
+        );
+        app.newOutput();
+        app.newOutput();
+
+        // Then
+        outputSpy.onInput(app.output());
+        assertEquals(emptyList(), outputSpy.receivedMessages());
+        outputSpy.clear();
+
+        outputSpy.onInput(app.output(0));
+        assertEquals(emptyList(), outputSpy.receivedMessages());
+        outputSpy.clear();
+
+        outputSpy.onInput(app.output(1));
+        assertEquals(emptyList(), outputSpy.receivedMessages());
+        outputSpy.clear();
+
+        outputSpy.onInput(app.output(2));
+        assertEquals(Arrays.asList(
+                new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
+                AckMessage.ACK_MESSAGE
+        ), outputSpy.receivedMessages());
+        outputSpy.clear();
+
+        outputSpy.onInput(app.output(3));
+        assertEquals(Arrays.asList(
+                new ImmutableQuotePricingMessage("isin2       ", 2, 5555L, 6666L),
+                AckMessage.ACK_MESSAGE
+        ), outputSpy.receivedMessages());
+        outputSpy.clear();
+
+        outputSpy.onInput(app.output(4));
+        assertEquals(emptyList(), outputSpy.receivedMessages());
+        outputSpy.clear();
+    }
 }

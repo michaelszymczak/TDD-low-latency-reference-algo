@@ -14,6 +14,10 @@ public class OutputSpy implements AppIO {
     private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();
     private final PricingProtocolDecodedMessageSpy spy = new PricingProtocolDecodedMessageSpy();
 
+    public void clear() {
+        spy.clear();
+    }
+
     @Override
     public int onInput(DirectBuffer input, int offset, int length) {
         return decoder.wrap(input, offset, length).decode(
