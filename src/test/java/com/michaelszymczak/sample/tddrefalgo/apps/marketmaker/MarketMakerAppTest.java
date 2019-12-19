@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableHeartbeatPricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
@@ -30,24 +31,28 @@ class MarketMakerAppTest {
     }
 
     @Test
-    void shouldQuoteWHenAskedTo() {
+    void shouldSendEventsWhenAskedTo() {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app
                 // TODO: parse from string
-                .quote("Q/   isin1/  1/     4455/   4466")
-                .quote("Q/   isin2/  2/     7755/   8866")
-                .quote("Q/   isin3/  1/     0/         0")
-                .quote("Q/   isin3/  0/     0/         0")
-                .quote("Q/   isin3/  0/     1234/   5678")
-                .output());
+                .events("Q/   isin1/  1/     4455/   4466\n" +
+                        "Q/   isin2/  2/     7755/   8866\n" +
+                        "Q/   isin3/  1/     0/         0\n" +
+                        "A\n" +
+                        "Q/   isin3/  0/     0/         0\n" +
+                        "Q/   isin3/  0/     1234/   5678\n" +
+                        "A\n"
+                ).output());
 
         assertEquals(Arrays.asList(
                 new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
                 new ImmutableQuotePricingMessage("isin2       ", 2, 7755L, 8866L),
                 new ImmutableQuotePricingMessage("isin3       ", 1, 0L, 0L),
+                AckMessage.ACK_MESSAGE,
                 new ImmutableQuotePricingMessage("isin3       ", 0, 0L, 0L),
-                new ImmutableQuotePricingMessage("isin3       ", 0, 1234L, 5678L)
+                new ImmutableQuotePricingMessage("isin3       ", 0, 1234L, 5678L),
+                AckMessage.ACK_MESSAGE
         ), outputSpy.receivedMessages());
     }
 

@@ -9,11 +9,11 @@ public class MarketMakingModule implements PricingProtocolListener {
     private final RelativeNanoClock nanoClock;
     private EncodingPublisher<PricingMessage> publisher;
 
-    public MarketMakingModule(final RelativeNanoClock nanoClock) {
+    MarketMakingModule(final RelativeNanoClock nanoClock) {
         this.nanoClock = nanoClock;
     }
 
-    public MarketMakingModule registerPublisher(EncodingPublisher<PricingMessage> publisher) {
+    MarketMakingModule registerPublisher(EncodingPublisher<PricingMessage> publisher) {
         this.publisher = publisher;
         return this;
     }
@@ -25,15 +25,19 @@ public class MarketMakingModule implements PricingProtocolListener {
 
     @Override
     public void onMessage(QuotePricingMessage message) {
-        publisher.publish(message);
+        publish(message);
     }
 
     @Override
     public void onMessage(AckMessage message) {
-        throw new UnsupportedOperationException();
+        publish(message);
     }
 
-    public void heartbeat() {
-        publisher.publish(new ImmutableHeartbeatPricingMessage(nanoClock.timestampNs()));
+    void heartbeat() {
+        publish(new ImmutableHeartbeatPricingMessage(nanoClock.timestampNs()));
+    }
+
+    private void publish(PricingMessage message) {
+        publisher.publish(message);
     }
 }
