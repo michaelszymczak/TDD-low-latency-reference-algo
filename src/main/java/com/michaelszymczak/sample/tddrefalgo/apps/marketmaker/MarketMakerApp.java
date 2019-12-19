@@ -6,12 +6,17 @@ import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactoryRegistry;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFactory;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.supportingdomain.RelativeNanoClock;
 import org.agrona.DirectBuffer;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 public class MarketMakerApp implements AppIO {
 
@@ -50,6 +55,21 @@ public class MarketMakerApp implements AppIO {
     public MarketMakerApp heartbeat() {
         marketMakingModule.heartbeat();
         return this;
+    }
+
+    public MarketMakerApp quote(String message) {
+        List<String> split = stream(message.split("/", -1))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        if (split.size() != 5) {
+            throw new IllegalArgumentException(message);
+        }
+        return quote(new ImmutableQuotePricingMessage(
+                split.get(1),
+                Integer.parseInt(split.get(2)),
+                Long.parseLong(split.get(3)),
+                Long.parseLong(split.get(4))
+        ));
     }
 
     public MarketMakerApp quote(QuotePricingMessage message) {

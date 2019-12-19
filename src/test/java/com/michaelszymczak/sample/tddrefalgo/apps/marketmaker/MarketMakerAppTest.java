@@ -30,16 +30,16 @@ class MarketMakerAppTest {
     }
 
     @Test
-    void shouldQuote() {
+    void shouldQuoteWHenAskedTo() {
         MarketMakerApp app = new MarketMakerApp();
 
         outputSpy.onInput(app
                 // TODO: parse from string
-                .quote(new ImmutableQuotePricingMessage("isin1", 1, 4455L, 4466L))
-                .quote(new ImmutableQuotePricingMessage("isin2", 2, 7755L, 8866L))
-                .quote(new ImmutableQuotePricingMessage("isin3", 1, 0L, 0L))
-                .quote(new ImmutableQuotePricingMessage("isin3", 0, 0L, 0L))
-                .quote(new ImmutableQuotePricingMessage("isin3", 0, 1234L, 5678L))
+                .quote("Q/   isin1/  1/     4455/   4466")
+                .quote("Q/   isin2/  2/     7755/   8866")
+                .quote("Q/   isin3/  1/     0/         0")
+                .quote("Q/   isin3/  0/     0/         0")
+                .quote("Q/   isin3/  0/     1234/   5678")
                 .output());
 
         assertEquals(Arrays.asList(
