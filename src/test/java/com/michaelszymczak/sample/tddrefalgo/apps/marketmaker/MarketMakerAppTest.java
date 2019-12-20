@@ -6,6 +6,7 @@ import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableHeartbea
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 import org.junit.jupiter.api.Test;
 
@@ -16,13 +17,13 @@ import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MarketMakerAppTest {
 
-    private final OutputSpy outputSpy = new OutputSpy();
+    private final MarketMakerApp app = new MarketMakerApp();
+    private final OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy = OutputSpy.outputSpy();
 
     @Test
     void shouldBeIdleIfUnprompted() {
@@ -35,14 +36,12 @@ class MarketMakerAppTest {
 
         outputSpy.onInput(app.heartbeat().output());
 
-        assertEquals(1, outputSpy.receivedMessages().size());
-        assertEquals(new ImmutableHeartbeatPricingMessage(12345L), outputSpy.receivedMessages().get(0));
+        assertEquals(1, outputSpy.getSpy().receivedMessages().size());
+        assertEquals(new ImmutableHeartbeatPricingMessage(12345L), outputSpy.getSpy().receivedMessages().get(0));
     }
 
     @Test
     void shouldSendEventsWhenAskedTo() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onSingleReaderInput(app
                 .events("Q/   isin1/  1/     4455/   4466\n" +
                         "Q/   isin2/  2/     7755/   8866\n" +
@@ -61,13 +60,11 @@ class MarketMakerAppTest {
                 new ImmutableQuotePricingMessage("isin3       ", 0, 0L, 0L),
                 new ImmutableQuotePricingMessage("isin3       ", 0, 1234L, 5678L),
                 AckMessage.ACK_MESSAGE
-        ), outputSpy.receivedMessages());
+        ), outputSpy.getSpy().receivedMessages());
     }
 
     @Test
     void shouldGenerateEventsForLater() {
-        MarketMakerApp app = new MarketMakerApp();
-
         // When
         app.events("Q/   isin1/  1/     4455/   4466\n" +
                 "A\n"
@@ -81,139 +78,97 @@ class MarketMakerAppTest {
 
         // Then
         outputSpy.onInput(app.output());
-        assertEquals(emptyList(), outputSpy.receivedMessages());
-        outputSpy.clear();
+        assertEquals(emptyList(), outputSpy.getSpy().receivedMessages());
+        outputSpy.getSpy().clear();
 
         outputSpy.onInput(app.output(0));
-        assertEquals(emptyList(), outputSpy.receivedMessages());
-        outputSpy.clear();
+        assertEquals(emptyList(), outputSpy.getSpy().receivedMessages());
+        outputSpy.getSpy().clear();
 
         outputSpy.onInput(app.output(1));
         assertEquals(Arrays.asList(
                 new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
                 AckMessage.ACK_MESSAGE
-        ), outputSpy.receivedMessages());
-        outputSpy.clear();
+        ), outputSpy.getSpy().receivedMessages());
+        outputSpy.getSpy().clear();
 
         outputSpy.onInput(app.output(2));
         assertEquals(Arrays.asList(
                 new ImmutableQuotePricingMessage("isin2       ", 2, 5555L, 6666L),
                 AckMessage.ACK_MESSAGE
-        ), outputSpy.receivedMessages());
-        outputSpy.clear();
+        ), outputSpy.getSpy().receivedMessages());
+        outputSpy.getSpy().clear();
 
         outputSpy.onInput(app.output(3));
-        assertEquals(emptyList(), outputSpy.receivedMessages());
-        outputSpy.clear();
+        assertEquals(emptyList(), outputSpy.getSpy().receivedMessages());
+        outputSpy.getSpy().clear();
     }
 
     @Test
     void shouldAlwaysGenerateMessageWith100PerCentProbability() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 100, new Probabilities(new Probabilities.AckProbability(100))
         ).output());
 
-        assertEquals(100, outputSpy.receivedMessages().size());
-        assertEquals(AckMessage.ACK_MESSAGE, outputSpy.receivedMessages().get(0));
-        assertEquals(AckMessage.ACK_MESSAGE, outputSpy.receivedMessages().get(99));
+        assertEquals(100, outputSpy.getSpy().receivedMessages().size());
+        assertEquals(AckMessage.ACK_MESSAGE, outputSpy.getSpy().receivedMessages().get(0));
+        assertEquals(AckMessage.ACK_MESSAGE, outputSpy.getSpy().receivedMessages().get(99));
     }
 
     @Test
     void shouldNeverGenerateMessageWith0PerCentProbability() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 100, new Probabilities(new Probabilities.AckProbability(0))
         ).output());
 
-        assertEquals(0, outputSpy.receivedMessages().size());
+        assertEquals(0, outputSpy.getSpy().receivedMessages().size());
     }
 
     @Test
     void shouldGenerateMessageAccordingToItsProbability() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(new Probabilities.AckProbability(50))
         ).output());
 
-        assertThat(outputSpy.receivedMessages()).hasSizeBetween(400, 600);
+        assertThat(outputSpy.getSpy().receivedMessages()).hasSizeBetween(400, 600);
     }
 
     @Test
     void shouldTreatMessageProbabilitiesAsIndependent() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(new Probabilities.AckProbability(50), new Probabilities.QuoteProbability(50, 10, 0, 0))
         ).output());
 
-        assertThat(outputSpy.receivedMessages()).hasSizeBetween(900, 1100);
+        assertThat(outputSpy.getSpy().receivedMessages()).hasSizeBetween(900, 1100);
     }
 
     @Test
     void shouldDefineProbabilityOfQuoteWithNoPrice() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 50, 0))
         ).output());
 
-        assertThat(outputSpy.receivedMessages(
-                QuotePricingMessage.class,
-                q -> q.askPrice() == 0 && q.bidPrice() == 0
-        )).hasSizeBetween(400, 600);
+        assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.askPrice() == 0 && q.bidPrice() == 0)).hasSizeBetween(400, 600);
     }
 
     @Test
     void shouldDefineProbabilityOfQuoteWithNoTier() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 30))
         ).output());
 
-        assertThat(outputSpy.receivedMessages(
-                QuotePricingMessage.class,
-                q -> q.priceTier() == 0
-        )).hasSizeBetween(200, 400);
+        assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.priceTier() == 0)).hasSizeBetween(200, 400);
     }
 
     @Test
     void shouldDefineNumberOfDistinctInstruments() {
-        MarketMakerApp app = new MarketMakerApp();
-
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 0))
         ).output());
 
-        Map<String, List<QuotePricingMessage>> quotesByIsin = outputSpy
-                .receivedMessages(QuotePricingMessage.class, Objects::nonNull).stream()
+        Map<String, List<QuotePricingMessage>> quotesByIsin = outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, Objects::nonNull).stream()
                 .collect(groupingBy(q -> q.isin().toString()));
         assertThat(quotesByIsin).hasSize(10);
         quotesByIsin.forEach((isin, quotes) -> assertThat(quotes).hasSizeBetween(50, 150));
-    }
-
-    @Test
-    void shouldBeAbleToGenerateManyMessages() {
-        final MarketMakerApp app = new MarketMakerApp();
-        final int samples = 50_000;
-        final int rounds = 10;
-        final int totalExpectedMessages = samples * rounds;
-
-        // When
-        range(1, rounds + 1).forEach(round -> app.generateRandom(samples, new Probabilities(
-                new Probabilities.AckProbability(1),
-                new Probabilities.QuoteProbability(99, 10, 30, 30))
-        ).newOutput());
-        range(1, rounds + 1).forEach(round -> outputSpy.onInput(app.output(round)));
-
-        // Then
-        assertThat(outputSpy.receivedMessages()).hasSizeBetween(
-                totalExpectedMessages - (int) (totalExpectedMessages * 0.2),
-                totalExpectedMessages + (int) (totalExpectedMessages * 0.2));
-        outputSpy.clear();
     }
 }

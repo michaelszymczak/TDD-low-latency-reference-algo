@@ -26,8 +26,8 @@ class PricingProtocolEncodingTest {
 
         int positionAfterDecoded = decoder.wrap(buffer, 3, LENGTH).decode(decodedMessageSpy);
 
-        assertEquals(1, decodedMessageSpy.messages().size());
-        assertEquals(new ImmutableHeartbeatPricingMessage(12345L), decodedMessageSpy.messages().get(0));
+        assertEquals(1, decodedMessageSpy.receivedMessages().size());
+        assertEquals(new ImmutableHeartbeatPricingMessage(12345L), decodedMessageSpy.receivedMessages().get(0));
         assertEquals(positionAfterEncoded, positionAfterDecoded);
     }
 
@@ -37,8 +37,8 @@ class PricingProtocolEncodingTest {
 
         int positionAfterDecoded = decoder.wrap(buffer, 3, LENGTH).decode(decodedMessageSpy);
 
-        assertEquals(1, decodedMessageSpy.messages().size());
-        assertEquals(new ImmutableQuotePricingMessage("GB00BD0PCK97", 1, 11, 12), decodedMessageSpy.messages().get(0));
+        assertEquals(1, decodedMessageSpy.receivedMessages().size());
+        assertEquals(new ImmutableQuotePricingMessage("GB00BD0PCK97", 1, 11, 12), decodedMessageSpy.receivedMessages().get(0));
         assertEquals(positionAfterEncoded, positionAfterDecoded);
     }
 
@@ -48,8 +48,8 @@ class PricingProtocolEncodingTest {
 
         int positionAfterDecoded = decoder.wrap(buffer, 3, LENGTH).decode(decodedMessageSpy);
 
-        assertEquals(1, decodedMessageSpy.messages().size());
-        assertEquals(ACK_MESSAGE, decodedMessageSpy.messages().get(0));
+        assertEquals(1, decodedMessageSpy.receivedMessages().size());
+        assertEquals(ACK_MESSAGE, decodedMessageSpy.receivedMessages().get(0));
         assertEquals(positionAfterEncoded, positionAfterDecoded);
     }
 
@@ -66,16 +66,16 @@ class PricingProtocolEncodingTest {
         int positionAfterDecodedMessage2 = decoder.wrap(buffer, positionAfterDecodedMessage1, LENGTH).decode(decodedMessageSpy);
         decoder.wrap(buffer, positionAfterDecodedMessage2, LENGTH).decode(decodedMessageSpy);
 
-        assertEquals(3, decodedMessageSpy.messages().size());
+        assertEquals(3, decodedMessageSpy.receivedMessages().size());
         assertEquals(
                 new ImmutableHeartbeatPricingMessage(12345L),
-                decodedMessageSpy.messages().get(0));
+                decodedMessageSpy.receivedMessages().get(0));
         assertEquals(
                 new ImmutableQuotePricingMessage("GB00BD0PCK95", 3, 31, 32),
-                decodedMessageSpy.messages().get(1));
+                decodedMessageSpy.receivedMessages().get(1));
         assertEquals(
                 new ImmutableHeartbeatPricingMessage(999L),
-                decodedMessageSpy.messages().get(2));
+                decodedMessageSpy.receivedMessages().get(2));
     }
 
 }

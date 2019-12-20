@@ -54,8 +54,8 @@ class FooAppTest {
                     assertEquals(FooApp.PRICING.id(), payloadSchemaId);
                     pricingDecoder.wrap(buffer, offset, length).decode(pricingDecodedMessageSpy);
                 });
-        assertEquals(1, pricingDecodedMessageSpy.messages().size());
-        assertEquals(heartbeat(nanoTime), pricingDecodedMessageSpy.messages().get(0));
+        assertEquals(1, pricingDecodedMessageSpy.receivedMessages().size());
+        assertEquals(heartbeat(nanoTime), pricingDecodedMessageSpy.receivedMessages().get(0));
 
         assertEquals(inputEndPosition, read);
         assertEquals(0, app.output().offset());

@@ -3,21 +3,21 @@ package com.michaelszymczak.sample.tddrefalgo.testsupport;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.Output;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolListener;
 import org.agrona.DirectBuffer;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-public class OutputSpy implements AppIO {
+public class OutputSpy<Spy extends PricingProtocolListener> implements AppIO {
     private final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
     private final PricingProtocolEncoding.Decoder pricingDecoder = new PricingProtocolEncoding.Decoder();
-    private final PricingProtocolDecodedMessageSpy spy = new PricingProtocolDecodedMessageSpy();
+    private final Spy spy;
 
-    public void clear() {
-        spy.clear();
+    public static OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy() {
+        return new OutputSpy<>(new PricingProtocolDecodedMessageSpy());
+    }
+
+    public OutputSpy(final Spy spy) {
+        this.spy = spy;
     }
 
     @Override
@@ -27,20 +27,12 @@ public class OutputSpy implements AppIO {
                         pricingDecoder.wrap(buffer, offset1, length1).decode(spy));
     }
 
-    public List<PricingMessage> receivedMessages() {
-        return spy.messages();
-    }
-
-    public <T extends PricingMessage> List<T> receivedMessages(Class<T> type, Predicate<T> predicate) {
-        return spy.messages().stream()
-                .filter(msg -> type.isAssignableFrom(msg.getClass()))
-                .map(type::cast)
-                .filter(predicate)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public Output output() {
         return null;
+    }
+
+    public Spy getSpy() {
+        return spy;
     }
 }
