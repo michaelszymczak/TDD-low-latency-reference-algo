@@ -6,6 +6,7 @@ import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactory;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.AppFactoryRegistry;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.PayloadSchema;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.setup.RegisteredAppFactory;
+import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.protocols.time.Time;
@@ -32,7 +33,7 @@ public class PongApp implements AppIO {
                         PLAIN_TEXT,
                         new PlainTextEncoding.Decoder(),
                         new PlainTextEncoding.Encoder(PLAIN_TEXT),
-                        publisher -> pongModule
+                        pongModule::registerPublisher
                 ),
                 new RegisteredAppFactory<>(
                         TIME,
@@ -65,15 +66,24 @@ public class PongApp implements AppIO {
 
         List<String> received = new ArrayList<>();
         int timeMessagesCount = 0;
+        private EncodingPublisher<String> stringPublisher;
+
 
         @Override
         public void onMessage(String message) {
             received.add(message);
+            stringPublisher.publish(message);
         }
 
         @Override
         public void onMessage(Time message) {
             timeMessagesCount++;
+        }
+
+
+        PongModule registerPublisher(EncodingPublisher<String> stringPublisher) {
+            this.stringPublisher = stringPublisher;
+            return this;
         }
     }
 }

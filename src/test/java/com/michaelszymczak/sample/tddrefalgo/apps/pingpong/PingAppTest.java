@@ -25,6 +25,22 @@ class PingAppTest {
     }
 
     @Test
+    void shouldForwardTheMessage() {
+        PingApp pingApp = new PingApp(1024);
+        PongApp pongApp = new PongApp();
+        PongApp endPongApp = new PongApp();
+        pingApp.ping();
+        pingApp.ping();
+        pongApp.onInput(pingApp.output());
+
+        // When
+        endPongApp.onInput(pongApp.output());
+
+        // Then
+        assertEquals(Arrays.asList("ping", "ping"), endPongApp.received());
+    }
+
+    @Test
     void shouldGenerateHeartbeats() {
         PingApp pingApp = new PingApp(1024 * 1024);
         PongApp pongApp = new PongApp();
@@ -61,6 +77,5 @@ class PingAppTest {
 
         // Then
         assertEquals(heartbeatsToSendInOneRound * rounds, pongApp.heartbeatCount());
-
     }
 }
