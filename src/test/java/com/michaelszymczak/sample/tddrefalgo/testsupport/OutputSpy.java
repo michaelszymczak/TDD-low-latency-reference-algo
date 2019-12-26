@@ -22,7 +22,7 @@ public class OutputSpy<Spy extends PricingProtocolListener> implements AppIO {
 
     @Override
     public int onInput(DirectBuffer input, int offset, int length) {
-        return decoder.wrap(input, offset, length).decode(
+        return decoder.wrap(input, offset, length).decodeAll(
                 (payloadSchemaId, timeNs, buffer, offset1, length1) ->
                         pricingDecoder.wrap(buffer, offset1, length1).decode(spy));
     }

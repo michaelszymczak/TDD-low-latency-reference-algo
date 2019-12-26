@@ -49,7 +49,7 @@ class FooAppTest {
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
 
         // Then
-        dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decode(
+        dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decodeAll(
                 (payloadSchemaId, timeNs, buffer, offset, length) -> {
                     assertEquals(FooApp.PRICING.id(), payloadSchemaId);
                     pricingDecoder.wrap(buffer, offset, length).decode(pricingDecodedMessageSpy);
@@ -72,7 +72,7 @@ class FooAppTest {
         int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
 
         // Then
-        dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decode(
+        dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decodeAll(
                 (payloadSchemaId, timeNs, buffer, offset, length) -> {
                     assertEquals(FooApp.PLAIN_TEXT.id(), payloadSchemaId);
                     textDecoder.wrap(buffer, offset, length).decode(textDecodedMessageSpy);

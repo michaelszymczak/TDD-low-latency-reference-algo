@@ -41,7 +41,7 @@ class MultiProtocolApp implements AppIO {
 
     @Override
     public int onInput(DirectBuffer input, int offset, int length) {
-        decoder.wrap(input, offset, length).decode(consumer);
+        decoder.wrap(input, offset, length).decodeAll(consumer);
         return offset + length;
     }
 

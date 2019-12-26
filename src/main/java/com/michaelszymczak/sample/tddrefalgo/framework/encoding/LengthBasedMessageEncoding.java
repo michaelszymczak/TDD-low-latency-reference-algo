@@ -54,8 +54,15 @@ public class LengthBasedMessageEncoding {
             return this;
         }
 
-        public int decode(final DecodedAppMessageConsumer consumer) {
+        public int decodeAll(final DecodedAppMessageConsumer consumer) {
             while (length > HEADER_SIZE) {
+                decodeNext(consumer);
+            }
+            return offset;
+        }
+
+        public int decodeNext(DecodedAppMessageConsumer consumer) {
+            if (length > HEADER_SIZE) {
                 int payloadLength = buffer.getInt(offset);
                 long timeNs = buffer.getLong(offset + SIZE_OF_INT);
                 short schemaId = buffer.getShort(offset + SIZE_OF_INT + SIZE_OF_LONG);
