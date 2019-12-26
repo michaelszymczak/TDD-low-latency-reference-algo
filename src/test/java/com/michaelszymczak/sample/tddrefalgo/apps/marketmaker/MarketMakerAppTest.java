@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,7 +137,11 @@ class MarketMakerAppTest {
     @Test
     void shouldTreatMessageProbabilitiesAsIndependent() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.AckProbability(50), new Probabilities.QuoteProbability(50, 10, 0, 0))
+                1000, new Probabilities(new Probabilities.AckProbability(50), quoteProbability()
+                        .withPercentageProbability(50)
+                        .withDistinctInstruments(10)
+                        .withNoPriceProbability(0)
+                        .withNoTierProbability(0).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages()).hasSizeBetween(900, 1100);
@@ -145,7 +150,11 @@ class MarketMakerAppTest {
     @Test
     void shouldDefineProbabilityOfQuoteWithNoPrice() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 50, 0))
+                1000, new Probabilities(quoteProbability()
+                        .withPercentageProbability(100)
+                        .withDistinctInstruments(10)
+                        .withNoPriceProbability(50)
+                        .withNoTierProbability(0).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.askPrice() == 0 && q.bidPrice() == 0)).hasSizeBetween(400, 600);
@@ -154,7 +163,11 @@ class MarketMakerAppTest {
     @Test
     void shouldDefineProbabilityOfQuoteWithNoTier() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 30))
+                1000, new Probabilities(quoteProbability()
+                        .withPercentageProbability(100)
+                        .withDistinctInstruments(10)
+                        .withNoPriceProbability(0)
+                        .withNoTierProbability(30).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.priceTier() == 0)).hasSizeBetween(200, 400);
@@ -163,7 +176,11 @@ class MarketMakerAppTest {
     @Test
     void shouldDefineNumberOfDistinctInstruments() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.QuoteProbability(100, 10, 0, 0))
+                1000, new Probabilities(quoteProbability()
+                        .withPercentageProbability(100)
+                        .withDistinctInstruments(10)
+                        .withNoPriceProbability(0)
+                        .withNoTierProbability(0).build())
         ).output());
 
         Map<String, List<QuotePricingMessage>> quotesByIsin = outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, Objects::nonNull).stream()

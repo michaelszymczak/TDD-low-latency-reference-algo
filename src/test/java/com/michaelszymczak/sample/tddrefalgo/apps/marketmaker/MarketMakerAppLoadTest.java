@@ -5,6 +5,7 @@ import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
 import org.junit.jupiter.api.Test;
 
+import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
 import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,8 +23,13 @@ class MarketMakerAppLoadTest {
         // When
         range(1, rounds + 1).forEach(round -> app.generateRandom(samples, new Probabilities(
                 new Probabilities.AckProbability(1),
-                new Probabilities.QuoteProbability(99, 10, 30, 30))
-        ).newOutput());
+                quoteProbability()
+                        .withPercentageProbability(99)
+                        .withDistinctInstruments(10)
+                        .withNoPriceProbability(30)
+                        .withNoTierProbability(30)
+                        .build()
+        )).newOutput());
         range(1, reads + 1).forEach(read -> range(1, rounds + 1).forEach(round -> outputSpy.onInput(app.output(round))));
 
         // Then
