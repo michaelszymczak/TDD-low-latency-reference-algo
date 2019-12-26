@@ -1,13 +1,11 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.pingpong;
 
-import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessageEncoding;
-import com.michaelszymczak.sample.tddrefalgo.framework.encoding.lengthbased.DecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.testsupport.SameOutputProperty;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PingAppTest {
 
@@ -84,9 +82,7 @@ class PingAppTest {
 
     @Test
     void shouldProduceTheSameOutput() {
-        final LengthBasedMessageEncoding.Decoder decoder = new LengthBasedMessageEncoding.Decoder();
-        final DecodedMessageSpy output1Spy = new DecodedMessageSpy();
-        final DecodedMessageSpy output2Spy = new DecodedMessageSpy();
+        SameOutputProperty property = new SameOutputProperty();
         PingApp pingApp = new PingApp(1024);
         PongApp pongApp1 = new PongApp();
         PongApp pongApp2 = new PongApp();
@@ -94,21 +90,11 @@ class PingAppTest {
         pongApp1.onInput(pingApp.output());
         pongApp2.onInput(pingApp.output());
 
-        int output1Offset1 = decoder.wrap(pongApp1.output().buffer(), pongApp1.output().offset(), pongApp1.output().length())
-                .decodeNext(output1Spy);
-        int output2Offset1 = decoder.wrap(pongApp2.output().buffer(), pongApp2.output().offset(), pongApp2.output().length())
-                .decodeNext(output2Spy);
-        assertEquals(output1Spy.firstEntry(), output2Spy.firstEntry());
-        assertEquals(output1Offset1, output2Offset1);
-        output1Spy.reset();
-        output2Spy.reset();
-
-        int output1Offset2 = decoder.wrap(pongApp1.output().buffer(), output1Offset1, pongApp1.output().length() - output1Offset1)
-                .decodeNext(output1Spy);
-        int output2Offset2 = decoder.wrap(pongApp1.output().buffer(), output2Offset1, pongApp1.output().length() - output2Offset1)
-                .decodeNext(output2Spy);
-        assertNull(output1Spy.firstEntry());
-        assertEquals(output1Spy.firstEntry(), output2Spy.firstEntry());
-        assertEquals(output1Offset2, output2Offset2);
+        int output1Offset1 = property.verifySameOutputs(
+                pongApp1.output().buffer(), pongApp1.output().offset(), pongApp1.output().length(),
+                pongApp2.output().buffer(), pongApp2.output().offset(), pongApp2.output().length());
+        property.verifySameOutputs(
+                pongApp1.output().buffer(), pongApp1.output().offset() + output1Offset1, pongApp1.output().length() - output1Offset1,
+                pongApp2.output().buffer(), pongApp2.output().offset() + output1Offset1, pongApp2.output().length() - output1Offset1);
     }
 }

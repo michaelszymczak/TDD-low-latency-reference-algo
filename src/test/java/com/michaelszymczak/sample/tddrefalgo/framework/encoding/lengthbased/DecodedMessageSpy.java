@@ -41,14 +41,6 @@ public class DecodedMessageSpy implements DecodedAppMessageConsumer {
             buffer.getBytes(offset, data, 0, length);
         }
 
-        public Entry(short payloadSchemaId, long timeNs, byte[] data, int offset, int length) {
-            this.payloadSchemaId = payloadSchemaId;
-            this.timeNs = timeNs;
-            this.offset = offset;
-            this.length = length;
-            this.data = data;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
