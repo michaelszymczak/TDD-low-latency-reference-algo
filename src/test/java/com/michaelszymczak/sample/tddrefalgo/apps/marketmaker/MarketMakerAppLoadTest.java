@@ -3,11 +3,14 @@ package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
+import com.michaelszymczak.sample.tddrefalgo.testsupport.SameOutputProperty;
 import org.junit.jupiter.api.Test;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
 import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MarketMakerAppLoadTest {
 
@@ -38,4 +41,31 @@ class MarketMakerAppLoadTest {
                 totalExpectedMessages + (int) (totalExpectedMessages * 0.2));
     }
 
+    @Test
+    void shouldHaveComparableOutputs() {
+        MarketMakerApp app = new MarketMakerApp();
+        Probabilities probabilities = new Probabilities(quoteProbability()
+                .withPercentageProbability(99)
+                .withDistinctInstruments(10)
+                .withNoPriceProbability(30)
+                .withNoTierProbability(30)
+                .build());
+        SameOutputProperty sameOutputProperty = new SameOutputProperty();
+
+        // When
+        app.generateRandom(50_000, probabilities);
+        app.newOutput();
+        app.generateRandom(50_000, probabilities);
+        app.newOutput();
+
+        // Then
+        assertDoesNotThrow(() -> sameOutputProperty.verifySameOutputs(
+                app.output(1).buffer(), app.output(1).offset(), app.output(1).length(),
+                app.output(1).buffer(), app.output(1).offset(), app.output(1).length()
+        ));
+        assertThrows(AssertionError.class, () -> sameOutputProperty.verifySameOutputs(
+                app.output(1).buffer(), app.output(1).offset(), app.output(1).length(),
+                app.output(2).buffer(), app.output(2).offset(), app.output(2).length()
+        ));
+    }
 }
