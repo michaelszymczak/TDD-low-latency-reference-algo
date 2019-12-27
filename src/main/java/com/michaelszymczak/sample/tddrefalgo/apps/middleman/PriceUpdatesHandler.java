@@ -8,7 +8,7 @@ class PriceUpdatesHandler implements PricingProtocolListener {
     private final ThrottledPrices throttledPrices;
 
     PriceUpdatesHandler(EncodingPublisher<PricingMessage> publisher) {
-        this.throttledPrices = new ThrottledPrices(new ThrottledPricesPublisher(publisher));
+        this.throttledPrices = new ThrottledPrices(new EncodingThrottledPricesPublisher(publisher));
     }
 
     @Override
