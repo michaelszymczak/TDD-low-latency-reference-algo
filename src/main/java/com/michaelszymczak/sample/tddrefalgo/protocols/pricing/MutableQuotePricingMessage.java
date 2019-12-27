@@ -7,7 +7,7 @@ public class MutableQuotePricingMessage implements QuotePricingMessage {
     private long bidPrice;
     private long askPrice;
 
-    void set(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
+    public MutableQuotePricingMessage set(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
         if (isin.length() > 12) {
             throw new IllegalArgumentException();
         }
@@ -16,6 +16,7 @@ public class MutableQuotePricingMessage implements QuotePricingMessage {
         this.priceTier = priceTier;
         this.bidPrice = bidPrice;
         this.askPrice = askPrice;
+        return this;
     }
 
     @Override

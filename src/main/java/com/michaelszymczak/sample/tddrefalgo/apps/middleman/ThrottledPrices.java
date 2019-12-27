@@ -15,7 +15,7 @@ class ThrottledPrices {
         publisher.publishHeartbeat(nanoTime);
     }
 
-    public void onQuoteUpdate(String isin, int tier, long bidPrice, long askPrice) {
+    public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
         if (windowFull()) return;
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
         inFlightMessages++;

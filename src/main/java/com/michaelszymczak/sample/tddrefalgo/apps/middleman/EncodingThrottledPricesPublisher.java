@@ -22,7 +22,7 @@ public class EncodingThrottledPricesPublisher implements ThrottledPricesPublishe
 
     @Override
     public void publishQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        publisher.publish(quoteMessage);
+        publisher.publish(quoteMessage.set(isin, tier, bidPrice, askPrice));
     }
 
     @Override

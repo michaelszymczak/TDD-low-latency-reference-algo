@@ -1,13 +1,16 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableHeartbeatPricingMessage;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MiddleManAppTracerBulletTest {
 
@@ -33,6 +36,14 @@ class MiddleManAppTracerBulletTest {
 
         // Then
         outputSpy.onInput(middleManApp.output());
-        assertThat(outputSpy.getSpy().receivedMessages()).hasSize(6);
+        outputSpy.getSpy().receivedMessages().forEach(System.out::println);
+        assertEquals(Arrays.asList(
+                new ImmutableHeartbeatPricingMessage(12345L),
+                new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
+                new ImmutableQuotePricingMessage("isin2       ", 2, 7755L, 8866L),
+                new ImmutableQuotePricingMessage("isin3       ", 3, 0L, 0L),
+                new ImmutableQuotePricingMessage("isin4       ", 4, 0L, 0L),
+                new ImmutableQuotePricingMessage("isin5       ", 5, 1234L, 5678L)
+        ), outputSpy.getSpy().receivedMessages());
     }
 }
