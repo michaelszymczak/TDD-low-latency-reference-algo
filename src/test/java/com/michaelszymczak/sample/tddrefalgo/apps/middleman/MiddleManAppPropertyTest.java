@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MiddleManAppPropertyTest {
 
-    private final MiddleManApp middleManApp = new MiddleManApp();
+    private final MiddleManApp middleManApp = new MiddleManApp(1024, 1);
     private final OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy = OutputSpy.outputSpy();
     private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L));
 

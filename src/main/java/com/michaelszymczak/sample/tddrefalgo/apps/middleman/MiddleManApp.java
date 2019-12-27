@@ -17,13 +17,13 @@ public class MiddleManApp implements AppIO {
 
     private final AppIO app;
 
-    public MiddleManApp() {
-        app = AppFactory.createApp(new AppFactoryRegistry(1024, Collections.singletonList(
+    public MiddleManApp(final int publisherCapacity, final int windowSize) {
+        app = AppFactory.createApp(new AppFactoryRegistry(publisherCapacity, Collections.singletonList(
                 new RegisteredAppFactory<>(
                         PRICING_SCHEMA,
                         new PricingProtocolEncoding.Decoder(),
                         new PricingProtocolEncoding.Encoder(PRICING_SCHEMA),
-                        PriceUpdatesHandler::new
+                        publisher -> new PriceUpdatesHandler(publisher, windowSize)
                 )
         )));
     }
