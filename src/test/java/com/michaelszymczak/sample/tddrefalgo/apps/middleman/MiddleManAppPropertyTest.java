@@ -7,8 +7,12 @@ class MiddleManAppPropertyTest {
 
     @Test
     @Disabled
-    void shouldProduceCorrectOutputs() {
+    void shouldNotProduceSideEffectsUnprompted() {
+    }
 
+    @Test
+    @Disabled
+    void shouldProduceCorrectOutputs() {
     }
 
     @Test
