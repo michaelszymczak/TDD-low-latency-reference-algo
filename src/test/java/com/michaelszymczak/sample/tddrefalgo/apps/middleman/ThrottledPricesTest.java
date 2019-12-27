@@ -46,4 +46,24 @@ class ThrottledPricesTest {
         publisherSpy.assertPublished(quote("isin1", 3, 10055L, 10066L));
     }
 
+    @Test
+    void shouldPublishMoreQuotesWhenAckReceived() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onQuoteUpdate("isin1", 3, 10055L, 10066L);
+        throttledPrices.onAck();
+        publisherSpy.assertPublished(quote("isin1", 3, 10055L, 10066L));
+
+        // When
+        throttledPrices.onQuoteUpdate("isin2", 4, 20055L, 20066L);
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("isin1", 3, 10055L, 10066),
+                quote("isin2", 4, 20055L, 20066)
+        );
+    }
+
 }

@@ -28,4 +28,8 @@ class ThrottledPrices {
         publisher.publishCancel(isin, tier);
         // TODO: increase in-flight messages
     }
+
+    public void onAck() {
+        inFlightMessages = 0;
+    }
 }
