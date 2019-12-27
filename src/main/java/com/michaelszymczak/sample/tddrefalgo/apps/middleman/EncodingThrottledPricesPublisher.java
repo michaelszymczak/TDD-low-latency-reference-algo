@@ -17,4 +17,14 @@ public class EncodingThrottledPricesPublisher implements ThrottledPricesPublishe
     public void publishHeartbeat(long nanoTime) {
         publisher.publish(heartBeatMessage.set(nanoTime));
     }
+
+    @Override
+    public void publishQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void publishCancel(CharSequence isin, int tier) {
+        throw new UnsupportedOperationException();
+    }
 }
