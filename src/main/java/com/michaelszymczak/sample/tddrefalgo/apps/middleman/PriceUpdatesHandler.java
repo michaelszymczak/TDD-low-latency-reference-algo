@@ -5,16 +5,15 @@ import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 
 class PriceUpdatesHandler implements PricingProtocolListener {
 
-    private final EncodingPublisher<PricingMessage> publisher;
+    private final ThrottledPrices throttledPrices;
 
     PriceUpdatesHandler(EncodingPublisher<PricingMessage> publisher) {
-
-        this.publisher = publisher;
+        this.throttledPrices = new ThrottledPrices(new ThrottledPricesPublisher(publisher));
     }
 
     @Override
     public void onMessage(HeartbeatPricingMessage message) {
-        publisher.publish(message);
+        throttledPrices.onHeartbeat(message.nanoTime());
     }
 
     @Override

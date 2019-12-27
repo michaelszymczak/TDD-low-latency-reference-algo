@@ -4,7 +4,7 @@ public class MutableHeartbeatPricingMessage implements HeartbeatPricingMessage {
 
     private long nanoTime;
 
-    MutableHeartbeatPricingMessage set(long nanoTime) {
+    public MutableHeartbeatPricingMessage set(long nanoTime) {
         this.nanoTime = nanoTime;
         return this;
     }
