@@ -16,20 +16,22 @@ class ThrottledPrices {
     }
 
     public void onQuoteUpdate(String isin, int tier, long bidPrice, long askPrice) {
-        if (inFlightMessages >= windowSize) {
-            return;
-        }
+        if (windowFull()) return;
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
         inFlightMessages++;
     }
 
     public void onCancel(String isin, int tier) {
-        // TODO: check window size
+        if (windowFull()) return;
         publisher.publishCancel(isin, tier);
-        // TODO: increase in-flight messages
+        inFlightMessages++;
     }
 
     public void onAck() {
         inFlightMessages = 0;
+    }
+
+    private boolean windowFull() {
+        return inFlightMessages >= windowSize;
     }
 }

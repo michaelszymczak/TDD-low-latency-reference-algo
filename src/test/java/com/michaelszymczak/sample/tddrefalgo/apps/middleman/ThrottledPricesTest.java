@@ -66,4 +66,91 @@ class ThrottledPricesTest {
         );
     }
 
+
+    @Test
+    void shouldThrottleCancelsToThePredefinedNumberBetweenAcks() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin1", 3);
+        publisherSpy.assertPublished(cancel("isin1", 3));
+
+        // When
+        throttledPrices.onCancel("isin2", 4);
+
+        // Then
+        publisherSpy.assertPublished(cancel("isin1", 3));
+    }
+
+    @Test
+    void shouldPublishMoreCancelsWhenAckReceived() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin1", 3);
+        throttledPrices.onAck();
+        publisherSpy.assertPublished(cancel("isin1", 3));
+
+        // When
+        throttledPrices.onCancel("isin2", 4);
+
+        // Then
+        publisherSpy.assertPublished(
+                cancel("isin1", 3),
+                cancel("isin2", 4)
+        );
+    }
+
+    @Test
+    void shouldThrottleQuotesAndCancelsTogether() {
+        int windowSize = 2;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onQuoteUpdate("isin1", 1, 100L, 200L);
+        throttledPrices.onCancel("isin2", 2);
+        publisherSpy.assertPublished(
+                quote("isin1", 1, 100L, 200L),
+                cancel("isin2", 2)
+        );
+
+        // When
+        throttledPrices.onQuoteUpdate("isin3", 3, 300L, 400L);
+        throttledPrices.onCancel("isin4", 4);
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("isin1", 1, 100L, 200L),
+                cancel("isin2", 2)
+        );
+    }
+
+    @Test
+    void shouldAllowMoreQuotesAndCancelsWhenAckReceived() {
+        int windowSize = 2;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onQuoteUpdate("isin1", 1, 100L, 200L);
+        throttledPrices.onCancel("isin2", 2);
+        throttledPrices.onAck();
+        publisherSpy.assertPublished(
+                quote("isin1", 1, 100L, 200L),
+                cancel("isin2", 2)
+        );
+
+        // When
+        throttledPrices.onQuoteUpdate("isin3", 3, 300L, 400L);
+        throttledPrices.onCancel("isin4", 4);
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("isin1", 1, 100L, 200L),
+                cancel("isin2", 2),
+                quote("isin3", 3, 300L, 400L),
+                cancel("isin4", 4)
+        );
+    }
 }

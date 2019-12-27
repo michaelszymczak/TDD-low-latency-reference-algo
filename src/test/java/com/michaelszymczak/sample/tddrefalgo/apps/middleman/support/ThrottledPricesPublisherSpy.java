@@ -55,6 +55,13 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
 
     public static class Heartbeat {
         long nanoTime;
+
+        @Override
+        public String toString() {
+            return "Heartbeat{" +
+                    "nanoTime=" + nanoTime +
+                    '}';
+        }
     }
 
     public static class Quote {
@@ -62,10 +69,28 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
         int priceTier;
         long bidPrice;
         long askPrice;
+
+        @Override
+        public String toString() {
+            return "Quote{" +
+                    "isin='" + isin + '\'' +
+                    ", priceTier=" + priceTier +
+                    ", bidPrice=" + bidPrice +
+                    ", askPrice=" + askPrice +
+                    '}';
+        }
     }
 
     public static class Cancel {
         String isin;
         int priceTier;
+
+        @Override
+        public String toString() {
+            return "Cancel{" +
+                    "isin='" + isin + '\'' +
+                    ", priceTier=" + priceTier +
+                    '}';
+        }
     }
 }
