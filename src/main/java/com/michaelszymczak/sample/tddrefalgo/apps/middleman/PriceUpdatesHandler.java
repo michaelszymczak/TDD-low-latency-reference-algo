@@ -18,8 +18,12 @@ class PriceUpdatesHandler implements PricingProtocolListener {
 
     @Override
     public void onMessage(QuotePricingMessage message) {
-        // TODO: handle cancels
-        throttledPrices.onQuoteUpdate(message.isin(), message.priceTier(), message.bidPrice(), message.askPrice());
+        if (message.bidPrice() == 0 && message.askPrice() == 0) {
+            throttledPrices.onCancel(message.isin(), message.priceTier());
+        } else {
+
+            throttledPrices.onQuoteUpdate(message.isin(), message.priceTier(), message.bidPrice(), message.askPrice());
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPri
 import org.junit.jupiter.api.Test;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ThrottledPricesTest {
 
@@ -152,5 +153,17 @@ class ThrottledPricesTest {
                 quote("isin3", 3, 300L, 400L),
                 cancel("isin4", 4)
         );
+    }
+
+    @Test
+    void shouldNotAllowQuotesWithZeroPriceOnBothSides() {
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+
+        // When
+        assertThrows(IllegalArgumentException.class,
+                () -> throttledPrices.onQuoteUpdate("isin", 1, 0, 0));
+
+        // Then
+        publisherSpy.assertPublishedNothing();
     }
 }

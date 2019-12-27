@@ -27,6 +27,6 @@ public class EncodingThrottledPricesPublisher implements ThrottledPricesPublishe
 
     @Override
     public void publishCancel(CharSequence isin, int tier) {
-        throw new UnsupportedOperationException();
+        publisher.publish(quoteMessage.set(isin, tier, 0L, 0L));
     }
 }

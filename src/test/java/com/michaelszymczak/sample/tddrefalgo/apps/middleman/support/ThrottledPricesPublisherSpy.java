@@ -34,6 +34,10 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
         return cancel;
     }
 
+    public void assertPublishedNothing() {
+        assertPublished();
+    }
+
     public void assertPublished(final Object... expected) {
         assertThat(published).usingRecursiveFieldByFieldElementComparator().isEqualTo(Arrays.asList(expected));
     }

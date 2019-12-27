@@ -16,12 +16,15 @@ class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
+        if (askPrice == 0 && bidPrice == 0) {
+            throw new IllegalArgumentException("Bid and ask price cannot be both zero");
+        }
         if (windowFull()) return;
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
         inFlightMessages++;
     }
 
-    public void onCancel(String isin, int tier) {
+    public void onCancel(CharSequence isin, int tier) {
         if (windowFull()) return;
         publisher.publishCancel(isin, tier);
         inFlightMessages++;
