@@ -27,7 +27,6 @@ class MiddleManAppPropertyTest {
     }
 
     @Test
-    @Disabled
     void shouldProduceSideEffects() {
         // Given
         marketMakerApp.heartbeat();

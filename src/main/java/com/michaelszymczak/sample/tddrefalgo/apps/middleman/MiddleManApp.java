@@ -23,14 +23,14 @@ public class MiddleManApp implements AppIO {
                         PRICING_SCHEMA,
                         new PricingProtocolEncoding.Decoder(),
                         new PricingProtocolEncoding.Encoder(PRICING_SCHEMA),
-                        pricingMessageEncodingPublisher -> new PriceUpdatesHandler()
+                        PriceUpdatesHandler::new
                 )
         )));
     }
 
     @Override
     public int onInput(DirectBuffer input, int offset, int length) {
-        return 0;
+        return app.onInput(input, offset, length);
     }
 
     @Override

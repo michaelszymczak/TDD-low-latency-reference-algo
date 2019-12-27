@@ -1,14 +1,20 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.HeartbeatPricingMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolListener;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuotePricingMessage;
+import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 
 class PriceUpdatesHandler implements PricingProtocolListener {
+
+    private final EncodingPublisher<PricingMessage> publisher;
+
+    PriceUpdatesHandler(EncodingPublisher<PricingMessage> publisher) {
+
+        this.publisher = publisher;
+    }
+
     @Override
     public void onMessage(HeartbeatPricingMessage message) {
-        throw new UnsupportedOperationException();
+        publisher.publish(message);
     }
 
     @Override
