@@ -1,5 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.framework.api.setup;
 
+import static java.util.Objects.requireNonNull;
+
 class RegisteredApp<D extends ProtocolDecoder<D, L>, L> {
     private final PayloadSchema protocolSchemaId;
     private final D protocolDecoder;
@@ -9,9 +11,9 @@ class RegisteredApp<D extends ProtocolDecoder<D, L>, L> {
             PayloadSchema payloadSchema,
             D protocolDecoder,
             L decodedMessageListener) {
-        this.protocolSchemaId = payloadSchema;
-        this.protocolDecoder = protocolDecoder;
-        this.decodedMessageListener = decodedMessageListener;
+        this.protocolSchemaId = requireNonNull(payloadSchema);
+        this.protocolDecoder = requireNonNull(protocolDecoder);
+        this.decodedMessageListener = requireNonNull(decodedMessageListener);
     }
 
     int getProtocolSchemaId() {

@@ -23,7 +23,7 @@ public class MiddleManApp implements AppIO {
                         PRICING_SCHEMA,
                         new PricingProtocolEncoding.Decoder(),
                         new PricingProtocolEncoding.Encoder(PRICING_SCHEMA),
-                        pricingMessageEncodingPublisher -> null
+                        pricingMessageEncodingPublisher -> new PriceUpdatesHandler()
                 )
         )));
     }
@@ -37,4 +37,5 @@ public class MiddleManApp implements AppIO {
     public Output output() {
         return app.output();
     }
+
 }
