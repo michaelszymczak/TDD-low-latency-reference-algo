@@ -16,7 +16,6 @@ class MiddleManAppTracerBulletTest {
     private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L));
 
     @Test
-    @Disabled
     void shouldProcessMessages() {
         // Given
         marketMakerApp.heartbeat();

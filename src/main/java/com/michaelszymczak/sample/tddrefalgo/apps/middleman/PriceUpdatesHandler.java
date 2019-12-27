@@ -18,11 +18,12 @@ class PriceUpdatesHandler implements PricingProtocolListener {
 
     @Override
     public void onMessage(QuotePricingMessage message) {
-        throw new UnsupportedOperationException();
+        // TODO: real values
+        throttledPrices.onQuoteUpdate("a", 1, 2L, 3L);
     }
 
     @Override
     public void onMessage(AckMessage message) {
-        throw new UnsupportedOperationException();
+        throttledPrices.onAck();
     }
 }
