@@ -1,6 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
-public class Quote {
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
+
+public class Quote implements PriceContribution {
     private final String isin;
     private final int tier;
     private final long bidPrice;
@@ -13,6 +15,12 @@ public class Quote {
         this.askPrice = askPrice;
     }
 
+    @Override
+    public void publishBy(ThrottledPricesPublisher publisher) {
+        publisher.publishQuote(isin, tier, bidPrice, askPrice);
+    }
+
+    @Override
     public String isin() {
         return isin;
     }

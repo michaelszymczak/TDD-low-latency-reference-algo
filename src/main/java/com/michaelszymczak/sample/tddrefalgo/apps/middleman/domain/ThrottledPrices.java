@@ -21,7 +21,7 @@ public class ThrottledPrices {
         validateQuote(isin, tier, bidPrice, askPrice);
         Quote quote = new Quote(isin, tier, bidPrice, askPrice);
         if (windowFull()) return;
-        publisher.publishQuote(quote.isin(), quote.tier(), quote.bidPrice(), quote.askPrice());
+        quote.publishBy(publisher);
         inFlightMessages++;
     }
 
@@ -29,7 +29,7 @@ public class ThrottledPrices {
         validate(isin);
         Cancel cancel = new Cancel(isin);
         if (windowFull()) return;
-        publisher.publishCancel(cancel.isin());
+        cancel.publishBy(publisher);
         inFlightMessages++;
     }
 
