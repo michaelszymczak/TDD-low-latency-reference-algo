@@ -4,32 +4,38 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPubli
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.EMPTY;
 
-public class Empty implements PriceContribution {
+class Empty implements PriceContribution {
 
-    static final Empty EMPTY_INSTANCE = new Empty();
+    private final String isin;
+    private final int tier;
 
-    @Override
-    public void publishBy(ThrottledPricesPublisher publisher) {
-
+    Empty(PriceContribution priceContribution) {
+        this.isin = priceContribution.isin();
+        this.tier = priceContribution.tier();
     }
 
     @Override
-    public boolean canBeReplacedWith(PriceContribution other) {
+    public boolean publishBy(ThrottledPricesPublisher publisher) {
         return false;
     }
 
     @Override
     public String isin() {
-        return "";
+        return isin;
     }
 
     @Override
     public int tier() {
-        return 0;
+        return tier;
     }
 
     @Override
     public PriceContributionType type() {
         return EMPTY;
+    }
+
+    @Override
+    public boolean sameIsinAsIn(PriceContribution other) {
+        return isin.equals(other.isin());
     }
 }

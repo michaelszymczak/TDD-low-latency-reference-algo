@@ -2,9 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
 
-import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.*;
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.QUOTE;
 
-public class Quote implements PriceContribution {
+class Quote implements PriceContribution {
     private final String isin;
     private final int tier;
     private final long bidPrice;
@@ -19,13 +19,9 @@ public class Quote implements PriceContribution {
     }
 
     @Override
-    public void publishBy(ThrottledPricesPublisher publisher) {
+    public boolean publishBy(ThrottledPricesPublisher publisher) {
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
-    }
-
-    @Override
-    public boolean canBeReplacedWith(PriceContribution other) {
-        return other.type() != EMPTY && isin().equals(other.isin()) && (other.type() == CANCEL || tier() == other.tier());
+        return true;
     }
 
     @Override
@@ -41,6 +37,11 @@ public class Quote implements PriceContribution {
     @Override
     public PriceContributionType type() {
         return QUOTE;
+    }
+
+    @Override
+    public boolean sameIsinAsIn(PriceContribution other) {
+        return isin.equals(other.isin());
     }
 
     private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {

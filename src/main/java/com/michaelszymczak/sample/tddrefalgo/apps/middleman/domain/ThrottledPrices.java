@@ -4,8 +4,7 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPubli
 
 import java.util.LinkedList;
 
-import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Empty.EMPTY_INSTANCE;
-import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.EMPTY;
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.*;
 
 public class ThrottledPrices {
 
@@ -32,22 +31,32 @@ public class ThrottledPrices {
         onUpdate(new Cancel(isin));
     }
 
-    private void onUpdate(PriceContribution newPriceContribution) {
+    private void onUpdate(PriceContribution update) {
         boolean replaced = false;
         for (int i = 0; i < awaitingContributions.size(); i++) {
-            if (awaitingContributions.get(i).canBeReplacedWith(newPriceContribution)) {
-                if (replaced) {
-                    awaitingContributions.set(i, EMPTY_INSTANCE);
-                } else {
-                    awaitingContributions.set(i, newPriceContribution);
-                    replaced = true;
-                }
+            PriceContribution existing = awaitingContributions.get(i);
+            if (!existing.sameIsinAsIn(update) || existing.type() == EMPTY) {
+                continue;
+            }
+            if (existing.type() == CANCEL && update.type() != CANCEL) {
+                continue;
+            }
+            if (existing.type() == QUOTE && update.type() != CANCEL && update.tier() != existing.tier()) {
+                continue;
+            }
+
+            if (!replaced) {
+                awaitingContributions.set(i, update);
+                replaced = true;
+            } else {
+                awaitingContributions.set(i, new Empty(update));
             }
         }
-        awaitingContributions.removeIf(priceContribution -> priceContribution.type() == EMPTY);
+
         if (!replaced) {
-            awaitingContributions.offer(newPriceContribution);
+            awaitingContributions.offer(update);
         }
+
         tryPublishEnqueued();
     }
 
@@ -58,8 +67,9 @@ public class ThrottledPrices {
 
     private void tryPublishEnqueued() {
         while (!isWindowFull() && !awaitingContributions.isEmpty()) {
-            awaitingContributions.remove().publishBy(publisher);
-            inFlightMessages++;
+            if (awaitingContributions.remove().publishBy(publisher)) {
+                inFlightMessages++;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
-public enum PriceContributionType {
+enum PriceContributionType {
     QUOTE,
     CANCEL,
     EMPTY

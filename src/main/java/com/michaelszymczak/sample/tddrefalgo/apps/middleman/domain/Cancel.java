@@ -4,7 +4,7 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPubli
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.CANCEL;
 
-public class Cancel implements PriceContribution {
+class Cancel implements PriceContribution {
 
     private final String isin;
 
@@ -20,13 +20,9 @@ public class Cancel implements PriceContribution {
     }
 
     @Override
-    public void publishBy(ThrottledPricesPublisher publisher) {
+    public boolean publishBy(ThrottledPricesPublisher publisher) {
         publisher.publishCancel(isin);
-    }
-
-    @Override
-    public boolean canBeReplacedWith(PriceContribution other) {
-        return other.type() == CANCEL && isin().equals(other.isin());
+        return true;
     }
 
     @Override
@@ -42,5 +38,10 @@ public class Cancel implements PriceContribution {
     @Override
     public PriceContributionType type() {
         return CANCEL;
+    }
+
+    @Override
+    public boolean sameIsinAsIn(PriceContribution other) {
+        return isin.equals(other.isin());
     }
 }
