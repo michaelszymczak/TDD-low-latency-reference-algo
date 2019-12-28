@@ -24,9 +24,9 @@ class ThrottledPrices {
         inFlightMessages++;
     }
 
-    public void onCancel(CharSequence isin, int tier) {
+    public void onCancel(CharSequence isin) {
         if (windowFull()) return;
-        publisher.publishCancel(isin, tier);
+        publisher.publishCancel(isin);
         inFlightMessages++;
     }
 

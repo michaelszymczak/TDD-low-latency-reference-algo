@@ -5,5 +5,5 @@ public interface ThrottledPricesPublisher {
 
     void publishQuote(CharSequence isin, int tier, long bidPrice, long askPrice);
 
-    void publishCancel(CharSequence isin, int tier);
+    void publishCancel(CharSequence isin);
 }

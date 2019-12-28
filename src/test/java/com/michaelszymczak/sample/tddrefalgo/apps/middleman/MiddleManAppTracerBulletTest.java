@@ -25,9 +25,9 @@ class MiddleManAppTracerBulletTest {
         marketMakerApp
                 .events("Q/   isin1/  1/     4455/   4466\n" +
                         "Q/   isin2/  2/     7755/   8866\n" +
-                        "Q/   isin3/  3/     0/         0\n" +
+                        "Q/   isin3/  0/     0/         0\n" +
                         "A\n" +
-                        "Q/   isin4/  4/     0/         0\n" +
+                        "Q/   isin4/  0/     0/         0\n" +
                         "Q/   isin5/  5/     1234/   5678\n" +
                         "A\n");
 
@@ -41,8 +41,8 @@ class MiddleManAppTracerBulletTest {
                 new ImmutableHeartbeatPricingMessage(12345L),
                 new ImmutableQuotePricingMessage("isin1       ", 1, 4455L, 4466L),
                 new ImmutableQuotePricingMessage("isin2       ", 2, 7755L, 8866L),
-                new ImmutableQuotePricingMessage("isin3       ", 3, 0L, 0L),
-                new ImmutableQuotePricingMessage("isin4       ", 4, 0L, 0L),
+                new ImmutableQuotePricingMessage("isin3       ", 0, 0L, 0L),
+                new ImmutableQuotePricingMessage("isin4       ", 0, 0L, 0L),
                 new ImmutableQuotePricingMessage("isin5       ", 5, 1234L, 5678L)
         ), outputSpy.getSpy().receivedMessages());
     }

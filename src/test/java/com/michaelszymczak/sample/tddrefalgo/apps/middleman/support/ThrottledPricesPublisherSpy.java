@@ -27,10 +27,9 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
         return quote;
     }
 
-    public static Cancel cancel(CharSequence isin, int priceTier) {
+    public static Cancel cancel(CharSequence isin) {
         Cancel cancel = new Cancel();
         cancel.isin = isin.toString();
-        cancel.priceTier = priceTier;
         return cancel;
     }
 
@@ -48,8 +47,8 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
     }
 
     @Override
-    public void publishCancel(CharSequence isin, int tier) {
-        published.add(cancel(isin, tier));
+    public void publishCancel(CharSequence isin) {
+        published.add(cancel(isin));
     }
 
     @Override
@@ -87,13 +86,11 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
 
     public static class Cancel {
         String isin;
-        int priceTier;
 
         @Override
         public String toString() {
             return "Cancel{" +
                     "isin='" + isin + '\'' +
-                    ", priceTier=" + priceTier +
                     '}';
         }
     }
