@@ -4,7 +4,6 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPri
 import org.junit.jupiter.api.Test;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ThrottledPricesTest {
 

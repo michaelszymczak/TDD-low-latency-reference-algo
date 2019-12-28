@@ -23,12 +23,20 @@ class ThrottledPrices {
     }
 
     private void validate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        if (isin.length() == 0 || tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+        validate(isin);
+        if (tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+            throw new IllegalArgumentException("Invalid quote update");
+        }
+    }
+
+    private void validate(CharSequence isin) {
+        if (isin.length() == 0) {
             throw new IllegalArgumentException("Invalid quote update");
         }
     }
 
     public void onCancel(CharSequence isin) {
+        validate(isin);
         if (windowFull()) return;
         publisher.publishCancel(isin);
         inFlightMessages++;

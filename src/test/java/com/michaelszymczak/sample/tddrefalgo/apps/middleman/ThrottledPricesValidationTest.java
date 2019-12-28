@@ -44,4 +44,16 @@ class ThrottledPricesValidationTest {
         // Then
         publisherSpy.assertPublishedNothing();
     }
+
+    @Test
+    void shouldNotAllowCancelsWithNoIsin() {
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+
+        // When
+        assertThrows(IllegalArgumentException.class,
+                () -> throttledPrices.onCancel(""));
+
+        // Then
+        publisherSpy.assertPublishedNothing();
+    }
 }
