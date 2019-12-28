@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 

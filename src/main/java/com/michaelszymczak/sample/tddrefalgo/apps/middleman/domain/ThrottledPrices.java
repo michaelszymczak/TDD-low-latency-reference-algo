@@ -1,17 +1,19 @@
-package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
+package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
-class ThrottledPrices {
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
+
+public class ThrottledPrices {
 
     private final ThrottledPricesPublisher publisher;
     private final int windowSize;
     private int inFlightMessages = 0;
 
-    ThrottledPrices(ThrottledPricesPublisher publisher, int windowSize) {
+    public ThrottledPrices(ThrottledPricesPublisher publisher, int windowSize) {
         this.publisher = publisher;
         this.windowSize = windowSize;
     }
 
-    void onHeartbeat(long nanoTime) {
+    public void onHeartbeat(long nanoTime) {
         publisher.publishHeartbeat(nanoTime);
     }
 

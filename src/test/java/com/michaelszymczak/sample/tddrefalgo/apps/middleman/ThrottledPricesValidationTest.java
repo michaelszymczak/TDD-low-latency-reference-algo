@@ -1,6 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
