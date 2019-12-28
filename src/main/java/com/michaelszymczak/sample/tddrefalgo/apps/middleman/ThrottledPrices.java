@@ -16,23 +16,10 @@ class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        validate(isin, tier, bidPrice, askPrice);
+        validateQuote(isin, tier, bidPrice, askPrice);
         if (windowFull()) return;
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
         inFlightMessages++;
-    }
-
-    private void validate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        validate(isin);
-        if (tier == 0 || (askPrice == 0 && bidPrice == 0)) {
-            throw new IllegalArgumentException("Invalid quote update");
-        }
-    }
-
-    private void validate(CharSequence isin) {
-        if (isin.length() == 0) {
-            throw new IllegalArgumentException("Invalid quote update");
-        }
     }
 
     public void onCancel(CharSequence isin) {
@@ -48,5 +35,18 @@ class ThrottledPrices {
 
     private boolean windowFull() {
         return inFlightMessages >= windowSize;
+    }
+
+    private void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
+        validate(isin);
+        if (tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+            throw new IllegalArgumentException("Invalid quote update");
+        }
+    }
+
+    private void validate(CharSequence isin) {
+        if (isin.length() == 0) {
+            throw new IllegalArgumentException("Invalid quote update");
+        }
     }
 }
