@@ -19,15 +19,17 @@ public class ThrottledPrices {
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
         validateQuote(isin, tier, bidPrice, askPrice);
+        Quote quote = new Quote(isin, tier, bidPrice, askPrice);
         if (windowFull()) return;
-        publisher.publishQuote(isin, tier, bidPrice, askPrice);
+        publisher.publishQuote(quote.isin(), quote.tier(), quote.bidPrice(), quote.askPrice());
         inFlightMessages++;
     }
 
     public void onCancel(CharSequence isin) {
         validate(isin);
+        Cancel cancel = new Cancel(isin);
         if (windowFull()) return;
-        publisher.publishCancel(isin);
+        publisher.publishCancel(cancel.isin());
         inFlightMessages++;
     }
 
