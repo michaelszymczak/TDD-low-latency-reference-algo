@@ -32,7 +32,6 @@ public class ThrottledPrices {
     }
 
     private void coalesce(Cancel cancel) {
-        // TODO: remove corresponding quotes
         for (PriceContribution awaitingContribution : awaitingContributions) {
             if (awaitingContribution.isin().equals(cancel.isin())) {
                 return;

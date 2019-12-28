@@ -2,6 +2,7 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
@@ -270,6 +271,18 @@ class ThrottledPricesTest {
 
         // Then
         publisherSpy.assertPublishedNothing();
+    }
+
+    @Test
+    @Disabled
+    void shouldRemoveQuotesWithTheSamIsinWhenCancelling() {
+
+    }
+
+    @Test
+    @Disabled
+    void shouldSquashQuotesWithTheSameIsinAndTier() {
+
     }
 
     private void runTimes(int times, Runnable runnable) {
