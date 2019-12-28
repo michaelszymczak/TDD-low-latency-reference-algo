@@ -16,11 +16,6 @@ public class Cancel implements PriceContribution {
         publisher.publishCancel(isin);
     }
 
-    @Override
-    public String isin() {
-        return isin;
-    }
-
     private static void validate(CharSequence isin) {
         if (isin.length() == 0) {
             throw new IllegalArgumentException("Invalid isin");
