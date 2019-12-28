@@ -26,8 +26,19 @@ public class ThrottledPrices {
     }
 
     public void onCancel(CharSequence isin) {
-        awaitingContributions.offer(new Cancel(isin));
+        Cancel cancel = new Cancel(isin);
+        coalesce(cancel);
         tryPublishEnqueued();
+    }
+
+    private void coalesce(Cancel cancel) {
+        // TODO: remove corresponding quotes
+        for (PriceContribution awaitingContribution : awaitingContributions) {
+            if (awaitingContribution.isin().equals(cancel.isin())) {
+                return;
+            }
+        }
+        awaitingContributions.offer(cancel);
     }
 
     public void onAck() {

@@ -21,6 +21,11 @@ public class Quote implements PriceContribution {
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
     }
 
+    @Override
+    public String isin() {
+        return isin;
+    }
+
     private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
         if (isin.length() == 0 || tier == 0 || (askPrice == 0 && bidPrice == 0)) {
             throw new IllegalArgumentException("Invalid quote update");

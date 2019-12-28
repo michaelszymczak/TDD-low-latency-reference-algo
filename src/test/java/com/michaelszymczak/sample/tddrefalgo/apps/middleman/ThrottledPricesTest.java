@@ -252,6 +252,26 @@ class ThrottledPricesTest {
         );
     }
 
+    @Test
+    void shouldSquashSameIsinCancellationsBeforePublishing() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+        throttledPrices.onCancel("isin1");
+        publisherSpy.clear();
+        throttledPrices.onCancel("isin2");
+        throttledPrices.onCancel("isin2");
+        throttledPrices.onCancel("isin2");
+        throttledPrices.onAck();
+        publisherSpy.assertPublished(cancel("isin2"));
+        publisherSpy.clear();
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublishedNothing();
+    }
+
     private void runTimes(int times, Runnable runnable) {
         IntStream.range(0, times).forEach(i -> runnable.run());
     }

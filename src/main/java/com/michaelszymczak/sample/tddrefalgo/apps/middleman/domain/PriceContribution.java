@@ -4,4 +4,6 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPubli
 
 public interface PriceContribution {
     void publishBy(ThrottledPricesPublisher publisher);
+
+    String isin();
 }
