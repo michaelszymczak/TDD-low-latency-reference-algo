@@ -370,6 +370,8 @@ class ThrottledPricesTest {
         throttledPrices.onQuoteUpdate("isin1", 3, 130, 131);
         throttledPrices.onQuoteUpdate("isin1", 4, 130, 131);
         throttledPrices.onCancel("isin1");
+        throttledPrices.onQuoteUpdate("isin1", 3, 132, 133);
+        throttledPrices.onQuoteUpdate("isin1", 4, 142, 143);
         throttledPrices.onQuoteUpdate("isin1", 3, 131, 132);
         throttledPrices.onQuoteUpdate("isin1", 4, 141, 142);
 
