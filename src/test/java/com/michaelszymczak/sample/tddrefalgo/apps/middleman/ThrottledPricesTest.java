@@ -166,4 +166,16 @@ class ThrottledPricesTest {
         // Then
         publisherSpy.assertPublishedNothing();
     }
+
+    @Test
+    void shouldNotAllowQuotesWithNoTier() {
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+
+        // When
+        assertThrows(IllegalArgumentException.class,
+                () -> throttledPrices.onQuoteUpdate("isin", 0, 1001L, 1002L));
+
+        // Then
+        publisherSpy.assertPublishedNothing();
+    }
 }

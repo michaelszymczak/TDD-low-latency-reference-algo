@@ -16,8 +16,8 @@ class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        if (askPrice == 0 && bidPrice == 0) {
-            throw new IllegalArgumentException("Bid and ask price cannot be both zero");
+        if (tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+            throw new IllegalArgumentException("Invalid quote update");
         }
         if (windowFull()) return;
         publisher.publishQuote(isin, tier, bidPrice, askPrice);
