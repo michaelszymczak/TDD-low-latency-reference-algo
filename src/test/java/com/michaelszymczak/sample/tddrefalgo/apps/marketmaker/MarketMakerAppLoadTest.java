@@ -25,9 +25,9 @@ class MarketMakerAppLoadTest {
 
         // When
         range(1, rounds + 1).forEach(round -> app.generateRandom(samples, new Probabilities(
-                new Probabilities.AckProbability(1),
+                new Probabilities.AckProbability(10),
                 quoteProbability()
-                        .withPercentageProbability(99)
+                        .withPercentageProbability(990)
                         .withDistinctInstruments(10)
                         .withCancellationProbability(30)
                         .build()
@@ -44,9 +44,9 @@ class MarketMakerAppLoadTest {
     void shouldHaveComparableOutputs() {
         MarketMakerApp app = new MarketMakerApp();
         Probabilities probabilities = new Probabilities(quoteProbability()
-                .withPercentageProbability(99)
-                .withDistinctInstruments(10)
-                .withCancellationProbability(30)
+                .withPercentageProbability(990)
+                .withDistinctInstruments(100)
+                .withCancellationProbability(300)
                 .build());
         SameOutputProperty sameOutputProperty = new SameOutputProperty();
 

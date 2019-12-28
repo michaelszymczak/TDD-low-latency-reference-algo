@@ -28,22 +28,22 @@ public class Probabilities {
     }
 
     public static class AckProbability {
-        public final int percentageProbability;
+        public final int permilProbability;
 
-        public AckProbability(int percentageProbability) {
-            this.percentageProbability = percentageProbability;
+        public AckProbability(int permilProbability) {
+            this.permilProbability = permilProbability;
         }
     }
 
     public static class QuoteProbability {
         public final int distinctInstruments;
-        public final int percentageProbability;
-        public final int cancellationProbability;
+        public final int perMillProbability;
+        public final int cancellationPerMillProbability;
 
-        private QuoteProbability(int percentageProbability, int distinctInstruments, int cancellationProbability) {
+        private QuoteProbability(int perMillProbability, int distinctInstruments, int cancellationPerMillProbability) {
             this.distinctInstruments = distinctInstruments;
-            this.percentageProbability = percentageProbability;
-            this.cancellationProbability = cancellationProbability;
+            this.perMillProbability = perMillProbability;
+            this.cancellationPerMillProbability = cancellationPerMillProbability;
         }
 
         public static QuoteProbability.Builder quoteProbability() {
@@ -51,12 +51,12 @@ public class Probabilities {
         }
 
         public static class Builder {
-            private int percentageProbability = 0;
+            private int perMillProbability = 0;
             private int distinctInstruments = 0;
-            private int cancellationProbability = 0;
+            private int cancellationPerMillProbability = 0;
 
-            public Builder withPercentageProbability(int percentageProbability) {
-                this.percentageProbability = percentageProbability;
+            public Builder withPercentageProbability(int perMillProbability) {
+                this.perMillProbability = perMillProbability;
                 return this;
             }
 
@@ -66,12 +66,12 @@ public class Probabilities {
             }
 
             public Builder withCancellationProbability(int noPriceProbability) {
-                this.cancellationProbability = noPriceProbability;
+                this.cancellationPerMillProbability = noPriceProbability;
                 return this;
             }
 
             public QuoteProbability build() {
-                return new QuoteProbability(percentageProbability, distinctInstruments, cancellationProbability);
+                return new QuoteProbability(perMillProbability, distinctInstruments, cancellationPerMillProbability);
             }
         }
     }

@@ -108,7 +108,7 @@ class MarketMakerAppTest {
     @Test
     void shouldAlwaysGenerateMessageWith100PerCentProbability() {
         outputSpy.onInput(app.generateRandom(
-                100, new Probabilities(new Probabilities.AckProbability(100))
+                100, new Probabilities(new Probabilities.AckProbability(1000))
         ).output());
 
         assertEquals(100, outputSpy.getSpy().receivedMessages().size());
@@ -128,7 +128,7 @@ class MarketMakerAppTest {
     @Test
     void shouldGenerateMessageAccordingToItsProbability() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.AckProbability(50))
+                1000, new Probabilities(new Probabilities.AckProbability(500))
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages()).hasSizeBetween(400, 600);
@@ -137,9 +137,9 @@ class MarketMakerAppTest {
     @Test
     void shouldTreatMessageProbabilitiesAsIndependent() {
         outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(new Probabilities.AckProbability(50), quoteProbability()
-                        .withPercentageProbability(50)
-                        .withDistinctInstruments(10)
+                1000, new Probabilities(new Probabilities.AckProbability(500), quoteProbability()
+                        .withPercentageProbability(500)
+                        .withDistinctInstruments(100)
                         .withCancellationProbability(0).build())
         ).output());
 
@@ -150,9 +150,9 @@ class MarketMakerAppTest {
     void shouldDefineProbabilityOfQuoteWithNoPrice() {
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(quoteProbability()
-                        .withPercentageProbability(100)
-                        .withDistinctInstruments(10)
-                        .withCancellationProbability(50).build())
+                        .withPercentageProbability(1000)
+                        .withDistinctInstruments(100)
+                        .withCancellationProbability(500).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.askPrice() == 0 && q.bidPrice() == 0)).hasSizeBetween(400, 600);
@@ -162,7 +162,7 @@ class MarketMakerAppTest {
     void shouldDefineNumberOfDistinctInstruments() {
         outputSpy.onInput(app.generateRandom(
                 1000, new Probabilities(quoteProbability()
-                        .withPercentageProbability(100)
+                        .withPercentageProbability(1000)
                         .withDistinctInstruments(10)
                         .withCancellationProbability(0).build())
         ).output());

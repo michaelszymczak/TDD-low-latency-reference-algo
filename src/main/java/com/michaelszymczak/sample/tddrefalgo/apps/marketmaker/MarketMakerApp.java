@@ -79,17 +79,17 @@ public class MarketMakerApp implements AppIO {
 
     public MarketMakerApp generateRandom(int attempts, Probabilities probabilities) {
         IntStream.range(0, attempts).forEach(attempt -> {
-            if (random.nextInt(100) < probabilities.ackProbability.percentageProbability) {
+            if (random.nextInt(1000) < probabilities.ackProbability.permilProbability) {
                 marketMakingModule.onMessage(AckMessage.ACK_MESSAGE);
             }
-            if (random.nextInt(100) < probabilities.quoteProbability.percentageProbability) {
+            if (random.nextInt(1000) < probabilities.quoteProbability.perMillProbability) {
                 String instrument = "isin" + random.nextInt(probabilities.quoteProbability.distinctInstruments);
-                if (random.nextInt(100) < probabilities.quoteProbability.cancellationProbability) {
+                if (random.nextInt(1000) < probabilities.quoteProbability.cancellationPerMillProbability) {
                     marketMakingModule.onMessage(new ImmutableQuotePricingMessage(instrument, 0, 0, 0));
                 } else {
                     int priceTier = random.nextInt(5) + 1;
                     marketMakingModule.onMessage(new ImmutableQuotePricingMessage(
-                            instrument, priceTier, random.nextInt(1000), random.nextInt(1000)));
+                            instrument, priceTier, random.nextInt(1000) + 1, random.nextInt(1000) + 1));
                 }
             }
         });
