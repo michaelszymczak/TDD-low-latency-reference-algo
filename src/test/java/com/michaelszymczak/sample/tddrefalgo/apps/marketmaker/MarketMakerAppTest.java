@@ -33,7 +33,7 @@ class MarketMakerAppTest {
 
     @Test
     void shouldHeartbeat() {
-        MarketMakerApp app = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L));
+        MarketMakerApp app = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L), 5 * 1024 * 1024);
 
         outputSpy.onInput(app.heartbeat().output());
 
@@ -140,8 +140,7 @@ class MarketMakerAppTest {
                 1000, new Probabilities(new Probabilities.AckProbability(50), quoteProbability()
                         .withPercentageProbability(50)
                         .withDistinctInstruments(10)
-                        .withNoPriceProbability(0)
-                        .withNoTierProbability(0).build())
+                        .withCancellationProbability(0).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages()).hasSizeBetween(900, 1100);
@@ -153,24 +152,10 @@ class MarketMakerAppTest {
                 1000, new Probabilities(quoteProbability()
                         .withPercentageProbability(100)
                         .withDistinctInstruments(10)
-                        .withNoPriceProbability(50)
-                        .withNoTierProbability(0).build())
+                        .withCancellationProbability(50).build())
         ).output());
 
         assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.askPrice() == 0 && q.bidPrice() == 0)).hasSizeBetween(400, 600);
-    }
-
-    @Test
-    void shouldDefineProbabilityOfQuoteWithNoTier() {
-        outputSpy.onInput(app.generateRandom(
-                1000, new Probabilities(quoteProbability()
-                        .withPercentageProbability(100)
-                        .withDistinctInstruments(10)
-                        .withNoPriceProbability(0)
-                        .withNoTierProbability(30).build())
-        ).output());
-
-        assertThat(outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, q -> q.priceTier() == 0)).hasSizeBetween(200, 400);
     }
 
     @Test
@@ -179,8 +164,7 @@ class MarketMakerAppTest {
                 1000, new Probabilities(quoteProbability()
                         .withPercentageProbability(100)
                         .withDistinctInstruments(10)
-                        .withNoPriceProbability(0)
-                        .withNoTierProbability(0).build())
+                        .withCancellationProbability(0).build())
         ).output());
 
         Map<String, List<QuotePricingMessage>> quotesByIsin = outputSpy.getSpy().receivedMessages(QuotePricingMessage.class, Objects::nonNull).stream()

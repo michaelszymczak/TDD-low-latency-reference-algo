@@ -38,14 +38,12 @@ public class Probabilities {
     public static class QuoteProbability {
         public final int distinctInstruments;
         public final int percentageProbability;
-        public final int noPriceProbability;
-        public final int noTierProbability;
+        public final int cancellationProbability;
 
-        private QuoteProbability(int percentageProbability, int distinctInstruments, int noPriceProbability, int noTierProbability) {
+        private QuoteProbability(int percentageProbability, int distinctInstruments, int cancellationProbability) {
             this.distinctInstruments = distinctInstruments;
             this.percentageProbability = percentageProbability;
-            this.noPriceProbability = noPriceProbability;
-            this.noTierProbability = noTierProbability;
+            this.cancellationProbability = cancellationProbability;
         }
 
         public static QuoteProbability.Builder quoteProbability() {
@@ -55,8 +53,7 @@ public class Probabilities {
         public static class Builder {
             private int percentageProbability = 0;
             private int distinctInstruments = 0;
-            private int noPriceProbability = 0;
-            private int noTierProbability = 0;
+            private int cancellationProbability = 0;
 
             public Builder withPercentageProbability(int percentageProbability) {
                 this.percentageProbability = percentageProbability;
@@ -68,18 +65,13 @@ public class Probabilities {
                 return this;
             }
 
-            public Builder withNoPriceProbability(int noPriceProbability) {
-                this.noPriceProbability = noPriceProbability;
-                return this;
-            }
-
-            public Builder withNoTierProbability(int noTierProbability) {
-                this.noTierProbability = noTierProbability;
+            public Builder withCancellationProbability(int noPriceProbability) {
+                this.cancellationProbability = noPriceProbability;
                 return this;
             }
 
             public QuoteProbability build() {
-                return new QuoteProbability(percentageProbability, distinctInstruments, noPriceProbability, noTierProbability);
+                return new QuoteProbability(percentageProbability, distinctInstruments, cancellationProbability);
             }
         }
     }

@@ -29,8 +29,7 @@ class MarketMakerAppLoadTest {
                 quoteProbability()
                         .withPercentageProbability(99)
                         .withDistinctInstruments(10)
-                        .withNoPriceProbability(30)
-                        .withNoTierProbability(30)
+                        .withCancellationProbability(30)
                         .build()
         )).newOutput());
         range(1, reads + 1).forEach(read -> range(1, rounds + 1).forEach(round -> outputSpy.onInput(app.output(round))));
@@ -47,8 +46,7 @@ class MarketMakerAppLoadTest {
         Probabilities probabilities = new Probabilities(quoteProbability()
                 .withPercentageProbability(99)
                 .withDistinctInstruments(10)
-                .withNoPriceProbability(30)
-                .withNoTierProbability(30)
+                .withCancellationProbability(30)
                 .build());
         SameOutputProperty sameOutputProperty = new SameOutputProperty();
 

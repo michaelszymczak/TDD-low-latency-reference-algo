@@ -31,12 +31,12 @@ public class MarketMakerApp implements AppIO {
     private int nextOutputNumber = 1;
 
     public MarketMakerApp() {
-        this(System::nanoTime);
+        this(System::nanoTime, 5 * 1024 * 1024);
     }
 
-    public MarketMakerApp(final RelativeNanoClock nanoClock) {
+    public MarketMakerApp(final RelativeNanoClock nanoClock, final int publisherCapacity) {
         this.marketMakingModule = new MarketMakingModule(nanoClock);
-        this.app = AppFactory.createApp(new AppFactoryRegistry(5 * 1024 * 1024, Collections.singletonList(
+        this.app = AppFactory.createApp(new AppFactoryRegistry(publisherCapacity, Collections.singletonList(
                 new RegisteredAppFactory<>(
                         PRICING_SCHEMA,
                         new PricingProtocolEncoding.Decoder(),
@@ -83,13 +83,11 @@ public class MarketMakerApp implements AppIO {
                 marketMakingModule.onMessage(AckMessage.ACK_MESSAGE);
             }
             if (random.nextInt(100) < probabilities.quoteProbability.percentageProbability) {
-                int priceTier = random.nextInt(100) < probabilities.quoteProbability.noTierProbability ?
-                        0 : random.nextInt(5) + 1;
                 String instrument = "isin" + random.nextInt(probabilities.quoteProbability.distinctInstruments);
-                if (random.nextInt(100) < probabilities.quoteProbability.noPriceProbability) {
-                    marketMakingModule.onMessage(new ImmutableQuotePricingMessage(
-                            instrument, priceTier, 0, 0));
+                if (random.nextInt(100) < probabilities.quoteProbability.cancellationProbability) {
+                    marketMakingModule.onMessage(new ImmutableQuotePricingMessage(instrument, 0, 0, 0));
                 } else {
+                    int priceTier = random.nextInt(5) + 1;
                     marketMakingModule.onMessage(new ImmutableQuotePricingMessage(
                             instrument, priceTier, random.nextInt(1000), random.nextInt(1000)));
                 }

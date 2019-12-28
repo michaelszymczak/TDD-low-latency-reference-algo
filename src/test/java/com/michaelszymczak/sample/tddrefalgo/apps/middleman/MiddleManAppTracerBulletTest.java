@@ -16,7 +16,7 @@ class MiddleManAppTracerBulletTest {
 
     private final MiddleManApp middleManApp = new MiddleManApp(1024, 3);
     private final OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy = OutputSpy.outputSpy();
-    private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L));
+    private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L), 5 * 1024 * 1024);
 
     @Test
     void shouldProcessMessages() {
