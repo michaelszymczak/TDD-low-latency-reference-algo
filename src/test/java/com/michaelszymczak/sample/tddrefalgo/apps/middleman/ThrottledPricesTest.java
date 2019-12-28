@@ -318,9 +318,32 @@ class ThrottledPricesTest {
     }
 
     @Test
-    @Disabled
     void shouldReplaceSameQuoteWithTheSameIsinAndTierMultipleTimes() {
+        int windowSize = 2;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
 
+        // Given
+        throttledPrices.onCancel("isin101");
+        throttledPrices.onCancel("isin102");
+        publisherSpy.clear();
+        throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
+        throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
+        throttledPrices.onQuoteUpdate("isin", 1, 113, 114);
+        throttledPrices.onQuoteUpdate("isin", 1, 115, 116);
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("otherisin", 1, 111, 112),
+                quote("isin", 1, 115, 116)
+        );
+
+        // No more items
+        publisherSpy.clear();
+        throttledPrices.onAck();
+        publisherSpy.assertPublishedNothing();
     }
 
     private void runTimes(int times, Runnable runnable) {
