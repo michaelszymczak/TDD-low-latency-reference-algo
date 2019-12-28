@@ -2,6 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
 
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.CANCEL;
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.EMPTY;
+
 public class Cancel implements PriceContribution {
 
     private final String isin;
@@ -11,6 +14,12 @@ public class Cancel implements PriceContribution {
         this.isin = isin.toString();
     }
 
+    private static void validate(CharSequence isin) {
+        if (isin.length() == 0) {
+            throw new IllegalArgumentException("Invalid isin");
+        }
+    }
+
     @Override
     public void publishBy(ThrottledPricesPublisher publisher) {
         publisher.publishCancel(isin);
@@ -18,7 +27,7 @@ public class Cancel implements PriceContribution {
 
     @Override
     public boolean matches(PriceContribution other) {
-        return isin().equals(other.isin()) && tier() == other.tier();
+        return other.type() != EMPTY && isin().equals(other.isin());
     }
 
     @Override
@@ -31,9 +40,8 @@ public class Cancel implements PriceContribution {
         return 0;
     }
 
-    private static void validate(CharSequence isin) {
-        if (isin.length() == 0) {
-            throw new IllegalArgumentException("Invalid isin");
-        }
+    @Override
+    public PriceContributionType type() {
+        return CANCEL;
     }
 }

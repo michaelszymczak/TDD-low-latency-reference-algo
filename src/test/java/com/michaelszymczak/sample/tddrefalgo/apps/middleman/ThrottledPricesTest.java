@@ -2,9 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy.*;
@@ -233,14 +233,12 @@ class ThrottledPricesTest {
         int windowSize = 1;
         ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
 
-        // Given
+        // When
         throttledPrices.onCancel("isin4");
         throttledPrices.onCancel("isin5");
         throttledPrices.onQuoteUpdate("isin6", 6, 60055L, 60066L);
         throttledPrices.onQuoteUpdate("isin7", 7, 70055L, 70066L);
         throttledPrices.onCancel("isin8");
-
-        // When
         runTimes(10, throttledPrices::onAck);
 
         // Then
@@ -259,24 +257,46 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
         throttledPrices.onCancel("isin1");
         publisherSpy.clear();
-        throttledPrices.onCancel("isin2");
-        throttledPrices.onCancel("isin2");
-        throttledPrices.onCancel("isin2");
-        throttledPrices.onAck();
-        publisherSpy.assertPublished(cancel("isin2"));
-        publisherSpy.clear();
 
         // When
+        throttledPrices.onCancel("isin2");
+        throttledPrices.onCancel("isin2");
+        throttledPrices.onCancel("isin2");
         throttledPrices.onAck();
 
         // Then
-        publisherSpy.assertPublishedNothing();
+        publisherSpy.assertPublished(cancel("isin2"));
+        assertNoMoreItemsPublished(throttledPrices);
     }
 
     @Test
-    @Disabled
-    void shouldRemoveQuotesWithTheSamIsinWhenCancelling() {
+    void shouldRemoveQuotesWithTheSameIsinsWhenCancelling() {
+        int windowSize = 4;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
 
+        // Given
+        runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
+        publisherSpy.clear();
+
+        // When
+        throttledPrices.onQuoteUpdate("isin1", 1, 111, 112);
+        throttledPrices.onQuoteUpdate("isin1", 2, 121, 122);
+        throttledPrices.onQuoteUpdate("isin2", 1, 211, 212);
+        throttledPrices.onQuoteUpdate("isin2", 2, 221, 222);
+        throttledPrices.onQuoteUpdate("isin3", 1, 311, 312);
+        throttledPrices.onQuoteUpdate("isin3", 2, 321, 322);
+        throttledPrices.onCancel("isin1");
+        throttledPrices.onCancel("isin3");
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                cancel("isin1"),
+                quote("isin2", 1, 211, 212),
+                quote("isin2", 2, 221, 222),
+                cancel("isin3")
+        );
+        assertNoMoreItemsPublished(throttledPrices);
     }
 
     @Test
@@ -285,11 +305,7 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
 
         // Given
-        throttledPrices.onCancel("isin101");
-        throttledPrices.onCancel("isin102");
-        throttledPrices.onCancel("isin103");
-        throttledPrices.onCancel("isin104");
-        throttledPrices.onCancel("isin105");
+        runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
         publisherSpy.clear();
         throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
         throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
@@ -310,11 +326,7 @@ class ThrottledPricesTest {
                 quote("isin", 3, 130, 131),
                 quote("isin", 4, 241, 242)
         );
-
-        // No more items
-        publisherSpy.clear();
-        throttledPrices.onAck();
-        publisherSpy.assertPublishedNothing();
+        assertNoMoreItemsPublished(throttledPrices);
     }
 
     @Test
@@ -339,11 +351,17 @@ class ThrottledPricesTest {
                 quote("otherisin", 1, 111, 112),
                 quote("isin", 1, 115, 116)
         );
+        assertNoMoreItemsPublished(throttledPrices);
+    }
 
-        // No more items
+    private void assertNoMoreItemsPublished(ThrottledPrices throttledPrices) {
         publisherSpy.clear();
         throttledPrices.onAck();
         publisherSpy.assertPublishedNothing();
+    }
+
+    private void runTimes(int times, IntConsumer runnable) {
+        IntStream.range(0, times).forEach(runnable);
     }
 
     private void runTimes(int times, Runnable runnable) {

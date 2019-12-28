@@ -10,4 +10,6 @@ public interface PriceContribution {
     String isin();
 
     int tier();
+
+    PriceContributionType type();
 }

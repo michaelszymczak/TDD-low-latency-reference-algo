@@ -4,6 +4,9 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPubli
 
 import java.util.LinkedList;
 
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Empty.EMPTY_INSTANCE;
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.EMPTY;
+
 public class ThrottledPrices {
 
     private final ThrottledPricesPublisher publisher;
@@ -42,12 +45,21 @@ public class ThrottledPrices {
     }
 
     private void coalesce(Cancel cancel) {
-        for (PriceContribution awaitingContribution : awaitingContributions) {
-            if (awaitingContribution.matches(cancel)) {
-                return;
+        boolean replaced = false;
+        for (int i = 0; i < awaitingContributions.size(); i++) {
+            if (awaitingContributions.get(i).matches(cancel)) {
+                if (replaced) {
+                    awaitingContributions.set(i, EMPTY_INSTANCE);
+                } else {
+                    awaitingContributions.set(i, cancel);
+                    replaced = true;
+                }
             }
         }
-        awaitingContributions.offer(cancel);
+        awaitingContributions.removeIf(priceContribution -> priceContribution.type() == EMPTY);
+        if (!replaced) {
+            awaitingContributions.offer(cancel);
+        }
     }
 
     public void onAck() {

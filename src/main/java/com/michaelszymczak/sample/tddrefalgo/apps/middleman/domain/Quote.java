@@ -2,6 +2,8 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
 
+import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.*;
+
 public class Quote implements PriceContribution {
     private final String isin;
     private final int tier;
@@ -23,7 +25,7 @@ public class Quote implements PriceContribution {
 
     @Override
     public boolean matches(PriceContribution other) {
-        return isin().equals(other.isin()) && tier() == other.tier();
+        return other.type() != EMPTY && isin().equals(other.isin()) && (other.type() == CANCEL || tier() == other.tier());
     }
 
     @Override
@@ -34,6 +36,11 @@ public class Quote implements PriceContribution {
     @Override
     public int tier() {
         return tier;
+    }
+
+    @Override
+    public PriceContributionType type() {
+        return QUOTE;
     }
 
     private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
