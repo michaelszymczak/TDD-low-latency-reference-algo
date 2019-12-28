@@ -22,14 +22,17 @@ public class ThrottledPrices {
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
         validateQuote(isin, tier, bidPrice, askPrice);
-        if (windowFull()) return;
+        // TODO: enqueue even if window limit reached
         awaitingContributions.offer(new Quote(isin, tier, bidPrice, askPrice));
+        if (windowFull()) return;
+
         awaitingContributions.remove().publishBy(publisher);
         inFlightMessages++;
     }
 
     public void onCancel(CharSequence isin) {
         validate(isin);
+        // TODO: enqueue even if window limit reached
         if (windowFull()) return;
         awaitingContributions.offer(new Cancel(isin));
         awaitingContributions.remove().publishBy(publisher);
@@ -38,6 +41,11 @@ public class ThrottledPrices {
 
     public void onAck() {
         inFlightMessages = 0;
+        if (awaitingContributions.isEmpty()) {
+            return;
+        }
+        awaitingContributions.remove().publishBy(publisher);
+        inFlightMessages++;
     }
 
     private boolean windowFull() {

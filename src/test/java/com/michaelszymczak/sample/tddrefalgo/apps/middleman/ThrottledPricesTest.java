@@ -1,7 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
-import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
 import org.junit.jupiter.api.Test;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy.*;
@@ -152,6 +152,26 @@ class ThrottledPricesTest {
                 cancel("isin2"),
                 quote("isin3", 3, 300L, 400L),
                 cancel("isin4")
+        );
+    }
+
+    @Test
+    void shouldPublishPreviouslyEnqueuedQuoteWhenAckReceived() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onQuoteUpdate("isin1", 3, 10055L, 10066L);
+        throttledPrices.onQuoteUpdate("isin2", 4, 20055L, 20066L);
+        publisherSpy.assertPublished(quote("isin1", 3, 10055L, 10066L));
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("isin1", 3, 10055L, 10066),
+                quote("isin2", 4, 20055L, 20066)
         );
     }
 }
