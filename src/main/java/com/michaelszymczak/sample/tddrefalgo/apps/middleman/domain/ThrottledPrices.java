@@ -24,7 +24,6 @@ public class ThrottledPrices {
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
         onUpdate(new Quote(isin, tier, bidPrice, askPrice));
-
     }
 
     public void onCancel(CharSequence isin) {
