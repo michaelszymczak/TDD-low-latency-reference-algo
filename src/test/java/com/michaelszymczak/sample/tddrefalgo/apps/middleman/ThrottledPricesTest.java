@@ -280,8 +280,46 @@ class ThrottledPricesTest {
     }
 
     @Test
+    void shouldReplaceQuotesWithTheSameIsinAndTier() {
+        int windowSize = 5;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin101");
+        throttledPrices.onCancel("isin102");
+        throttledPrices.onCancel("isin103");
+        throttledPrices.onCancel("isin104");
+        throttledPrices.onCancel("isin105");
+        publisherSpy.clear();
+        throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
+        throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
+        throttledPrices.onQuoteUpdate("isin", 5, 521, 522);
+        throttledPrices.onQuoteUpdate("isin", 3, 130, 131);
+        throttledPrices.onQuoteUpdate("isin", 1, 113, 114);
+        throttledPrices.onQuoteUpdate("isin", 5, 525, 526);
+        throttledPrices.onQuoteUpdate("isin", 4, 241, 242);
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                quote("otherisin", 1, 111, 112),
+                quote("isin", 1, 113, 114),
+                quote("isin", 5, 525, 526),
+                quote("isin", 3, 130, 131),
+                quote("isin", 4, 241, 242)
+        );
+
+        // No more items
+        publisherSpy.clear();
+        throttledPrices.onAck();
+        publisherSpy.assertPublishedNothing();
+    }
+
+    @Test
     @Disabled
-    void shouldSquashQuotesWithTheSameIsinAndTier() {
+    void shouldReplaceSameQuoteWithTheSameIsinAndTierMultipleTimes() {
 
     }
 

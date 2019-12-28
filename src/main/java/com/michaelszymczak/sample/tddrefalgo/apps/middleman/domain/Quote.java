@@ -22,8 +22,18 @@ public class Quote implements PriceContribution {
     }
 
     @Override
+    public boolean matches(PriceContribution other) {
+        return isin().equals(other.isin()) && tier() == other.tier();
+    }
+
+    @Override
     public String isin() {
         return isin;
+    }
+
+    @Override
+    public int tier() {
+        return tier;
     }
 
     private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {

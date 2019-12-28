@@ -21,7 +21,7 @@ public class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        awaitingContributions.offer(new Quote(isin, tier, bidPrice, askPrice));
+        coalesce(new Quote(isin, tier, bidPrice, askPrice));
         tryPublishEnqueued();
     }
 
@@ -31,9 +31,19 @@ public class ThrottledPrices {
         tryPublishEnqueued();
     }
 
+    private void coalesce(Quote quote) {
+        for (int i = 0; i < awaitingContributions.size(); i++) {
+            if (awaitingContributions.get(i).matches(quote)) {
+                awaitingContributions.set(i, quote);
+                return;
+            }
+        }
+        awaitingContributions.offer(quote);
+    }
+
     private void coalesce(Cancel cancel) {
         for (PriceContribution awaitingContribution : awaitingContributions) {
-            if (awaitingContribution.isin().equals(cancel.isin())) {
+            if (awaitingContribution.matches(cancel)) {
                 return;
             }
         }

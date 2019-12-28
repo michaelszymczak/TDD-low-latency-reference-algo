@@ -17,8 +17,18 @@ public class Cancel implements PriceContribution {
     }
 
     @Override
+    public boolean matches(PriceContribution other) {
+        return isin().equals(other.isin()) && tier() == other.tier();
+    }
+
+    @Override
     public String isin() {
         return isin;
+    }
+
+    @Override
+    public int tier() {
+        return 0;
     }
 
     private static void validate(CharSequence isin) {
