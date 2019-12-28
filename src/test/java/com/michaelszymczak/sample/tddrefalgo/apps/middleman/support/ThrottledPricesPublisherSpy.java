@@ -41,6 +41,10 @@ public class ThrottledPricesPublisherSpy implements ThrottledPricesPublisher {
         assertThat(published).usingRecursiveFieldByFieldElementComparator().isEqualTo(Arrays.asList(expected));
     }
 
+    public void clear() {
+        published.clear();
+    }
+
     @Override
     public void publishHeartbeat(long nanoTime) {
         published.add(heartbeat(nanoTime));

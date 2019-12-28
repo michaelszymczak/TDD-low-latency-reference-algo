@@ -38,11 +38,10 @@ public class ThrottledPrices {
 
     public void onAck() {
         inFlightMessages = 0;
-        if (awaitingContributions.isEmpty()) {
-            return;
+        while (!windowFull() && !awaitingContributions.isEmpty()) {
+            awaitingContributions.remove().publishBy(publisher);
+            inFlightMessages++;
         }
-        awaitingContributions.remove().publishBy(publisher);
-        inFlightMessages++;
     }
 
     private boolean windowFull() {

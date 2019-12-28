@@ -194,4 +194,34 @@ class ThrottledPricesTest {
                 cancel("isin2")
         );
     }
+
+    @Test
+    void shouldPublishPreviouslyEnqueuedQuotesAndCancelsThatFitsTheWindowWhenAckReceived() {
+        int windowSize = 4;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin1");
+        throttledPrices.onQuoteUpdate("isin2", 2, 20055L, 20066L);
+        throttledPrices.onQuoteUpdate("isin3", 3, 30055L, 30066L);
+        throttledPrices.onCancel("isin4");
+        throttledPrices.onCancel("isin5");
+        throttledPrices.onQuoteUpdate("isin6", 6, 60055L, 60066L);
+        throttledPrices.onQuoteUpdate("isin7", 7, 70055L, 70066L);
+        throttledPrices.onCancel("isin8");
+        throttledPrices.onQuoteUpdate("isin9", 9, 90055L, 90066L);
+        throttledPrices.onCancel("isin10");
+        publisherSpy.clear();
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                cancel("isin5"),
+                quote("isin6", 6, 60055L, 60066),
+                quote("isin7", 7, 70055L, 70066),
+                cancel("isin8")
+        );
+    }
 }
