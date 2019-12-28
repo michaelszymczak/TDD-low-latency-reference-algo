@@ -21,43 +21,29 @@ public class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        validateQuote(isin, tier, bidPrice, askPrice);
         awaitingContributions.offer(new Quote(isin, tier, bidPrice, askPrice));
-        if (windowFull()) return;
-        awaitingContributions.remove().publishBy(publisher);
-        inFlightMessages++;
+        tryPublishEnqueued();
     }
 
     public void onCancel(CharSequence isin) {
-        validate(isin);
         awaitingContributions.offer(new Cancel(isin));
-        if (windowFull()) return;
-        awaitingContributions.remove().publishBy(publisher);
-        inFlightMessages++;
+        tryPublishEnqueued();
     }
 
     public void onAck() {
         inFlightMessages = 0;
-        while (!windowFull() && !awaitingContributions.isEmpty()) {
+        tryPublishEnqueued();
+    }
+
+    private void tryPublishEnqueued() {
+        while (!isWindowFull() && !awaitingContributions.isEmpty()) {
             awaitingContributions.remove().publishBy(publisher);
             inFlightMessages++;
         }
     }
 
-    private boolean windowFull() {
+    private boolean isWindowFull() {
         return inFlightMessages >= windowSize;
     }
 
-    private void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        validate(isin);
-        if (tier == 0 || (askPrice == 0 && bidPrice == 0)) {
-            throw new IllegalArgumentException("Invalid quote update");
-        }
-    }
-
-    private void validate(CharSequence isin) {
-        if (isin.length() == 0) {
-            throw new IllegalArgumentException("Invalid quote update");
-        }
-    }
 }

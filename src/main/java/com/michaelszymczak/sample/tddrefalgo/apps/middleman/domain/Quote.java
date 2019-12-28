@@ -8,7 +8,8 @@ public class Quote implements PriceContribution {
     private final long bidPrice;
     private final long askPrice;
 
-    public Quote(CharSequence isin, int tier, long bidPrice, long askPrice) {
+    Quote(CharSequence isin, int tier, long bidPrice, long askPrice) {
+        validateQuote(isin, tier, bidPrice, askPrice);
         this.isin = isin.toString();
         this.tier = tier;
         this.bidPrice = bidPrice;
@@ -35,5 +36,11 @@ public class Quote implements PriceContribution {
 
     public long askPrice() {
         return askPrice;
+    }
+
+    private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
+        if (isin.length() == 0 || tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+            throw new IllegalArgumentException("Invalid quote update");
+        }
     }
 }

@@ -6,7 +6,8 @@ public class Cancel implements PriceContribution {
 
     private final String isin;
 
-    public Cancel(CharSequence isin) {
+    Cancel(CharSequence isin) {
+        validate(isin);
         this.isin = isin.toString();
     }
 
@@ -18,5 +19,11 @@ public class Cancel implements PriceContribution {
     @Override
     public String isin() {
         return isin;
+    }
+
+    private static void validate(CharSequence isin) {
+        if (isin.length() == 0) {
+            throw new IllegalArgumentException("Invalid isin");
+        }
     }
 }

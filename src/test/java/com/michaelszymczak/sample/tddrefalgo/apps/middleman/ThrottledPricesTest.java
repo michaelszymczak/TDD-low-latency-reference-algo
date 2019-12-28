@@ -4,6 +4,8 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPric
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy.*;
 
 class ThrottledPricesTest {
@@ -223,5 +225,34 @@ class ThrottledPricesTest {
                 quote("isin7", 7, 70055L, 70066),
                 cancel("isin8")
         );
+    }
+
+    @Test
+    void shouldEventuallyPublishAll() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin4");
+        throttledPrices.onCancel("isin5");
+        throttledPrices.onQuoteUpdate("isin6", 6, 60055L, 60066L);
+        throttledPrices.onQuoteUpdate("isin7", 7, 70055L, 70066L);
+        throttledPrices.onCancel("isin8");
+
+        // When
+        runTimes(10, throttledPrices::onAck);
+
+        // Then
+        publisherSpy.assertPublished(
+                cancel("isin4"),
+                cancel("isin5"),
+                quote("isin6", 6, 60055L, 60066),
+                quote("isin7", 7, 70055L, 70066),
+                cancel("isin8")
+        );
+    }
+
+    private void runTimes(int times, Runnable runnable) {
+        IntStream.range(0, times).forEach(i -> runnable.run());
     }
 }
