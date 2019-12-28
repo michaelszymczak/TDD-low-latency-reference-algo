@@ -356,28 +356,35 @@ class ThrottledPricesTest {
 
     @Test
     void shouldAddQuoteWithTheSameIsinAfterTheCancelAndKeepItAsItCanBeUsedToCancelOtherTiers() {
-        int windowSize = 5;
+        int windowSize = 2;
         ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
 
         // Given
         runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
         publisherSpy.clear();
+        throttledPrices.onQuoteUpdate("isin2", 2, 211, 212);
         throttledPrices.onCancel("isin1");
         throttledPrices.onQuoteUpdate("isin1", 1, 111, 112);
         throttledPrices.onQuoteUpdate("isin1", 2, 121, 122);
+        throttledPrices.onCancel("isin1");
+        throttledPrices.onQuoteUpdate("isin1", 3, 130, 131);
+        throttledPrices.onQuoteUpdate("isin1", 4, 130, 131);
         throttledPrices.onCancel("isin1");
         throttledPrices.onQuoteUpdate("isin1", 3, 131, 132);
         throttledPrices.onQuoteUpdate("isin1", 4, 141, 142);
 
         // When
         throttledPrices.onAck();
+        throttledPrices.onAck();
 
         // Then
         publisherSpy.assertPublished(
+                quote("isin2", 2, 211, 212),
                 cancel("isin1"),
                 quote("isin1", 3, 131, 132),
                 quote("isin1", 4, 141, 142)
         );
+        assertNoMoreItemsPublished(throttledPrices);
     }
 
     private void assertNoMoreItemsPublished(ThrottledPrices throttledPrices) {
