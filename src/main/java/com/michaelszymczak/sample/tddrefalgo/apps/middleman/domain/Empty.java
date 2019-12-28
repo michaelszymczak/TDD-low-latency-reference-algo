@@ -14,7 +14,7 @@ public class Empty implements PriceContribution {
     }
 
     @Override
-    public boolean matches(PriceContribution other) {
+    public boolean canBeReplacedWith(PriceContribution other) {
         return false;
     }
 

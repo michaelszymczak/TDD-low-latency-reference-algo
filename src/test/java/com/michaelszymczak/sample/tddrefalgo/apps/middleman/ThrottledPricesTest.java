@@ -2,7 +2,6 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.IntConsumer;
@@ -356,7 +355,6 @@ class ThrottledPricesTest {
     }
 
     @Test
-    @Disabled
     void shouldAddQuoteWithTheSameIsinAfterTheCancelAndKeepItAsItCanBeUsedToCancelOtherTiers() {
         int windowSize = 5;
         ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
@@ -375,7 +373,11 @@ class ThrottledPricesTest {
         throttledPrices.onAck();
 
         // Then
-        throw new UnsupportedOperationException();
+        publisherSpy.assertPublished(
+                cancel("isin1"),
+                quote("isin1", 3, 131, 132),
+                quote("isin1", 4, 141, 142)
+        );
     }
 
     private void assertNoMoreItemsPublished(ThrottledPrices throttledPrices) {

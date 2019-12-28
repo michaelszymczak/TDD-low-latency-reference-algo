@@ -24,42 +24,31 @@ public class ThrottledPrices {
     }
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        coalesce(new Quote(isin, tier, bidPrice, askPrice));
-        tryPublishEnqueued();
+        onUpdate(new Quote(isin, tier, bidPrice, askPrice));
+
     }
 
     public void onCancel(CharSequence isin) {
-        Cancel cancel = new Cancel(isin);
-        coalesce(cancel);
-        tryPublishEnqueued();
+        onUpdate(new Cancel(isin));
     }
 
-    private void coalesce(Quote quote) {
-        for (int i = 0; i < awaitingContributions.size(); i++) {
-            if (awaitingContributions.get(i).matches(quote)) {
-                awaitingContributions.set(i, quote);
-                return;
-            }
-        }
-        awaitingContributions.offer(quote);
-    }
-
-    private void coalesce(Cancel cancel) {
+    private void onUpdate(PriceContribution newPriceContribution) {
         boolean replaced = false;
         for (int i = 0; i < awaitingContributions.size(); i++) {
-            if (awaitingContributions.get(i).matches(cancel)) {
+            if (awaitingContributions.get(i).canBeReplacedWith(newPriceContribution)) {
                 if (replaced) {
                     awaitingContributions.set(i, EMPTY_INSTANCE);
                 } else {
-                    awaitingContributions.set(i, cancel);
+                    awaitingContributions.set(i, newPriceContribution);
                     replaced = true;
                 }
             }
         }
         awaitingContributions.removeIf(priceContribution -> priceContribution.type() == EMPTY);
         if (!replaced) {
-            awaitingContributions.offer(cancel);
+            awaitingContributions.offer(newPriceContribution);
         }
+        tryPublishEnqueued();
     }
 
     public void onAck() {

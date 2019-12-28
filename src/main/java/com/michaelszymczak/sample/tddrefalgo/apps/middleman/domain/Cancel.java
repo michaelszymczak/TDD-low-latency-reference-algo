@@ -3,7 +3,6 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.CANCEL;
-import static com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.PriceContributionType.EMPTY;
 
 public class Cancel implements PriceContribution {
 
@@ -26,8 +25,8 @@ public class Cancel implements PriceContribution {
     }
 
     @Override
-    public boolean matches(PriceContribution other) {
-        return other.type() != EMPTY && isin().equals(other.isin());
+    public boolean canBeReplacedWith(PriceContribution other) {
+        return other.type() == CANCEL && isin().equals(other.isin());
     }
 
     @Override

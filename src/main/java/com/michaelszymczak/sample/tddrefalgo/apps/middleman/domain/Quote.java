@@ -24,7 +24,7 @@ public class Quote implements PriceContribution {
     }
 
     @Override
-    public boolean matches(PriceContribution other) {
+    public boolean canBeReplacedWith(PriceContribution other) {
         return other.type() != EMPTY && isin().equals(other.isin()) && (other.type() == CANCEL || tier() == other.tier());
     }
 
