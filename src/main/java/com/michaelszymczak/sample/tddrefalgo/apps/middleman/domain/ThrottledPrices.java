@@ -2,10 +2,13 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.ThrottledPricesPublisher;
 
+import java.util.LinkedList;
+
 public class ThrottledPrices {
 
     private final ThrottledPricesPublisher publisher;
     private final int windowSize;
+    private final LinkedList<PriceContribution> awaitingContributions = new LinkedList<>();
     private int inFlightMessages = 0;
 
     public ThrottledPrices(ThrottledPricesPublisher publisher, int windowSize) {
@@ -19,17 +22,17 @@ public class ThrottledPrices {
 
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
         validateQuote(isin, tier, bidPrice, askPrice);
-        Quote quote = new Quote(isin, tier, bidPrice, askPrice);
         if (windowFull()) return;
-        quote.publishBy(publisher);
+        awaitingContributions.offer(new Quote(isin, tier, bidPrice, askPrice));
+        awaitingContributions.remove().publishBy(publisher);
         inFlightMessages++;
     }
 
     public void onCancel(CharSequence isin) {
         validate(isin);
-        Cancel cancel = new Cancel(isin);
         if (windowFull()) return;
-        cancel.publishBy(publisher);
+        awaitingContributions.offer(new Cancel(isin));
+        awaitingContributions.remove().publishBy(publisher);
         inFlightMessages++;
     }
 
