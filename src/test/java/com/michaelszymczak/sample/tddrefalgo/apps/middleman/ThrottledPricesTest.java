@@ -174,4 +174,24 @@ class ThrottledPricesTest {
                 quote("isin2", 4, 20055L, 20066)
         );
     }
+
+    @Test
+    void shouldPublishPreviouslyEnqueuedCancelWhenAckReceived() {
+        int windowSize = 1;
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, windowSize);
+
+        // Given
+        throttledPrices.onCancel("isin1");
+        throttledPrices.onCancel("isin2");
+        publisherSpy.assertPublished(cancel("isin1"));
+
+        // When
+        throttledPrices.onAck();
+
+        // Then
+        publisherSpy.assertPublished(
+                cancel("isin1"),
+                cancel("isin2")
+        );
+    }
 }
