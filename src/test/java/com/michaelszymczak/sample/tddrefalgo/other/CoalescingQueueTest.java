@@ -1,30 +1,40 @@
 package com.michaelszymczak.sample.tddrefalgo.other;
 
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CoalescingQueueTest {
 
-    private final CoalescingQueue<String> queue = new ReferenceCoalescingQueue<>();
 
-    @Test
-    void shouldBeEmptyUponConstruction() {
+    static <T> List<CoalescingQueue<T>> implementationProvider() {
+        return singletonList(new ReferenceCoalescingQueue<>());
+    }
+
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldBeEmptyUponConstruction(CoalescingQueue<String> queue) {
         assertThat(queue.size()).isEqualTo(0);
         assertThat(queue.poll()).isNull();
     }
 
-    @Test
-    void shouldReturnOnlyElement() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldReturnOnlyElement(CoalescingQueue<String> queue) {
         queue.add("key", "element");
 
         assertThat(queue.size()).isEqualTo(1);
         assertThat(queue.poll()).isEqualTo("element");
     }
 
-    @Test
-    void shouldRemoveElementWhenPolled() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldRemoveElementWhenPolled(CoalescingQueue<String> queue) {
         queue.add("key", "element");
         queue.poll();
 
@@ -32,32 +42,36 @@ class CoalescingQueueTest {
         assertThat(queue.poll()).isNull();
     }
 
-    @Test
-    void shouldCountElementsIndividuallyIfKeysAreDifferent() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldCountElementsIndividuallyIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
 
         assertThat(queue.size()).isEqualTo(2);
     }
 
-    @Test
-    void shouldPlaceNewElementAfterExistingOneIfKeysAreDifferent() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldPlaceNewElementAfterExistingOneIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
 
         assertThat(queue.poll()).isEqualTo("element1");
     }
 
-    @Test
-    void shouldReplaceElementWithTheSameKey() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldReplaceElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key1", "element2");
 
         assertThat(queue.poll()).isEqualTo("element2");
     }
 
-    @Test
-    void shouldPollElementsInFIFOOrderIfKeysAreDifferent() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldPollElementsInFIFOOrderIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
         queue.add("key3", "element3");
@@ -67,8 +81,9 @@ class CoalescingQueueTest {
         assertThat(queue.poll()).isEqualTo("element3");
     }
 
-    @Test
-    void shouldKeepThePositionOfTheOriginalElementWithTheSameKey() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldKeepThePositionOfTheOriginalElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
         queue.add("key3", "element3");
@@ -79,21 +94,22 @@ class CoalescingQueueTest {
         assertThat(queue.poll()).isEqualTo("element3");
     }
 
-    @Test
-    void shouldSupportArbitraryType() {
-        final CoalescingQueue<Integer> numberQueue = new ReferenceCoalescingQueue<>();
-        numberQueue.add("key1", 1);
-        numberQueue.add("key2", 2);
-        numberQueue.add("key3", 3);
-        numberQueue.add("key2", 20);
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldSupportArbitraryType(CoalescingQueue<Integer> queue) {
+        queue.add("key1", 1);
+        queue.add("key2", 2);
+        queue.add("key3", 3);
+        queue.add("key2", 20);
 
-        assertThat(numberQueue.poll()).isEqualTo(1);
-        assertThat(numberQueue.poll()).isEqualTo(20);
-        assertThat(numberQueue.poll()).isEqualTo(3);
+        assertThat(queue.poll()).isEqualTo(1);
+        assertThat(queue.poll()).isEqualTo(20);
+        assertThat(queue.poll()).isEqualTo(3);
     }
 
-    @Test
-    void shouldWorkEvenIfKeysMutatedAfterwards() {
+    @ParameterizedTest
+    @MethodSource("implementationProvider")
+    void shouldWorkEvenIfKeysMutatedAfterwards(CoalescingQueue<String> queue) {
         StringBuilder key = new StringBuilder();
         key.append("key1");
         queue.add(key, "element1");
