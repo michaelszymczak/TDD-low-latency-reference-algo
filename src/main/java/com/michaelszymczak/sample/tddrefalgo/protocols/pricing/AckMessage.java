@@ -9,4 +9,8 @@ public class AckMessage implements PricingMessage {
         return Type.ACK;
     }
 
+    @Override
+    public String toString() {
+        return "ACK";
+    }
 }
