@@ -23,7 +23,9 @@ public class ReferenceCoalescingQueue<T> implements CoalescingQueue<T> {
 
     @Override
     public void add(CharSequence key, T element) {
-        keys.addLast(key.toString());
+        if (!elementByKey.containsKey(key.toString())) {
+            keys.addLast(key.toString());
+        }
         elementByKey.put(key.toString(), element);
     }
 

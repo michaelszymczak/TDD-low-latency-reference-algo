@@ -68,10 +68,33 @@ class CoalescingQueueTest {
     @ParameterizedTest
     @MethodSource("stableImplementationsProvider")
     void shouldReplaceElementWithTheSameKey(CoalescingQueue<String> queue) {
-        queue.add("key1", "element1");
-        queue.add("key1", "element2");
+        queue.add("key1", "element1a");
+        queue.add("key1", "element1b");
+
+        assertThat(queue.size()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stableImplementationsProvider")
+    void shouldReturnReplacedElement(CoalescingQueue<String> queue) {
+        queue.add("key1", "element1a");
+        queue.add("key1", "element1b");
+
+        assertThat(queue.poll()).isEqualTo("element1b");
+        assertThat(queue.size()).isEqualTo(0);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stableImplementationsProvider")
+    void shouldRemovePreviousElementWithTheSameKey(CoalescingQueue<String> queue) {
+        queue.add("key1", "element1a");
+        queue.add("key1", "element1b");
+        queue.add("key2", "element2");
+        queue.poll();
 
         assertThat(queue.poll()).isEqualTo("element2");
+        assertThat(queue.size()).isEqualTo(0);
+
     }
 
     @ParameterizedTest
