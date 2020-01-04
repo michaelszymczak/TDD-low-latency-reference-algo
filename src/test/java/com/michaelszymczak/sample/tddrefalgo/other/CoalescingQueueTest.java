@@ -16,7 +16,7 @@ class CoalescingQueueTest {
     }
 
     static <T> Stream<CoalescingQueue<T>> unstableImplementationsProvider() {
-        return Stream.of(new ReferenceCoalescingQueue<>());
+        return Stream.of(new LowLatencyCoalescingQueue<>());
     }
 
     static <T> Stream<CoalescingQueue<T>> allImplementationsProvider() {
