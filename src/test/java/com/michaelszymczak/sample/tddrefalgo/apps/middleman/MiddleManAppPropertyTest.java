@@ -84,14 +84,14 @@ class MiddleManAppPropertyTest {
         });
     }
 
-    private MarketMakerApp generateMarketUpdates(int publisherCapacity, int rounds, final int samples, final int askPerMilProbability) {
+    private static MarketMakerApp generateMarketUpdates(int publisherCapacity, int rounds, final int samples, final int ackPerMilProbability) {
         final MarketMakerApp app = new MarketMakerApp(System::nanoTime, publisherCapacity);
         final OutputSpy<PricingMessagesCountingSpy> marketMakerOutputSpy = new OutputSpy<>(new PricingMessagesCountingSpy());
         final int totalExpectedMessages = samples * rounds;
 
         // When
         range(1, rounds + 1).forEach(round -> app.generateRandom(samples, new Probabilities(
-                new Probabilities.AckProbability(askPerMilProbability),
+                new Probabilities.AckProbability(ackPerMilProbability),
                 quoteProbability()
                         .withPercentageProbability(990)
                         .withDistinctInstruments(100)

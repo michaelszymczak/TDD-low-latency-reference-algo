@@ -1,5 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.other;
 
+import org.agrona.collections.MutableLong;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -7,10 +9,22 @@ import java.util.Map;
 
 public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
 
-    private final Deque<Key> keys = new ArrayDeque<>();
-    private final Map<Key, WrappedElement<T>> elementByKey = new HashMap<>();
-    private final Key keyPlaceholder = new Key("");
-    private final Deque<WrappedElement<T>> wrappedElementsPool = new ArrayDeque<>();
+    private static final ThreadLocal<MutableLong> ALLOCATIONS = ThreadLocal.withInitial(MutableLong::new);
+
+    private final Deque<Key> keys = recordAllocation(new ArrayDeque<>());
+    private final Map<Key, WrappedElement<T>> elementByKey = recordAllocation(new HashMap<>());
+    private final Key keyPlaceholder = recordAllocation(new Key(""));
+    private final Deque<WrappedElement<T>> wrappedElementsPool = recordAllocation(new ArrayDeque<>());
+
+    public long allocations() {
+        return ALLOCATIONS.get().get();
+    }
+
+    private static <A> A recordAllocation(A newlyCreatedObject) {
+        MutableLong count = ALLOCATIONS.get();
+        count.set(count.get() + 1);
+        return newlyCreatedObject;
+    }
 
     @Override
     public int size() {
@@ -47,7 +61,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private WrappedElement<T> newWrappedElement(CharSequence key, T element) {
         WrappedElement<T> pooled = wrappedElementsPool.pollFirst();
         if (pooled == null) {
-            return new WrappedElement<>(key, element);
+            return recordAllocation(new WrappedElement<>(key, element));
         } else {
             return pooled.set(key, element);
         }
@@ -70,7 +84,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         T element;
 
         WrappedElement(CharSequence key, T element) {
-            this.key = new Key(key);
+            this.key = recordAllocation(new Key(key));
             this.element = element;
         }
 
@@ -92,7 +106,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     }
 
     static class Key {
-        final StringBuilder k = new StringBuilder();
+        final StringBuilder k = recordAllocation(new StringBuilder());
 
         Key(CharSequence k) {
             this.k.setLength(0);
