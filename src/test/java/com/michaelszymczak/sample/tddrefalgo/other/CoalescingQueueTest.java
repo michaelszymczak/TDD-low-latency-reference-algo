@@ -4,21 +4,23 @@ package com.michaelszymczak.sample.tddrefalgo.other;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CoalescingQueueTest {
 
 
-    static <T> List<CoalescingQueue<T>> stableImplementationsProvider() {
-        return singletonList(new ReferenceCoalescingQueue<>());
+    static <T> Stream<CoalescingQueue<T>> stableImplementationsProvider() {
+        return Stream.of(new ReferenceCoalescingQueue<>());
     }
 
-    static <T> List<CoalescingQueue<T>> allImplementationsProvider() {
-        return Arrays.asList(new ReferenceCoalescingQueue<>(), new LowLatencyCoalescingQueue<>());
+    static <T> Stream<CoalescingQueue<T>> unstableImplementationsProvider() {
+        return Stream.of(new ReferenceCoalescingQueue<>());
+    }
+
+    static <T> Stream<CoalescingQueue<T>> allImplementationsProvider() {
+        return Stream.concat(stableImplementationsProvider(), unstableImplementationsProvider());
     }
 
     @ParameterizedTest
