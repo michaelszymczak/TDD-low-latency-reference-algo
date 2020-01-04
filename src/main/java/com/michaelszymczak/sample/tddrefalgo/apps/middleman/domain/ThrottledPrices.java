@@ -34,21 +34,18 @@ public class ThrottledPrices {
         boolean replaced = false;
         for (int i = 0; i < awaitingContributions.size(); i++) {
             PriceContribution existing = awaitingContributions.get(i);
-            if (!existing.sameIsinAsIn(update) || existing.type() == EMPTY) {
-                continue;
-            }
-            if (existing.type() == CANCEL && update.type() != CANCEL) {
-                continue;
-            }
-            if (existing.type() == QUOTE && update.type() != CANCEL && update.tier() != existing.tier()) {
+            if (!existing.sameIsinAsIn(update) ||
+                    existing.type() == EMPTY ||
+                    (existing.type() == CANCEL && update.type() != CANCEL) ||
+                    (existing.type() == QUOTE && update.type() != CANCEL && update.tier() != existing.tier())) {
                 continue;
             }
 
-            if (!replaced) {
+            if (replaced) {
+                awaitingContributions.set(i, new Empty(update));
+            } else {
                 awaitingContributions.set(i, update);
                 replaced = true;
-            } else {
-                awaitingContributions.set(i, new Empty(update));
             }
         }
 
