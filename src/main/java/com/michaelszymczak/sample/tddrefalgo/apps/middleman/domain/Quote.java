@@ -45,7 +45,7 @@ class Quote implements PriceContribution {
     }
 
     private static void validateQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        if (isin.length() == 0 || tier == 0 || (askPrice == 0 && bidPrice == 0)) {
+        if (isin.length() == 0 || tier < 1 || tier > 5 || (askPrice == 0 && bidPrice == 0)) {
             throw new IllegalArgumentException("Invalid quote update");
         }
     }

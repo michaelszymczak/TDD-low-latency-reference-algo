@@ -3,6 +3,8 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,6 +43,19 @@ class ThrottledPricesValidationTest {
         // When
         assertThrows(IllegalArgumentException.class,
                 () -> throttledPrices.onQuoteUpdate("", 1, 101L, 102L));
+
+        // Then
+        publisherSpy.assertPublishedNothing();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1", "6"})
+    void shouldNotAllowQuotesWithTierOutOfRange(final int tier) {
+        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+
+        // When
+        assertThrows(IllegalArgumentException.class,
+                () -> throttledPrices.onQuoteUpdate("isin", tier, 101L, 102L));
 
         // Then
         publisherSpy.assertPublishedNothing();

@@ -205,14 +205,14 @@ class ThrottledPricesTest {
 
         // Given
         throttledPrices.onCancel("isin1");
-        throttledPrices.onQuoteUpdate("isin2", 2, 20055L, 20066L);
-        throttledPrices.onQuoteUpdate("isin3", 3, 30055L, 30066L);
+        throttledPrices.onQuoteUpdate("isin2", 1, 20055L, 20066L);
+        throttledPrices.onQuoteUpdate("isin3", 2, 30055L, 30066L);
         throttledPrices.onCancel("isin4");
         throttledPrices.onCancel("isin5");
-        throttledPrices.onQuoteUpdate("isin6", 6, 60055L, 60066L);
-        throttledPrices.onQuoteUpdate("isin7", 7, 70055L, 70066L);
+        throttledPrices.onQuoteUpdate("isin6", 3, 60055L, 60066L);
+        throttledPrices.onQuoteUpdate("isin7", 4, 70055L, 70066L);
         throttledPrices.onCancel("isin8");
-        throttledPrices.onQuoteUpdate("isin9", 9, 90055L, 90066L);
+        throttledPrices.onQuoteUpdate("isin9", 5, 90055L, 90066L);
         throttledPrices.onCancel("isin10");
         publisherSpy.clear();
 
@@ -222,8 +222,8 @@ class ThrottledPricesTest {
         // Then
         publisherSpy.assertPublished(
                 cancel("isin5"),
-                quote("isin6", 6, 60055L, 60066),
-                quote("isin7", 7, 70055L, 70066),
+                quote("isin6", 3, 60055L, 60066),
+                quote("isin7", 4, 70055L, 70066),
                 cancel("isin8")
         );
     }
@@ -236,8 +236,8 @@ class ThrottledPricesTest {
         // When
         throttledPrices.onCancel("isin4");
         throttledPrices.onCancel("isin5");
-        throttledPrices.onQuoteUpdate("isin6", 6, 60055L, 60066L);
-        throttledPrices.onQuoteUpdate("isin7", 7, 70055L, 70066L);
+        throttledPrices.onQuoteUpdate("isin6", 4, 60055L, 60066L);
+        throttledPrices.onQuoteUpdate("isin7", 5, 70055L, 70066L);
         throttledPrices.onCancel("isin8");
         runTimes(10, throttledPrices::onAck);
 
@@ -245,8 +245,8 @@ class ThrottledPricesTest {
         publisherSpy.assertPublished(
                 cancel("isin4"),
                 cancel("isin5"),
-                quote("isin6", 6, 60055L, 60066),
-                quote("isin7", 7, 70055L, 70066),
+                quote("isin6", 4, 60055L, 60066),
+                quote("isin7", 5, 70055L, 70066),
                 cancel("isin8")
         );
     }
