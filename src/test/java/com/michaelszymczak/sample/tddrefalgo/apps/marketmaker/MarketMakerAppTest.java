@@ -1,19 +1,13 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableHeartbeatPricingMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuotePricingMessage;
+import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
 import static java.util.Collections.emptyList;
@@ -62,6 +56,27 @@ class MarketMakerAppTest {
                 new ImmutableQuotePricingMessage("isin3       ", 0, 1234L, 5678L),
                 AckMessage.ACK_MESSAGE
         ), outputSpy.getSpy().receivedMessages());
+    }
+
+    @Test
+    void shouldSendEventsReGeneratedFromCapturedEvents() {
+        outputSpy.onSingleReaderInput(app.generateRandom(
+                1000, new Probabilities(
+                        new Probabilities.AckProbability(100),
+                        quoteProbability()
+                                .withPercentageProbability(700)
+                                .withDistinctInstruments(10)
+                                .withCancellationProbability(100).build())
+        ).output());
+        final List<PricingMessage> expectedReceivedMessages = new ArrayList<>(outputSpy.getSpy().receivedMessages());
+        String reGeneratedInputs = outputSpy.getSpy().receivedMessagesPrettyPrint(", ");
+        outputSpy.getSpy().clear();
+
+        // When
+        outputSpy.onSingleReaderInput(app.events(", ", reGeneratedInputs).output());
+
+        // Then
+        assertThat(outputSpy.getSpy().receivedMessages()).isEqualTo(expectedReceivedMessages);
     }
 
     @Test

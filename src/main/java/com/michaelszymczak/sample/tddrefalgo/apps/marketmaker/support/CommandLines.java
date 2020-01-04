@@ -17,8 +17,8 @@ public class CommandLines implements Command {
         this.commands = commands;
     }
 
-    public static CommandLines parseAll(String message) {
-        return new CommandLines(stream(message.split("\n", -1))
+    public static CommandLines parseAll(final String commandDelimiter, String message) {
+        return new CommandLines(stream(message.split(commandDelimiter, -1))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(CommandLines::parseOne)

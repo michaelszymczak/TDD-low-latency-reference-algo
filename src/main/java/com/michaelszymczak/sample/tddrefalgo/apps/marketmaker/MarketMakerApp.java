@@ -67,7 +67,11 @@ public class MarketMakerApp implements AppIO {
     }
 
     public MarketMakerApp events(String messages) {
-        CommandLines.parseAll(messages).executeAgainst(marketMakingModule);
+        return events("\n", messages);
+    }
+
+    public MarketMakerApp events(final String commandDelimiter, String messages) {
+        CommandLines.parseAll(commandDelimiter, messages).executeAgainst(marketMakingModule);
         return this;
     }
 
