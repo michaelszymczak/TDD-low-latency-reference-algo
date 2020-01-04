@@ -26,4 +26,11 @@ public class ReferenceCoalescingQueue<T> implements CoalescingQueue<T> {
         keys.addLast(key.toString());
         elementByKey.put(key.toString(), element);
     }
+
+    @Override
+    public String toString() {
+        return "ReferenceCoalescingQueue{" +
+                "size=" + size() +
+                '}';
+    }
 }

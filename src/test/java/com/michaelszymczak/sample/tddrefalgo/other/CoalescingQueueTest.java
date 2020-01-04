@@ -4,6 +4,7 @@ package com.michaelszymczak.sample.tddrefalgo.other;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -12,19 +13,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CoalescingQueueTest {
 
 
-    static <T> List<CoalescingQueue<T>> implementationProvider() {
+    static <T> List<CoalescingQueue<T>> stableImplementationsProvider() {
         return singletonList(new ReferenceCoalescingQueue<>());
     }
 
+    static <T> List<CoalescingQueue<T>> allImplementationsProvider() {
+        return Arrays.asList(new ReferenceCoalescingQueue<>(), new LowLatencyCoalescingQueue<>());
+    }
+
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldBeEmptyUponConstruction(CoalescingQueue<String> queue) {
         assertThat(queue.size()).isEqualTo(0);
         assertThat(queue.poll()).isNull();
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldReturnOnlyElement(CoalescingQueue<String> queue) {
         queue.add("key", "element");
 
@@ -33,7 +38,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldRemoveElementWhenPolled(CoalescingQueue<String> queue) {
         queue.add("key", "element");
         queue.poll();
@@ -43,7 +48,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldCountElementsIndividuallyIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -52,7 +57,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldPlaceNewElementAfterExistingOneIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -61,7 +66,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldReplaceElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key1", "element2");
@@ -70,7 +75,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldPollElementsInFIFOOrderIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -82,7 +87,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldKeepThePositionOfTheOriginalElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -95,7 +100,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldSupportArbitraryType(CoalescingQueue<Integer> queue) {
         queue.add("key1", 1);
         queue.add("key2", 2);
@@ -108,7 +113,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("implementationProvider")
+    @MethodSource("stableImplementationsProvider")
     void shouldWorkEvenIfKeysMutatedAfterwards(CoalescingQueue<String> queue) {
         StringBuilder key = new StringBuilder();
         key.append("key1");
