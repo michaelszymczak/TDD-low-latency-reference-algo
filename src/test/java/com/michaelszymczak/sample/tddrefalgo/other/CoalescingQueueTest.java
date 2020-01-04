@@ -31,7 +31,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldReturnOnlyElement(CoalescingQueue<String> queue) {
         queue.add("key", "element");
 
@@ -40,7 +40,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldRemoveElementWhenPolled(CoalescingQueue<String> queue) {
         queue.add("key", "element");
         queue.poll();
@@ -50,7 +50,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldCountElementsIndividuallyIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -59,7 +59,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldPlaceNewElementAfterExistingOneIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -68,7 +68,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldReplaceElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1a");
         queue.add("key1", "element1b");
@@ -77,7 +77,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldReturnReplacedElement(CoalescingQueue<String> queue) {
         queue.add("key1", "element1a");
         queue.add("key1", "element1b");
@@ -87,7 +87,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldRemovePreviousElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1a");
         queue.add("key1", "element1b");
@@ -100,7 +100,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldPollElementsInFIFOOrderIfKeysAreDifferent(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -112,7 +112,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldKeepThePositionOfTheOriginalElementWithTheSameKey(CoalescingQueue<String> queue) {
         queue.add("key1", "element1");
         queue.add("key2", "element2");
@@ -125,7 +125,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldSupportArbitraryType(CoalescingQueue<Integer> queue) {
         queue.add("key1", 1);
         queue.add("key2", 2);
@@ -138,7 +138,7 @@ class CoalescingQueueTest {
     }
 
     @ParameterizedTest
-    @MethodSource("stableImplementationsProvider")
+    @MethodSource("allImplementationsProvider")
     void shouldWorkEvenIfKeysMutatedAfterwards(CoalescingQueue<String> queue) {
         StringBuilder key = new StringBuilder();
         key.append("key1");
