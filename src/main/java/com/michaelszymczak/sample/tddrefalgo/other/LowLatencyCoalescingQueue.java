@@ -10,6 +10,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private final Deque<Key> keys = new ArrayDeque<>();
     private final Map<Key, WrappedElement<T>> elementByKey = new HashMap<>();
     private final Key keyPlaceholder = new Key("");
+    private final Deque<WrappedElement<T>> wrappedElementsPool = new ArrayDeque<>();
 
     @Override
     public int size() {
@@ -19,7 +20,14 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     @Override
     public T poll() {
         Key key = keys.pollFirst();
-        return key == null ? null : elementByKey.remove(key).element;
+        if (key == null) {
+            return null;
+        } else {
+            WrappedElement<T> removedWrappedElement = elementByKey.remove(key);
+            T element = removedWrappedElement.element;
+            returnToThePool(removedWrappedElement);
+            return element;
+        }
     }
 
     @Override
@@ -27,14 +35,27 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         keyPlaceholder.set(key);
         WrappedElement<T> existingWrappedElement = elementByKey.get(keyPlaceholder);
         if (existingWrappedElement == null) {
-            WrappedElement<T> wrappedElement = new WrappedElement<>(new Key(key), element);
+            WrappedElement<T> wrappedElement = newWrappedElement(key, element);
             keys.addLast(wrappedElement.key);
             elementByKey.put(wrappedElement.key, wrappedElement);
-        }
-        else {
+        } else {
             existingWrappedElement.setElement(element);
         }
 
+    }
+
+    private WrappedElement<T> newWrappedElement(CharSequence key, T element) {
+        WrappedElement<T> pooled = wrappedElementsPool.pollFirst();
+        if (pooled == null) {
+            return new WrappedElement<>(key, element);
+        } else {
+            return pooled.set(key, element);
+        }
+    }
+
+    private void returnToThePool(WrappedElement<T> wrappedElement) {
+        wrappedElement.clear();
+        wrappedElementsPool.addFirst(wrappedElement);
     }
 
     @Override
@@ -45,17 +66,28 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     }
 
     static class WrappedElement<T> {
-        Key key;
+        final Key key;
         T element;
 
-        WrappedElement(Key key, T element) {
-            this.key = key;
+        WrappedElement(CharSequence key, T element) {
+            this.key = new Key(key);
             this.element = element;
         }
 
 
+        public WrappedElement<T> set(CharSequence key, T element) {
+            this.key.set(key);
+            this.element = element;
+            return this;
+        }
+
         void setElement(T element) {
             this.element = element;
+        }
+
+        void clear() {
+            this.key.set("");
+            this.element = null;
         }
     }
 
