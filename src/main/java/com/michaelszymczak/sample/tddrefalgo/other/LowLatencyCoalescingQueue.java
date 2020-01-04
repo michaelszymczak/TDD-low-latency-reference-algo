@@ -9,6 +9,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
 
     private final Deque<Key> keys = new ArrayDeque<>();
     private final Map<Key, WrappedElement<T>> elementByKey = new HashMap<>();
+    private final Key keyPlaceholder = new Key("");
 
     @Override
     public int size() {
@@ -23,12 +24,17 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
 
     @Override
     public void add(CharSequence key, T element) {
-        Key k = new Key(key);
-        if (!elementByKey.containsKey(k)) {
-            keys.addLast(k);
+        keyPlaceholder.set(key);
+        WrappedElement<T> existingWrappedElement = elementByKey.get(keyPlaceholder);
+        if (existingWrappedElement == null) {
+            WrappedElement<T> wrappedElement = new WrappedElement<>(new Key(key), element);
+            keys.addLast(wrappedElement.key);
+            elementByKey.put(wrappedElement.key, wrappedElement);
         }
-        WrappedElement<T> wrappedElement = new WrappedElement<>(k, element);
-        elementByKey.put(wrappedElement.key, wrappedElement);
+        else {
+            existingWrappedElement.setElement(element);
+        }
+
     }
 
     @Override
@@ -48,12 +54,20 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         }
 
 
+        void setElement(T element) {
+            this.element = element;
+        }
     }
 
     static class Key {
         final StringBuilder k = new StringBuilder();
 
         Key(CharSequence k) {
+            this.k.setLength(0);
+            this.k.append(k);
+        }
+
+        public void set(CharSequence k) {
             this.k.setLength(0);
             this.k.append(k);
         }
