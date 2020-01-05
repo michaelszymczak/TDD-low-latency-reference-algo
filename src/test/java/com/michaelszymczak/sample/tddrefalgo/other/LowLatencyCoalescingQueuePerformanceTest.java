@@ -1,24 +1,31 @@
 package com.michaelszymczak.sample.tddrefalgo.other;
 
-import net.openhft.chronicle.core.jlbh.JLBH;
-import net.openhft.chronicle.core.jlbh.JLBHOptions;
-import net.openhft.chronicle.core.jlbh.JLBHResultConsumer;
-import net.openhft.chronicle.core.jlbh.JLBHTask;
+import net.openhft.chronicle.core.jlbh.*;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofNanos;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LowLatencyCoalescingQueuePerformanceTest {
 
     @Test
     void shouldNotAllocateInSteadyState() {
-        // Given
+        //Given
         final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
         JLBHOptions jlbhOptions = parametersWhenTesting(new LowLatencyCoalescingQueue<>());
         final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
 
-        // When
+        //When
         jlbh.start();
+
+        //Then
+        JLBHResult.RunResult latency = results.get().endToEnd().summaryOfLastRun();
+        assertThat(latency.get50thPercentile()).isLessThan(us(1));
+        assertThat(latency.get999thPercentile()).isLessThan(us(100));
+        assertThat(latency.getWorst()).isLessThan(ms(1));
     }
 
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut) {
@@ -26,10 +33,18 @@ class LowLatencyCoalescingQueuePerformanceTest {
                 .warmUpIterations(50_000)
                 .iterations(50_000)
                 .throughput(10_000)
-                .runs(2)
+                .runs(3)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
                 .jlbhTask(new ComponentTestingTask(sut));
+    }
+
+    private Duration us(int us) {
+        return ofNanos(us * 1000);
+    }
+
+    private Duration ms(int ms) {
+        return ofMillis(ms);
     }
 
     class ComponentTestingTask implements JLBHTask {
