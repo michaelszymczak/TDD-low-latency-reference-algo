@@ -1,10 +1,10 @@
 package com.michaelszymczak.sample.tddrefalgo.other;
 
 import org.agrona.collections.MutableLong;
+import org.agrona.collections.Object2ObjectHashMap;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 
 public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
@@ -12,18 +12,18 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private static final ThreadLocal<MutableLong> ALLOCATIONS = ThreadLocal.withInitial(MutableLong::new);
 
     private final Deque<Key> keys = recordAllocation(new ArrayDeque<>());
-    private final Map<Key, WrappedElement<T>> elementByKey = recordAllocation(new HashMap<>());
+    private final Map<Key, WrappedElement<T>> elementByKey = recordAllocation(new Object2ObjectHashMap<>());
     private final Key keyPlaceholder = recordAllocation(new Key(""));
     private final Deque<WrappedElement<T>> wrappedElementsPool = recordAllocation(new ArrayDeque<>());
-
-    public long allocations() {
-        return ALLOCATIONS.get().get();
-    }
 
     private static <A> A recordAllocation(A newlyCreatedObject) {
         MutableLong count = ALLOCATIONS.get();
         count.set(count.get() + 1);
         return newlyCreatedObject;
+    }
+
+    public long allocations() {
+        return ALLOCATIONS.get().get();
     }
 
     @Override
@@ -55,7 +55,6 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         } else {
             existingWrappedElement.setElement(element);
         }
-
     }
 
     private WrappedElement<T> newWrappedElement(CharSequence key, T element) {
@@ -147,5 +146,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         public String toString() {
             return k.toString();
         }
+
+
     }
 }

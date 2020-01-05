@@ -2,6 +2,10 @@ package com.michaelszymczak.sample.tddrefalgo.other;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LowLatencyCoalescingQueueTest {
@@ -11,35 +15,64 @@ class LowLatencyCoalescingQueueTest {
 
     @Test
     void shouldNotAllocateInSteadyState() {
-        int uniqueKeys = 10_000;
         // Given
-        LowLatencyCoalescingQueue<Object> queue = warmedUpQueue("warmUpKey", uniqueKeys);
+        LowLatencyCoalescingQueue<Object> queue = warmedUpQueue("warmUpKey", 10_000);
         long allocationsBeforeEnteredSteadyState = queue.allocations();
 
         // When
-        for (int i = 0; i < uniqueKeys; i++) {
-            key.setLength(0);
-            key.append("steadyStateKey").append(i);
-            queue.add(key, element);
-            if (i % 10 == 0) {
-                queue.poll();
-            }
-        }
+        Map<String, Long> result = runInSteadyState("steadyStateKey", queue, 10_000_000);
 
         // Then
         assertThat(queue.allocations()).isEqualTo(allocationsBeforeEnteredSteadyState);
+        assertThat(result.get("msgPerSecond")).isGreaterThan(4_000_000);
+        assertThat(result.get("worstLatencyMicros")).isLessThan(500);
+        System.out.println(result);
+    }
+
+    private Map<String, Long> runInSteadyState(final String keyPrefix, LowLatencyCoalescingQueue<Object> queue, final int iterations) {
+        long worstLatency = 0;
+        long start = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+            long before = System.nanoTime();
+            if (i % 128 == 0) {
+                while (queue.poll() != null) {
+                }
+            } else if (i % 64 == 0) {
+                queue.poll();
+                queue.poll();
+                queue.poll();
+            } else if (i % 32 == 0) {
+                queue.add(key(keyPrefix, iterations + i), element);
+            } else {
+                queue.add(key(keyPrefix, i), element);
+            }
+            long after = System.nanoTime();
+            if (worstLatency < after - before) {
+                worstLatency = after - before;
+            }
+        }
+        long end = System.nanoTime();
+        HashMap<String, Long> result = new HashMap<>();
+        result.put("worstLatencyMicros", TimeUnit.NANOSECONDS.toMicros(worstLatency));
+        result.put("msgPerSecond", TimeUnit.SECONDS.toNanos(iterations) / (end - start));
+        return result;
     }
 
     private LowLatencyCoalescingQueue<Object> warmedUpQueue(final String keyPrefix, int uniqueKeys) {
         LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
         for (int i = 0; i < uniqueKeys; i++) {
-            key.setLength(0);
-            key.append(keyPrefix).append(i);
-            queue.add(key, element);
+            key(keyPrefix, i);
+            queue.add(key(keyPrefix, i), element);
         }
         for (int i = 0; i < uniqueKeys; i++) {
             queue.poll();
         }
         return queue;
+    }
+
+    private CharSequence key(final String prefix, int i) {
+        key.setLength(0);
+        key.append(prefix).append(i);
+        return key;
     }
 }
