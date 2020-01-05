@@ -11,16 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CoalescingQueueTest {
 
 
-    static <T> Stream<CoalescingQueue<T>> stableImplementationsProvider() {
+    static <T> Stream<CoalescingQueue<T>> referenceImplementationsProvider() {
         return Stream.of(new ReferenceCoalescingQueue<>());
     }
 
-    static <T> Stream<CoalescingQueue<T>> unstableImplementationsProvider() {
+    static <T> Stream<CoalescingQueue<T>> lowLatencyImplementationsProvider() {
         return Stream.of(new LowLatencyCoalescingQueue<>());
     }
 
     static <T> Stream<CoalescingQueue<T>> allImplementationsProvider() {
-        return Stream.concat(stableImplementationsProvider(), unstableImplementationsProvider());
+        return Stream.concat(referenceImplementationsProvider(), lowLatencyImplementationsProvider());
     }
 
     @ParameterizedTest

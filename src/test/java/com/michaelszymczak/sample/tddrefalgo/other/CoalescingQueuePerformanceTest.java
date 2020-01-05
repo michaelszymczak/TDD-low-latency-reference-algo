@@ -2,20 +2,36 @@ package com.michaelszymczak.sample.tddrefalgo.other;
 
 import net.openhft.chronicle.core.jlbh.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
+import java.util.stream.Stream;
 
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofNanos;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LowLatencyCoalescingQueuePerformanceTest {
+class CoalescingQueuePerformanceTest {
 
-    @Test
-    void shouldNotAllocateInSteadyState() {
+    static <T> Stream<CoalescingQueue<T>> referenceImplementationsProvider() {
+        return Stream.of(new ReferenceCoalescingQueue<>());
+    }
+
+    static <T> Stream<CoalescingQueue<T>> lowLatencyImplementationsProvider() {
+        return Stream.of(new LowLatencyCoalescingQueue<>());
+    }
+
+    static <T> Stream<CoalescingQueue<T>> allImplementationsProvider() {
+        return Stream.concat(referenceImplementationsProvider(), lowLatencyImplementationsProvider());
+    }
+
+    @ParameterizedTest
+    @MethodSource("lowLatencyImplementationsProvider")
+    void shouldBeOfLowLatency(CoalescingQueue<Object> queue) {
         //Given
         final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
-        JLBHOptions jlbhOptions = parametersWhenTesting(new LowLatencyCoalescingQueue<>());
+        JLBHOptions jlbhOptions = parametersWhenTesting(queue);
         final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
 
         //When
@@ -23,16 +39,16 @@ class LowLatencyCoalescingQueuePerformanceTest {
 
         //Then
         JLBHResult.RunResult latency = results.get().endToEnd().summaryOfLastRun();
-        assertThat(latency.get50thPercentile()).isLessThan(us(1));
-        assertThat(latency.get999thPercentile()).isLessThan(us(100));
+        assertThat(latency.get50thPercentile()).isLessThan(ofNanos(500));
+        assertThat(latency.get9999thPercentile()).isLessThan(us(100));
         assertThat(latency.getWorst()).isLessThan(ms(1));
     }
 
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut) {
         return new JLBHOptions()
                 .warmUpIterations(50_000)
-                .iterations(50_000)
-                .throughput(10_000)
+                .iterations(500_000) // 50_000 - for reference
+                .throughput(100_000) // 10_000 - for reference
                 .runs(3)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
