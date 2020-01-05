@@ -47,8 +47,8 @@ class CoalescingQueuePerformanceTest {
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut) {
         return new JLBHOptions()
                 .warmUpIterations(50_000)
-                .iterations(500_000) // 50_000 - for reference
-                .throughput(100_000) // 10_000 - for reference
+                .iterations(5_000_000) // 50_000 - for reference
+                .throughput(1_000_000) // 10_000 - for reference
                 .runs(3)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
