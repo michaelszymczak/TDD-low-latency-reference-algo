@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.other;
+package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
 import org.agrona.collections.MutableLong;
 import org.agrona.collections.Object2ObjectHashMap;

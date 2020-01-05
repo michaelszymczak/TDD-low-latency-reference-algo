@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.other;
+package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
 public interface CoalescingQueue<T> {
     int size();

@@ -1,7 +1,6 @@
-package com.michaelszymczak.sample.tddrefalgo.other;
+package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
 import net.openhft.chronicle.core.jlbh.*;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 

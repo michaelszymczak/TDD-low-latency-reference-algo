@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.other;
+package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

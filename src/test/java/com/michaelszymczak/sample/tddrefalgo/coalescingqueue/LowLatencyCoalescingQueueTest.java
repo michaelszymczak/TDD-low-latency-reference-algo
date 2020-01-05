@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.other;
+package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
 import org.junit.jupiter.api.Test;
 
