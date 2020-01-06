@@ -31,7 +31,7 @@ class CoalescingQueuePerformanceTest {
     void shouldBeOfLowLatency(CoalescingQueue<Object> queue) {
         //Given
         final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
-        JLBHOptions jlbhOptions = parametersWhenTesting(queue);
+        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 5_000_000, 1_000_000);
         final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
 
         //When
@@ -44,11 +44,29 @@ class CoalescingQueuePerformanceTest {
         assertThat(latency.getWorst()).isLessThan(ms(1));
     }
 
-    private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut) {
+    @ParameterizedTest
+    @MethodSource("referenceImplementationsProvider")
+    void shouldBeOfAcceptableLatency(CoalescingQueue<Object> queue) {
+        //Given
+        final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
+        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 50_000, 10_000);
+        final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
+
+        //When
+        jlbh.start();
+
+        //Then
+        JLBHResult.RunResult latency = results.get().endToEnd().summaryOfLastRun();
+        assertThat(latency.get50thPercentile()).isLessThan(ofNanos(500));
+        assertThat(latency.get9999thPercentile()).isLessThan(us(100));
+        assertThat(latency.getWorst()).isLessThan(ms(1));
+    }
+
+    private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut, final int iterations, final int throughput) {
         return new JLBHOptions()
                 .warmUpIterations(50_000)
-                .iterations(5_000_000) // 50_000 - for reference
-                .throughput(1_000_000) // 10_000 - for reference
+                .iterations(iterations) // 50_000 - for reference
+                .throughput(throughput) // 10_000 - for reference
                 .runs(3)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
