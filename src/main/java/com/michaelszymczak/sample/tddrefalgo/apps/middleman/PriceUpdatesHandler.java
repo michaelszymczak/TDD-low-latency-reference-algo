@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.framework.encoding.EncodingPublisher;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
@@ -9,7 +10,7 @@ class PriceUpdatesHandler implements PricingProtocolListener {
     private final ThrottledPrices throttledPrices;
 
     PriceUpdatesHandler(EncodingPublisher<PricingMessage> publisher, final int windowSize) {
-        this.throttledPrices = new ThrottledPrices(new EncodingThrottledPricesPublisher(publisher), windowSize);
+        this.throttledPrices = new ReferenceThrottledPrices(new EncodingThrottledPricesPublisher(publisher), windowSize);
     }
 
     @Override

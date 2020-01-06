@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.ThrottledPricesPublisherSpy;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ class ThrottledPricesValidationTest {
 
     @Test
     void shouldNotAllowQuotesWithZeroPriceOnBothSides() {
-        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, 1);
 
         // When
         assertThrows(IllegalArgumentException.class,
@@ -26,7 +27,7 @@ class ThrottledPricesValidationTest {
 
     @Test
     void shouldNotAllowQuotesWithNoTier() {
-        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, 1);
 
         // When
         assertThrows(IllegalArgumentException.class,
@@ -38,7 +39,7 @@ class ThrottledPricesValidationTest {
 
     @Test
     void shouldNotAllowQuotesWithNoIsin() {
-        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, 1);
 
         // When
         assertThrows(IllegalArgumentException.class,
@@ -51,7 +52,7 @@ class ThrottledPricesValidationTest {
     @ParameterizedTest
     @CsvSource({"-1", "6"})
     void shouldNotAllowQuotesWithTierOutOfRange(final int tier) {
-        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, 1);
 
         // When
         assertThrows(IllegalArgumentException.class,
@@ -63,7 +64,7 @@ class ThrottledPricesValidationTest {
 
     @Test
     void shouldNotAllowCancelsWithNoIsin() {
-        ThrottledPrices throttledPrices = new ThrottledPrices(publisherSpy, 1);
+        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, 1);
 
         // When
         assertThrows(IllegalArgumentException.class,
