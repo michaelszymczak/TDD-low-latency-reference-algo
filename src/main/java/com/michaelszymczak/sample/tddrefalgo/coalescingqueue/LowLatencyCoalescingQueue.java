@@ -1,6 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
-import org.agrona.collections.MutableLong;
+import org.agrona.collections.MutableInteger;
 import org.agrona.collections.Object2ObjectHashMap;
 
 import java.util.ArrayDeque;
@@ -9,21 +9,22 @@ import java.util.Map;
 
 public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
 
-    private static final ThreadLocal<MutableLong> ALLOCATIONS = ThreadLocal.withInitial(MutableLong::new);
+    private final AllocationCounter allocationsCounter;
+    private final Deque<Key> keys;
+    private final Map<Key, WrappedElement<T>> elementByKey;
+    private final Key keyPlaceholder;
+    private final Deque<WrappedElement<T>> wrappedElementsPool;
 
-    private final Deque<Key> keys = recordAllocation(new ArrayDeque<>());
-    private final Map<Key, WrappedElement<T>> elementByKey = recordAllocation(new Object2ObjectHashMap<>());
-    private final Key keyPlaceholder = recordAllocation(new Key(""));
-    private final Deque<WrappedElement<T>> wrappedElementsPool = recordAllocation(new ArrayDeque<>());
-
-    private static <A> A recordAllocation(A newlyCreatedObject) {
-        MutableLong count = ALLOCATIONS.get();
-        count.set(count.get() + 1);
-        return newlyCreatedObject;
+    public LowLatencyCoalescingQueue() {
+        this.allocationsCounter = new AllocationCounter();
+        this.keys = this.allocationsCounter.recordAllocation(new ArrayDeque<>());
+        this.elementByKey = this.allocationsCounter.recordAllocation(new Object2ObjectHashMap<>());
+        this.keyPlaceholder = this.allocationsCounter.recordAllocation(new Key(allocationsCounter, ""));
+        this.wrappedElementsPool = this.allocationsCounter.recordAllocation(new ArrayDeque<>());
     }
 
     public long allocations() {
-        return ALLOCATIONS.get().get();
+        return allocationsCounter.count();
     }
 
     @Override
@@ -61,7 +62,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private WrappedElement<T> newWrappedElement(CharSequence key, T element) {
         WrappedElement<T> pooled = wrappedElementsPool.pollFirst();
         if (pooled == null) {
-            return recordAllocation(new WrappedElement<>(key, element));
+            return allocationsCounter.recordAllocation(new WrappedElement<>(allocationsCounter, key, element));
         } else {
             return pooled.set(key, element);
         }
@@ -79,12 +80,26 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
                 '}';
     }
 
-    static class WrappedElement<T> {
+    private static class AllocationCounter {
+        private final MutableInteger count = new MutableInteger();
+
+        <A> A recordAllocation(A newlyCreatedObject) {
+            count.set(count.get() + 1);
+            return newlyCreatedObject;
+        }
+
+        int count()
+        {
+            return count.get();
+        }
+    }
+
+    private static class WrappedElement<T> {
         final Key key;
         T element;
 
-        WrappedElement(CharSequence key, T element) {
-            this.key = recordAllocation(new Key(key));
+        WrappedElement(AllocationCounter allocationCounter, CharSequence key, T element) {
+            this.key = allocationCounter.recordAllocation(new Key(allocationCounter, key));
             this.element = element;
         }
 
@@ -105,10 +120,11 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         }
     }
 
-    static class Key {
-        final StringBuilder k = recordAllocation(new StringBuilder());
+    private static class Key {
+        final StringBuilder k;
 
-        Key(CharSequence k) {
+        Key(AllocationCounter allocationsCounter, CharSequence k) {
+            this.k = allocationsCounter.recordAllocation(new StringBuilder());
             this.k.setLength(0);
             this.k.append(k);
         }
@@ -147,7 +163,5 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         public String toString() {
             return k.toString();
         }
-
-
     }
 }

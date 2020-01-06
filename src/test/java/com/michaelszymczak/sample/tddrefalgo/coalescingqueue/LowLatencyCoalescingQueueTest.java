@@ -1,5 +1,6 @@
 package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
+import org.agrona.collections.MutableInteger;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -17,20 +18,20 @@ class LowLatencyCoalescingQueueTest {
     @Test
     void shouldNotAllocateInSteadyState() {
         // Given
-        LowLatencyCoalescingQueue<Object> queue = warmedUpQueue("warmUpKey", 10_000);
+        LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
+        run("someKey", queue, 1_000_000);
         long allocationsBeforeEnteredSteadyState = queue.allocations();
 
         // When
-        Map<String, Long> result = runInSteadyState("steadyStateKey", queue, 10_000_000);
+        Map<String, Long> result = run("steadyStateKey", queue, 10_000_000);
 
         // Then
         assertThat(queue.allocations()).isEqualTo(allocationsBeforeEnteredSteadyState);
-        assertThat(result.get("msgPerSecond")).isGreaterThan(4_000_000);
+        assertThat(result.get("msgPerSecond")).isGreaterThan(3_000_000);
         assertThat(result.get("worstLatencyMicros")).isLessThan(500);
-        System.out.println(result);
     }
 
-    private Map<String, Long> runInSteadyState(final String keyPrefix, LowLatencyCoalescingQueue<Object> queue, final int iterations) {
+    private Map<String, Long> run(final String keyPrefix, LowLatencyCoalescingQueue<Object> queue, final int iterations) {
         long worstLatency = 0;
         long start = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
