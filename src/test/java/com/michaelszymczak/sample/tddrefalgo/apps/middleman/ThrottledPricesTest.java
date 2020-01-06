@@ -16,21 +16,21 @@ class ThrottledPricesTest {
 
     @Test
     void shouldRespondToHeartbeats() {
-        new ReferenceThrottledPrices(publisherSpy, 1).onHeartbeat(123L);
+        throttledPricesWithWindowOfSize(1).onHeartbeat(123L);
 
         publisherSpy.assertPublished(heartbeat(123L));
     }
 
     @Test
     void shouldSendFirstQuoteUpdateRightAfterReceipt() {
-        new ReferenceThrottledPrices(publisherSpy, 1).onQuoteUpdate("isin", 3, 10055L, 10066L);
+        throttledPricesWithWindowOfSize(1).onQuoteUpdate("isin", 3, 10055L, 10066L);
 
         publisherSpy.assertPublished(quote("isin", 3, 10055L, 10066L));
     }
 
     @Test
     void shouldSendFirstCancelRightAfterReceipt() {
-        new ReferenceThrottledPrices(publisherSpy, 1).onCancel("isin");
+        throttledPricesWithWindowOfSize(1).onCancel("isin");
 
         publisherSpy.assertPublished(cancel("isin"));
     }
@@ -38,7 +38,7 @@ class ThrottledPricesTest {
     @Test
     void shouldThrottleQuotesToThePredefinedNumberBetweenAcks() {
         int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(windowSize);
 
         // Given
         throttledPrices.onQuoteUpdate("isin1", 3, 10055L, 10066L);
@@ -53,8 +53,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldPublishMoreQuotesWhenAckReceived() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
         throttledPrices.onQuoteUpdate("isin1", 3, 10055L, 10066L);
@@ -75,7 +74,7 @@ class ThrottledPricesTest {
     @Test
     void shouldThrottleCancelsToThePredefinedNumberBetweenAcks() {
         int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(windowSize);
 
         // Given
         throttledPrices.onCancel("isin1");
@@ -90,8 +89,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldPublishMoreCancelsWhenAckReceived() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
         throttledPrices.onCancel("isin1");
@@ -110,8 +108,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldThrottleQuotesAndCancelsTogether() {
-        int windowSize = 2;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(2);
 
         // Given
         throttledPrices.onQuoteUpdate("isin1", 1, 100L, 200L);
@@ -134,8 +131,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldAllowMoreQuotesAndCancelsWhenAckReceived() {
-        int windowSize = 2;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(2);
 
         // Given
         throttledPrices.onQuoteUpdate("isin1", 1, 100L, 200L);
@@ -161,8 +157,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldPublishPreviouslyEnqueuedQuoteWhenAckReceived() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
         throttledPrices.onQuoteUpdate("isin1", 3, 10055L, 10066L);
@@ -181,8 +176,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldPublishPreviouslyEnqueuedCancelWhenAckReceived() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
         throttledPrices.onCancel("isin1");
@@ -201,8 +195,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldPublishPreviouslyEnqueuedQuotesAndCancelsThatFitsTheWindowWhenAckReceived() {
-        int windowSize = 4;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(4);
 
         // Given
         throttledPrices.onCancel("isin1");
@@ -231,8 +224,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldEventuallyPublishAll() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // When
         throttledPrices.onCancel("isin4");
@@ -254,8 +246,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldSquashSameIsinCancellationsBeforePublishing() {
-        int windowSize = 1;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
         throttledPrices.onCancel("isin1");
         publisherSpy.clear();
 
@@ -272,11 +263,10 @@ class ThrottledPricesTest {
 
     @Test
     void shouldRemoveQuotesWithTheSameIsinsWhenCancelling() {
-        int windowSize = 4;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(4);
 
         // Given
-        runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
+        runTimes(4, i -> throttledPrices.onCancel("otherisin" + i));
         publisherSpy.clear();
 
         // When
@@ -302,11 +292,10 @@ class ThrottledPricesTest {
 
     @Test
     void shouldReplaceQuotesWithTheSameIsinAndTier() {
-        int windowSize = 5;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(5);
 
         // Given
-        runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
+        runTimes(5, i -> throttledPrices.onCancel("otherisin" + i));
         publisherSpy.clear();
         throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
         throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
@@ -332,8 +321,7 @@ class ThrottledPricesTest {
 
     @Test
     void shouldReplaceSameQuoteWithTheSameIsinAndTierMultipleTimes() {
-        int windowSize = 2;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(2);
 
         // Given
         throttledPrices.onCancel("isin101");
@@ -357,11 +345,10 @@ class ThrottledPricesTest {
 
     @Test
     void shouldAddQuoteWithTheSameIsinAfterTheCancelAndKeepItAsItCanBeUsedToCancelOtherTiers() {
-        int windowSize = 2;
-        ThrottledPrices throttledPrices = new ReferenceThrottledPrices(publisherSpy, windowSize);
+        ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(2);
 
         // Given
-        runTimes(windowSize, i -> throttledPrices.onCancel("otherisin" + i));
+        runTimes(2, i -> throttledPrices.onCancel("otherisin" + i));
         publisherSpy.clear();
         throttledPrices.onQuoteUpdate("isin2", 2, 211, 212);
         throttledPrices.onCancel("isin1");
@@ -395,6 +382,11 @@ class ThrottledPricesTest {
         throttledPrices.onAck();
         publisherSpy.assertPublishedNothing();
     }
+
+    private ReferenceThrottledPrices throttledPricesWithWindowOfSize(int windowSize) {
+        return new ReferenceThrottledPrices(publisherSpy, windowSize);
+    }
+
 
     private void runTimes(int times, IntConsumer runnable) {
         IntStream.range(0, times).forEach(runnable);
