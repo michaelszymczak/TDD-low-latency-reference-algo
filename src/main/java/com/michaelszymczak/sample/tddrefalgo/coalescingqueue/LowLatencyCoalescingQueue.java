@@ -45,7 +45,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     }
 
     @Override
-    public void add(CharSequence key, T element) {
+    public void add(CharSequence key, T element, EvictedElementListener<? super T> evictedElementConsumer) {
         keyPlaceholder.set(key);
         WrappedElement<T> existingWrappedElement = elementByKey.get(keyPlaceholder);
         if (existingWrappedElement == null) {
@@ -53,6 +53,7 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
             keys.addLast(wrappedElement.key);
             elementByKey.put(wrappedElement.key, wrappedElement);
         } else {
+            evictedElementConsumer.onEvicted(existingWrappedElement.element);
             existingWrappedElement.setElement(element);
         }
     }

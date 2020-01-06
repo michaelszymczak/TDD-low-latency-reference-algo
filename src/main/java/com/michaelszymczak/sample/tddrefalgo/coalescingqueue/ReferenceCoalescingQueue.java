@@ -22,11 +22,13 @@ public class ReferenceCoalescingQueue<T> implements CoalescingQueue<T> {
     }
 
     @Override
-    public void add(CharSequence key, T element) {
+    public void add(CharSequence key, T element, EvictedElementListener<? super T> evictedElementConsumer) {
         if (!elementByKey.containsKey(key.toString())) {
             keys.addLast(key.toString());
+            elementByKey.put(key.toString(), element);
+        } else {
+            evictedElementConsumer.onEvicted(elementByKey.put(key.toString(), element));
         }
-        elementByKey.put(key.toString(), element);
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.michaelszymczak.sample.tddrefalgo.coalescingqueue.CoalescingQueue.DROP_EVICTED_ELEMENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LowLatencyCoalescingQueueTest {
@@ -42,9 +43,9 @@ class LowLatencyCoalescingQueueTest {
                 queue.poll();
                 queue.poll();
             } else if (i % 32 == 0) {
-                queue.add(key(keyPrefix, iterations + i), element);
+                queue.add(key(keyPrefix, iterations + i), element, DROP_EVICTED_ELEMENT);
             } else {
-                queue.add(key(keyPrefix, i), element);
+                queue.add(key(keyPrefix, i), element, DROP_EVICTED_ELEMENT);
             }
             long after = System.nanoTime();
             if (worstLatency < after - before) {
@@ -62,7 +63,7 @@ class LowLatencyCoalescingQueueTest {
         LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
         for (int i = 0; i < uniqueKeys; i++) {
             key(keyPrefix, i);
-            queue.add(key(keyPrefix, i), element);
+            queue.add(key(keyPrefix, i), element, DROP_EVICTED_ELEMENT);
         }
         for (int i = 0; i < uniqueKeys; i++) {
             queue.poll();

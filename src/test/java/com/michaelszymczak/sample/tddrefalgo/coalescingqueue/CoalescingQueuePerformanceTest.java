@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.Duration;
 import java.util.stream.Stream;
 
+import static com.michaelszymczak.sample.tddrefalgo.coalescingqueue.CoalescingQueue.DROP_EVICTED_ELEMENT;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofNanos;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,9 +106,9 @@ class CoalescingQueuePerformanceTest {
                 queue.poll();
                 queue.poll();
             } else if (iteration % 32 == 0) {
-                queue.add(key("keyPrefix", 10_000_000 + iteration), element);
+                queue.add(key("keyPrefix", 10_000_000 + iteration), element, DROP_EVICTED_ELEMENT);
             } else {
-                queue.add(key("keyPrefix", iteration), element);
+                queue.add(key("keyPrefix", iteration), element, DROP_EVICTED_ELEMENT);
             }
             return fakeResult;
         }
