@@ -1,6 +1,9 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.SimpleLowLatencyThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.support.InputPermutations;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -17,10 +21,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MiddleManAppExploratoryTest {
 
+    private static final int WINDOW_SIZE = 100;
+    private static final Function<ThrottledPricesPublisher, ThrottledPrices> REFERENCE_IMPLEMENTATION = throttledPricesPublisher ->
+            new ReferenceThrottledPrices(throttledPricesPublisher, WINDOW_SIZE);
+    private static final Function<ThrottledPricesPublisher, ThrottledPrices> TESTED_IMPLEMENTATION = throttledPricesPublisher ->
+            new SimpleLowLatencyThrottledPrices(throttledPricesPublisher, WINDOW_SIZE);
     private static final String MESSAGE_DELIMITER = ", ";
+    private static final int PUBLISHER_CAPACITY = 5 * 1024 * 1024;
     private final OutputSpy<PricingProtocolDecodedMessageSpy> inputSpy = OutputSpy.outputSpy();
     private final OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy = OutputSpy.outputSpy();
-    private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L), 5 * 1024 * 1024);
+    private final MarketMakerApp marketMakerApp = new MarketMakerApp(
+            new RelativeNanoClockWithTimeFixedTo(12345L), PUBLISHER_CAPACITY);
     private final InputPermutations<String> inputPermutations = new InputPermutations<>(
             "Q/   isin/  1/     101/   102",
             "Q/   isin/  1/     191/   192",
@@ -45,12 +56,16 @@ class MiddleManAppExploratoryTest {
             marketMakerApp.output().reset();
 
             // When
-            marketMakerApp.output().reset();
-            String output = process(10, inputEvents);
+            PricingProtocolDecodedMessageSpy referenceImplementationSideEffects = process(REFERENCE_IMPLEMENTATION, inputEvents);
+            PricingProtocolDecodedMessageSpy testedImplementationSideEffects = process(REFERENCE_IMPLEMENTATION, inputEvents);
 
             // Then
-//            System.out.println(inputEvents + " -> " + output);
-            assertThat(output).isNotEmpty();
+            String referenceImplementationOutput = referenceImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
+            String testedImplementationOutput = testedImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
+
+            assertThat(testedImplementationOutput)
+                    .describedAs(inputEvents + " -> " + referenceImplementationOutput)
+                    .isEqualTo(testedImplementationOutput); // reference implementation produces different output
 
             // Cleanup
             marketMakerApp.output().reset();
@@ -63,17 +78,21 @@ class MiddleManAppExploratoryTest {
     @Disabled
     void manuallyExamineOutput() {
         String inputEvents = "Q/isin/1/101/102, Q/isin/2/291/292, Q/isin/0/0/0, Q/isin/1/101/102, A";
-        String output = process(10, inputEvents);
+        String output = process(REFERENCE_IMPLEMENTATION, inputEvents).receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
 //        System.out.println(inputEvents + " -> " + output);
         assertThat(output).isNotEmpty();
     }
 
-    private String process(final int windowSize, String inputEvents) {
-        MiddleManApp middleManApp = createAppWithFullWindowOfSize(windowSize);
+    private PricingProtocolDecodedMessageSpy process(
+            final Function<ThrottledPricesPublisher, ThrottledPrices> throttledPricesFactory,
+            String inputEvents) {
+        marketMakerApp.output().reset();
+        MiddleManApp middleManApp = createMiddleManAppWithWindowFull(throttledPricesFactory);
         marketMakerApp.events(MESSAGE_DELIMITER, inputEvents);
         middleManApp.onInput(marketMakerApp.output());
+        outputSpy.getSpy().clear();
         outputSpy.onInput(middleManApp.output());
-        return outputSpy.getSpy().receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
+        return outputSpy.getSpy();
     }
 
     private List<String> inputPermutationsWithSlotCountOf(int slots) {
@@ -82,14 +101,15 @@ class MiddleManAppExploratoryTest {
                 .collect(Collectors.toList());
     }
 
-    private MiddleManApp createAppWithFullWindowOfSize(int windowSize) {
-        MiddleManApp middleManApp = new MiddleManApp(1024, windowSize);
-        range(0, windowSize).forEach(i -> marketMakerApp.events(
+    private MiddleManApp createMiddleManAppWithWindowFull(final Function<ThrottledPricesPublisher, ThrottledPrices> throttledPricesFactory) {
+        MiddleManApp middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, throttledPricesFactory);
+        range(0, WINDOW_SIZE).forEach(i -> marketMakerApp.events(
                 format("Q/   otherisin%d/  1/     1/   1", i)
         ));
+        outputSpy.getSpy().clear();
         middleManApp.onSingleReaderInput(marketMakerApp.output());
         outputSpy.onSingleReaderInput(middleManApp.output());
-        assertThat(outputSpy.getSpy().receivedMessages()).hasSize(windowSize);
+        assertThat(outputSpy.getSpy().receivedMessages()).hasSize(WINDOW_SIZE);
         outputSpy.getSpy().clear();
         return middleManApp;
     }

@@ -1,6 +1,5 @@
 package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
-import org.agrona.collections.MutableInteger;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -59,18 +58,6 @@ class LowLatencyCoalescingQueueTest {
         result.put("worstLatencyMicros", TimeUnit.NANOSECONDS.toMicros(worstLatency));
         result.put("msgPerSecond", TimeUnit.SECONDS.toNanos(iterations) / (end - start));
         return result;
-    }
-
-    private LowLatencyCoalescingQueue<Object> warmedUpQueue(final String keyPrefix, int uniqueKeys) {
-        LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
-        for (int i = 0; i < uniqueKeys; i++) {
-            key(keyPrefix, i);
-            queue.add(key(keyPrefix, i), element, DROP_EVICTED_ELEMENT);
-        }
-        for (int i = 0; i < uniqueKeys; i++) {
-            queue.poll();
-        }
-        return queue;
     }
 
     private CharSequence key(final String prefix, int i) {
