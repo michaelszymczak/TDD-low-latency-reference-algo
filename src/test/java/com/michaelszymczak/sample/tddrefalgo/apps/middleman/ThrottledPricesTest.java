@@ -92,16 +92,16 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
-        throttledPrices.onCancel("isin1");
+        throttledPrices.onQuoteUpdate("isin1", 1, 1, 1);
         throttledPrices.onAck();
-        publisherSpy.assertPublished(cancel("isin1"));
+        publisherSpy.assertPublished(quote("isin1", 1, 1, 1));
 
         // When
         throttledPrices.onCancel("isin2");
 
         // Then
         publisherSpy.assertPublished(
-                cancel("isin1"),
+                quote("isin1", 1, 1, 1),
                 cancel("isin2")
         );
     }
@@ -179,16 +179,16 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(1);
 
         // Given
-        throttledPrices.onCancel("isin1");
+        throttledPrices.onQuoteUpdate("isin1", 1, 1, 1);
         throttledPrices.onCancel("isin2");
-        publisherSpy.assertPublished(cancel("isin1"));
+        publisherSpy.assertPublished(quote("isin1", 1, 1, 1));
 
         // When
         throttledPrices.onAck();
 
         // Then
         publisherSpy.assertPublished(
-                cancel("isin1"),
+                quote("isin1", 1, 1, 1),
                 cancel("isin2")
         );
     }
@@ -266,7 +266,7 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(4);
 
         // Given
-        runTimes(4, i -> throttledPrices.onCancel("otherisin" + i));
+        runTimes(4, i -> throttledPrices.onQuoteUpdate("otherisin" + i, 1, 1, 1));
         publisherSpy.clear();
 
         // When
@@ -295,7 +295,7 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(5);
 
         // Given
-        runTimes(5, i -> throttledPrices.onCancel("otherisin" + i));
+        runTimes(5, i -> throttledPrices.onQuoteUpdate("otherisin" + i, 1, 1, 1));
         publisherSpy.clear();
         throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
         throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
@@ -324,8 +324,8 @@ class ThrottledPricesTest {
         ThrottledPrices throttledPrices = throttledPricesWithWindowOfSize(2);
 
         // Given
-        throttledPrices.onCancel("isin101");
-        throttledPrices.onCancel("isin102");
+        throttledPrices.onQuoteUpdate("isin101", 1, 1, 1);
+        throttledPrices.onQuoteUpdate("isin102", 1, 1, 1);
         publisherSpy.clear();
         throttledPrices.onQuoteUpdate("otherisin", 1, 111, 112);
         throttledPrices.onQuoteUpdate("isin", 1, 111, 112);
@@ -383,7 +383,7 @@ class ThrottledPricesTest {
         publisherSpy.assertPublishedNothing();
     }
 
-    private ReferenceThrottledPrices throttledPricesWithWindowOfSize(int windowSize) {
+    private ThrottledPrices throttledPricesWithWindowOfSize(int windowSize) {
         return new ReferenceThrottledPrices(publisherSpy, windowSize);
     }
 

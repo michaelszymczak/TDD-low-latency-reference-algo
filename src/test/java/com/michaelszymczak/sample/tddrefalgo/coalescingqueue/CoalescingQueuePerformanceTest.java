@@ -39,9 +39,15 @@ class CoalescingQueuePerformanceTest {
 
         //Then
         JLBHResult.RunResult latency = results.get().endToEnd().summaryOfLastRun();
-        assertThat(latency.get50thPercentile()).isLessThan(ofNanos(500));
-        assertThat(latency.get9999thPercentile()).isLessThan(ms(1));
-        assertThat(latency.getWorst()).isLessThan(ms(1));
+        assertThat(latency.get50thPercentile())
+                .describedAs("50th percentile is " + latency.get50thPercentile())
+                .isLessThan(ofNanos(500));
+        assertThat(latency.get9999thPercentile())
+                .describedAs("99.99th percentile is " + latency.get9999thPercentile())
+                .isLessThan(ms(1));
+        assertThat(latency.getWorst())
+                .describedAs("worst is " + latency.getWorst())
+                .isLessThan(ms(1));
     }
 
     @ParameterizedTest
@@ -57,9 +63,15 @@ class CoalescingQueuePerformanceTest {
 
         //Then
         JLBHResult.RunResult latency = results.get().endToEnd().summaryOfLastRun();
-        assertThat(latency.get50thPercentile()).isLessThan(ofNanos(500));
-        assertThat(latency.get9999thPercentile()).isLessThan(ms(1));
-        assertThat(latency.getWorst()).isLessThan(ms(1));
+        assertThat(latency.get50thPercentile())
+                .describedAs("50th percentile is " + latency.get50thPercentile())
+                .isLessThan(ofNanos(500));
+        assertThat(latency.get9999thPercentile())
+                .describedAs("99.99th percentile is " + latency.get9999thPercentile())
+                .isLessThan(ms(1));
+        assertThat(latency.getWorst())
+                .describedAs("worst is " + latency.getWorst())
+                .isLessThan(ms(1));
     }
 
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut, final int iterations, final int throughput) {

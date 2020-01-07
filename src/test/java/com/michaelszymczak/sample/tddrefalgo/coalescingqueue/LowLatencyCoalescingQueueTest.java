@@ -21,6 +21,7 @@ class LowLatencyCoalescingQueueTest {
         LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
         run("someKey", queue, 1_000_000);
         long allocationsBeforeEnteredSteadyState = queue.allocations();
+        assertThat(allocationsBeforeEnteredSteadyState).isEqualTo(374);
 
         // When
         Map<String, Long> result = run("steadyStateKey", queue, 10_000_000);

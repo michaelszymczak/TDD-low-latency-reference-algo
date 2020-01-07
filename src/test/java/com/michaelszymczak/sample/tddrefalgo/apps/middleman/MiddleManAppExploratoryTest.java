@@ -85,7 +85,7 @@ class MiddleManAppExploratoryTest {
     private MiddleManApp createAppWithFullWindowOfSize(int windowSize) {
         MiddleManApp middleManApp = new MiddleManApp(1024, windowSize);
         range(0, windowSize).forEach(i -> marketMakerApp.events(
-                format("Q/   otherisin%d/  0/     0/   0", i)
+                format("Q/   otherisin%d/  1/     1/   1", i)
         ));
         middleManApp.onSingleReaderInput(marketMakerApp.output());
         outputSpy.onSingleReaderInput(middleManApp.output());
