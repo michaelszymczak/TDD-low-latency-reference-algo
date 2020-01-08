@@ -68,10 +68,10 @@ class CoalescingQueuePerformanceTest {
                 .isLessThan(ofNanos(500));
         assertThat(latency.get9999thPercentile())
                 .describedAs("99.99th percentile is " + latency.get9999thPercentile())
-                .isLessThan(ms(1));
+                .isLessThan(ms(5));
         assertThat(latency.getWorst())
                 .describedAs("worst is " + latency.getWorst())
-                .isLessThan(ms(1));
+                .isLessThan(ms(10));
     }
 
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut, final int iterations, final int throughput) {
