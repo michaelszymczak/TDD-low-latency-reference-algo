@@ -1,13 +1,17 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman.support;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
+import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.apps.support.InputPermutations;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
 
 public class MarketEventsGenerator {
     private static final int PUBLISHER_CAPACITY = 5 * 1024 * 1024;
@@ -31,8 +35,18 @@ public class MarketEventsGenerator {
         this.slots = slots;
     }
 
+    public List<String> generateHumanReadableSimulation() {
+        return Arrays.asList(
+                generate(),
+                generate(),
+                generate()
+        );
+    }
+
     public List<String> generateHumanReadablePermutations() {
-        return inputPermutationsWithSlotCountOf(slots).stream().map(this::generateFrom).collect(Collectors.toList());
+        return inputPermutationsWithSlotCountOf(slots).stream()
+                .map(this::generateFrom)
+                .collect(Collectors.toList());
     }
 
     private List<String> inputPermutationsWithSlotCountOf(int slots) {
@@ -43,6 +57,24 @@ public class MarketEventsGenerator {
 
     private String generateFrom(String humanReadableMarketEventSequence) {
         marketMakerApp.events(humanReadableMarketEventSequence);
+        final OutputSpy<PricingProtocolDecodedMessageSpy> spyOfTestedInputToSUT = OutputSpy.outputSpy();
+        spyOfTestedInputToSUT.onInput(marketMakerApp.output());
+        String humanReadableTestedInputToSUT = spyOfTestedInputToSUT.getSpy().receivedMessagesPrettyPrint(messageDelimiter);
+        spyOfTestedInputToSUT.getSpy().clear();
+        marketMakerApp.output().reset();
+        return humanReadableTestedInputToSUT;
+    }
+
+    private String generate() {
+        marketMakerApp.generateRandom(
+                1000,
+                new Probabilities(
+                        new Probabilities.AckProbability(100),
+                        quoteProbability()
+                                .withPercentageProbability(700)
+                                .withDistinctInstruments(10)
+                                .withCancellationProbability(100).build())
+        );
         final OutputSpy<PricingProtocolDecodedMessageSpy> spyOfTestedInputToSUT = OutputSpy.outputSpy();
         spyOfTestedInputToSUT.onInput(marketMakerApp.output());
         String humanReadableTestedInputToSUT = spyOfTestedInputToSUT.getSpy().receivedMessagesPrettyPrint(messageDelimiter);

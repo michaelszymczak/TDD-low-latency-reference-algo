@@ -16,10 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MiddleManAppExploratoryTest {
 
-    private static final String SAME_EXPOSURE_DIFFERENT_OUTPUT =
-            "Q/isin/1/101/102, Q/isin/2/291/292, Q/isin2/0/0/0, Q/isin/1/101/102, A";
-    private static final String SAME_EXPOSURE_SAME_OUTPUT =
+    private static final String QUOTES_ONLY =
             "Q/isin/1/101/102, Q/isin/2/291/292, Q/isin/1/101/102, Q/isin/2/291/292, A";
+    private static final String CANCELS_AND_UNRELATED_QUOTES =
+            "Q/isin/1/101/102, Q/isin/2/291/292, Q/isin2/0/0/0, Q/isin/1/101/102, A";
+    private static final String CANCELS_AND_RELATED_QUOTES =
+            "Q/isin/1/101/102, Q/isin/2/291/292, Q/isin/0/0/0, Q/isin/1/101/102, A";
 
     private static final int WINDOW_SIZE = 100;
     private static final String MESSAGE_DELIMITER = ", ";
@@ -35,26 +37,97 @@ class MiddleManAppExploratoryTest {
         return MARKET_EVENTS_GENERATOR.generateHumanReadablePermutations();
     }
 
-    private static void assertIdenticalSideEffects(
-            String humanReadableMarketEventsSequence,
-            PricingProtocolDecodedMessageSpy referenceImplementationSideEffects,
-            PricingProtocolDecodedMessageSpy testedImplementationSideEffects) {
+    static List<String> humanReadableSimulation() {
+        return MARKET_EVENTS_GENERATOR.generateHumanReadableSimulation();
+    }
 
+    @ParameterizedTest
+    @MethodSource("humanReadablePermutations")
+    @Disabled
+    void shouldProduceIdenticalSideEffectsForPermutations(String humanReadablePermutations) {
+        shouldProduceIdenticalSideEffects(humanReadablePermutations);
+    }
+
+    @ParameterizedTest
+    @MethodSource("humanReadablePermutations")
+    @Disabled
+    void shouldResultInTheSameExposureForPermutations(String humanReadablePermutations) {
+        shouldResultInTheSameExposure(humanReadablePermutations);
+    }
+
+    @ParameterizedTest(name = "simulation")
+    @MethodSource("humanReadableSimulation")
+    @Disabled
+    void shouldProduceIdenticalSideEffectsDuringSimulation(String humanReadableSimulation) {
+        shouldProduceIdenticalSideEffects(humanReadableSimulation);
+    }
+
+    @ParameterizedTest(name = "simulation")
+    @MethodSource("humanReadableSimulation")
+    @Disabled
+    void shouldResultInTheSameExposureDuringSimulation(String humanReadableSimulation) {
+        shouldResultInTheSameExposure(humanReadableSimulation);
+    }
+
+    @Test
+    void shouldProduceCorrectResults() {
+        // change to reproduce some other input
+        String input = "Q/isin/1/1/1, A";
+        shouldResultInTheSameExposure(input);
+        shouldProduceIdenticalSideEffects(input);
+    }
+
+    @Test
+    void testIdenticalOutput1() {
+        shouldProduceIdenticalSideEffects(QUOTES_ONLY);
+    }
+
+    @Test
+    void testExposure1() {
+        shouldResultInTheSameExposure(QUOTES_ONLY);
+        shouldResultInTheSameExposure(CANCELS_AND_UNRELATED_QUOTES);
+    }
+
+    @Test
+    @Disabled
+    void testIdenticalOutput2() {
+        shouldProduceIdenticalSideEffects(CANCELS_AND_UNRELATED_QUOTES);
+    }
+
+    @Test
+    @Disabled
+    void testExposure2() {
+        shouldResultInTheSameExposure(CANCELS_AND_RELATED_QUOTES);
+    }
+
+    private void shouldProduceIdenticalSideEffects(String humanReadablePermutations) {
+        PricingProtocolDecodedMessageSpy referenceImplementationSideEffects = process
+                .process(humanReadablePermutations, referenceMiddleManApp);
+
+        // When
+        PricingProtocolDecodedMessageSpy testedImplementationSideEffects = process
+                .process(humanReadablePermutations, testedMiddleManApp);
+
+        // Then
         String referenceImplementationOutput = referenceImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
         String testedImplementationOutput = testedImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
 
-        assertThat(humanReadableMarketEventsSequence).isNotEmpty();
+        assertThat(humanReadablePermutations).isNotEmpty();
         assertThat(referenceImplementationOutput).isNotEmpty();
         assertThat(testedImplementationOutput)
-                .describedAs("For input: " + humanReadableMarketEventsSequence)
+                .describedAs("For input: " + humanReadablePermutations)
                 .isEqualTo(referenceImplementationOutput);
     }
 
-    private static void assertIdenticalExposure(
-            String humanReadableMarketEventsSequence,
-            PricingProtocolDecodedMessageSpy referenceImplementationSideEffects,
-            PricingProtocolDecodedMessageSpy testedImplementationSideEffects) {
+    private void shouldResultInTheSameExposure(String humanReadablePermutations) {
+        PricingProtocolDecodedMessageSpy referenceImplementationSideEffects = process
+                .process(humanReadablePermutations, referenceMiddleManApp);
 
+        // When
+        PricingProtocolDecodedMessageSpy testedImplementationSideEffects = process
+                .process(humanReadablePermutations, testedMiddleManApp);
+
+        // Then
         Exposure exposureForReferenceImplementation = new Exposure();
         Exposure exposureForTestedImplementation = new Exposure();
         referenceImplementationSideEffects.receivedMessages()
@@ -64,64 +137,8 @@ class MiddleManAppExploratoryTest {
                 .forEach(exposureForTestedImplementation::onPricingMessage);
 
         assertThat(exposureForTestedImplementation)
-                .describedAs("For input: " + humanReadableMarketEventsSequence)
+                .describedAs("For input: " + humanReadablePermutations)
                 .isEqualTo(exposureForReferenceImplementation);
     }
-
-    @ParameterizedTest
-    @MethodSource("humanReadablePermutations")
-    @Disabled
-    void shouldProduceSideEffectsIdenticalToTheReferenceImplementation(String humanReadablePermutations) {
-        PricingProtocolDecodedMessageSpy referenceImplementationSideEffects = process
-                .process(humanReadablePermutations, referenceMiddleManApp);
-
-        // When
-        PricingProtocolDecodedMessageSpy testedImplementationSideEffects = process
-                .process(humanReadablePermutations, testedMiddleManApp);
-
-        // Then
-        assertIdenticalSideEffects(
-                humanReadablePermutations,
-                referenceImplementationSideEffects,
-                testedImplementationSideEffects
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("humanReadablePermutations")
-    @Disabled
-    void shouldResultInTheSameExposureAsTheReferenceImplementation(String humanReadablePermutations) {
-        PricingProtocolDecodedMessageSpy referenceImplementationSideEffects = process
-                .process(humanReadablePermutations, referenceMiddleManApp);
-
-        // When
-        PricingProtocolDecodedMessageSpy testedImplementationSideEffects = process
-                .process(humanReadablePermutations, testedMiddleManApp);
-
-        // Then
-        assertIdenticalExposure(
-                humanReadablePermutations,
-                referenceImplementationSideEffects,
-                testedImplementationSideEffects
-        );
-    }
-
-    @Test
-    void testIdenticalOutput1() {
-        shouldProduceSideEffectsIdenticalToTheReferenceImplementation(SAME_EXPOSURE_SAME_OUTPUT);
-    }
-
-    @Test
-    @Disabled
-    void testIdenticalOutput2() {
-        shouldProduceSideEffectsIdenticalToTheReferenceImplementation(SAME_EXPOSURE_DIFFERENT_OUTPUT);
-    }
-
-    @Test
-    void testExposure() {
-        shouldResultInTheSameExposureAsTheReferenceImplementation(SAME_EXPOSURE_SAME_OUTPUT);
-        shouldResultInTheSameExposureAsTheReferenceImplementation(SAME_EXPOSURE_DIFFERENT_OUTPUT);
-    }
-
 
 }
