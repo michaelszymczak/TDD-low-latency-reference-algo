@@ -7,6 +7,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toMap;
+
 public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
 
     private final AllocationCounter allocationsCounter;
@@ -16,15 +19,19 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private final Deque<WrappedElement<T>> wrappedElementsPool;
 
     public LowLatencyCoalescingQueue() {
-        this.allocationsCounter = new AllocationCounter();
+        this(new AllocationCounter());
+    }
+
+    public LowLatencyCoalescingQueue(AllocationCounter allocationsCounter) {
+        this.allocationsCounter = allocationsCounter;
         this.keys = this.allocationsCounter.recordAllocation(new ArrayDeque<>());
         this.elementByKey = this.allocationsCounter.recordAllocation(new Object2ObjectHashMap<>());
-        this.keyPlaceholder = this.allocationsCounter.recordAllocation(new Key(allocationsCounter, ""));
+        this.keyPlaceholder = this.allocationsCounter.recordAllocation(new Key(this.allocationsCounter, ""));
         this.wrappedElementsPool = this.allocationsCounter.recordAllocation(new ArrayDeque<>());
     }
 
     public long allocations() {
-        return allocationsCounter.count();
+        return allocationsCounter.totalCount();
     }
 
     @Override
@@ -62,7 +69,9 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
     private WrappedElement<T> newWrappedElement(CharSequence key, T element) {
         WrappedElement<T> pooled = wrappedElementsPool.pollFirst();
         if (pooled == null) {
-            return allocationsCounter.recordAllocation(new WrappedElement<>(allocationsCounter, key, element));
+            return allocationsCounter.recordAllocation(
+                    "NEW_WRAPPED_ELEMENT",
+                    new WrappedElement<>(allocationsCounter, key, element));
         } else {
             return pooled.set(key, element);
         }
@@ -80,17 +89,39 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
                 '}';
     }
 
-    private static class AllocationCounter {
-        private final MutableInteger count = new MutableInteger();
+    public static class AllocationCounter {
+
+        private static final String DEFAULT_LABEL = "CONSTRUCTOR";
+
+        private final Map<String, MutableInteger> countByLabel = new Object2ObjectHashMap<>();
 
         <A> A recordAllocation(A newlyCreatedObject) {
+            return recordAllocation(DEFAULT_LABEL, newlyCreatedObject);
+        }
+
+        <A> A recordAllocation(String label, A newlyCreatedObject) {
+            MutableInteger count = countForLabel(label);
             count.set(count.get() + 1);
             return newlyCreatedObject;
         }
 
-        int count()
-        {
-            return count.get();
+        private MutableInteger countForLabel(String label) {
+            MutableInteger count = countByLabel.get(label);
+            if (count == null) {
+                countByLabel.put(label, new MutableInteger());
+                return countByLabel.get(label);
+            } else {
+                return count;
+            }
+        }
+
+        int totalCount() {
+            return countByLabel.values().stream().mapToInt(MutableInteger::get).sum();
+        }
+
+        Map<String, Integer> countByLabel() {
+            return unmodifiableMap(countByLabel.entrySet().stream()
+                    .collect(toMap(Map.Entry::getKey, e -> e.getValue().get())));
         }
     }
 
@@ -99,7 +130,10 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         T element;
 
         WrappedElement(AllocationCounter allocationCounter, CharSequence key, T element) {
-            this.key = allocationCounter.recordAllocation(new Key(allocationCounter, key));
+            this.key = allocationCounter.recordAllocation(
+                    "NEW_KEY",
+                    new Key(allocationCounter, key)
+            );
             this.element = element;
         }
 
@@ -124,7 +158,10 @@ public class LowLatencyCoalescingQueue<T> implements CoalescingQueue<T> {
         final StringBuilder k;
 
         Key(AllocationCounter allocationsCounter, CharSequence k) {
-            this.k = allocationsCounter.recordAllocation(new StringBuilder());
+            this.k = allocationsCounter.recordAllocation(
+                    "NEW_STRING_BUILDER_FOR_KEY",
+                    new StringBuilder()
+            );
             this.k.setLength(0);
             this.k.append(k);
         }

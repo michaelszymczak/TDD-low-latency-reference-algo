@@ -17,16 +17,24 @@ class LowLatencyCoalescingQueueTest {
     @Test
     void shouldNotAllocateInSteadyState() {
         // Given
-        LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>();
+        LowLatencyCoalescingQueue.AllocationCounter allocationsCounter = new LowLatencyCoalescingQueue.AllocationCounter();
+        LowLatencyCoalescingQueue<Object> queue = new LowLatencyCoalescingQueue<>(allocationsCounter);
         run("someKey", queue, 1_000_000);
-        long allocationsBeforeEnteredSteadyState = queue.allocations();
-        assertThat(allocationsBeforeEnteredSteadyState).isEqualTo(374);
+        long totalAllocationsBeforeEnteredSteadyState = allocationsCounter.totalCount();
+        Map<String, Integer> allocationsBeforeEnteredSteadyState = new HashMap<>();
+        allocationsBeforeEnteredSteadyState.put("CONSTRUCTOR", 4);
+        allocationsBeforeEnteredSteadyState.put("NEW_KEY", 123);
+        allocationsBeforeEnteredSteadyState.put("NEW_STRING_BUILDER_FOR_KEY", 124);
+        allocationsBeforeEnteredSteadyState.put("NEW_WRAPPED_ELEMENT", 123);
+        assertThat(allocationsCounter.countByLabel()).isEqualTo(allocationsBeforeEnteredSteadyState);
+        assertThat(totalAllocationsBeforeEnteredSteadyState).isEqualTo(374);
 
         // When
         Map<String, Long> result = run("steadyStateKey", queue, 10_000_000);
 
         // Then
-        assertThat(queue.allocations()).isEqualTo(allocationsBeforeEnteredSteadyState);
+        assertThat(allocationsCounter.countByLabel()).isEqualTo(allocationsBeforeEnteredSteadyState);
+        assertThat(queue.allocations()).isEqualTo(totalAllocationsBeforeEnteredSteadyState);
         assertThat(result.get("msgPerSecond")).isGreaterThan(3_000_000);
         assertThat(result.get("worstLatencyMicros")).isLessThan(500);
     }
