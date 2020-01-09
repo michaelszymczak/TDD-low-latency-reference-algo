@@ -1,26 +1,43 @@
 package com.michaelszymczak.sample.tddrefalgo;
 
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.ImmutableQuotePricingMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.MutableQuotePricingMessage;
-import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuoteEncoding;
-import org.agrona.ExpandableDirectByteBuffer;
+import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.MiddleManApp;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
+
+import static com.michaelszymczak.sample.tddrefalgo.support.OutputSpy.outputSpy;
 
 public class TddRefAlgoMain {
 
+    private static final int PUBLISHER_CAPACITY = 5 * 1024 * 1024;
+    private final MarketMakerApp marketMakerApp = new MarketMakerApp(System::nanoTime, PUBLISHER_CAPACITY);
+    private final int windowSize;
+    private final MiddleManApp middleManApp;
+
     public static void main(String[] args) {
-        System.out.println(new TddRefAlgoMain().foo());
+        System.out.println(new TddRefAlgoMain(2).process(
+                "" +
+                        "Q/   isin1/  1/     4455/   4466\n" +
+                        "Q/   isin2/  2/     7755/   8866\n" +
+                        "Q/   isin3/  0/     0/         0\n" +
+                        "A\n" +
+                        "Q/   isin4/  0/     0/         0\n" +
+                        "Q/   isin5/  5/     1234/   5678\n" +
+                        "A\n"));
     }
 
-    public String foo() {
-        ExpandableDirectByteBuffer buffer = new ExpandableDirectByteBuffer();
-        MutableQuotePricingMessage quote = new MutableQuotePricingMessage();
-        new QuoteEncoding.Encoder()
-                .wrap(buffer, 50)
-                .encode(new ImmutableQuotePricingMessage("GB00BD0PCK97", 2, 100_98, 100_95));
-        new QuoteEncoding.Decoder()
-                .wrap(buffer, 50)
-                .decode(quote);
-        return new ImmutableQuotePricingMessage(quote).toString();
+    public TddRefAlgoMain(final int windowSize) {
+        this.windowSize = windowSize;
+        middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, this.windowSize);
+    }
+
+    public String process(final String messages) {
+
+        marketMakerApp.events(messages);
+        OutputSpy<PricingProtocolDecodedMessageSpy> spy = outputSpy();
+        middleManApp.onInput(marketMakerApp.output());
+        spy.onInput(middleManApp.output());
+        return spy.getSpy().receivedMessages().toString();
     }
 
 }

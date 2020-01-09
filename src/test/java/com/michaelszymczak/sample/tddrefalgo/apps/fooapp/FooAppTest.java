@@ -5,7 +5,7 @@ import com.michaelszymczak.sample.tddrefalgo.framework.encoding.LengthBasedMessa
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextEncoding;
 import com.michaelszymczak.sample.tddrefalgo.protocols.plaintext.PlainTextListener;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.PricingProtocolEncoding;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Test;
 

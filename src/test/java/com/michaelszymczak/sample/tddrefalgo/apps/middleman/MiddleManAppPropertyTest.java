@@ -2,9 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Disabled;

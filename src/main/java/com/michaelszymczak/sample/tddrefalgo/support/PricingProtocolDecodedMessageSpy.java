@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.testsupport;
+package com.michaelszymczak.sample.tddrefalgo.support;
 
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
 
@@ -29,10 +29,6 @@ public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener
 
     public List<PricingMessage> receivedMessages() {
         return pricingMessages;
-    }
-
-    public String receivedMessagesPrettyPrint(final String delimiter) {
-        return PricingMessagePrettyPrint.prettyPrint(delimiter, pricingMessages);
     }
 
     public <T extends PricingMessage> List<T> receivedMessages(Class<T> type, Predicate<T> predicate) {

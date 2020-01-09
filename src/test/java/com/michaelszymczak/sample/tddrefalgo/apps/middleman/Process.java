@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 
 import static java.lang.String.format;

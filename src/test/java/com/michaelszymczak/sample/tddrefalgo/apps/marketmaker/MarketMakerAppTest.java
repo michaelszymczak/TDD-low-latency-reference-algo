@@ -2,14 +2,15 @@ package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.*;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
+import static com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagePrettyPrint.prettyPrint;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +70,7 @@ class MarketMakerAppTest {
                                 .withCancellationProbability(100).build())
         ).output());
         final List<PricingMessage> expectedReceivedMessages = new ArrayList<>(outputSpy.getSpy().receivedMessages());
-        String reGeneratedInputs = outputSpy.getSpy().receivedMessagesPrettyPrint(", ");
+        String reGeneratedInputs = prettyPrint(", ", outputSpy.getSpy().receivedMessages());
         outputSpy.getSpy().clear();
 
         // When

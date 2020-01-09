@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.testsupport;
+package com.michaelszymczak.sample.tddrefalgo.support;
 
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.AppIO;
 import com.michaelszymczak.sample.tddrefalgo.framework.api.io.Output;

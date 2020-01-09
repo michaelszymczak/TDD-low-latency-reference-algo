@@ -3,8 +3,8 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman.support;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.apps.support.InputPermutations;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 
 import java.util.Arrays;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities.QuoteProbability.quoteProbability;
+import static com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagePrettyPrint.prettyPrint;
 
 public class MarketEventsGenerator {
     private static final int PUBLISHER_CAPACITY = 5 * 1024 * 1024;
@@ -59,7 +60,7 @@ public class MarketEventsGenerator {
         marketMakerApp.events(humanReadableMarketEventSequence);
         final OutputSpy<PricingProtocolDecodedMessageSpy> spyOfTestedInputToSUT = OutputSpy.outputSpy();
         spyOfTestedInputToSUT.onInput(marketMakerApp.output());
-        String humanReadableTestedInputToSUT = spyOfTestedInputToSUT.getSpy().receivedMessagesPrettyPrint(messageDelimiter);
+        String humanReadableTestedInputToSUT = prettyPrint(messageDelimiter, spyOfTestedInputToSUT.getSpy().receivedMessages());
         spyOfTestedInputToSUT.getSpy().clear();
         marketMakerApp.output().reset();
         return humanReadableTestedInputToSUT;
@@ -77,7 +78,7 @@ public class MarketEventsGenerator {
         );
         final OutputSpy<PricingProtocolDecodedMessageSpy> spyOfTestedInputToSUT = OutputSpy.outputSpy();
         spyOfTestedInputToSUT.onInput(marketMakerApp.output());
-        String humanReadableTestedInputToSUT = spyOfTestedInputToSUT.getSpy().receivedMessagesPrettyPrint(messageDelimiter);
+        String humanReadableTestedInputToSUT = prettyPrint(messageDelimiter, spyOfTestedInputToSUT.getSpy().receivedMessages());
         spyOfTestedInputToSUT.getSpy().clear();
         marketMakerApp.output().reset();
         return humanReadableTestedInputToSUT;

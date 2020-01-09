@@ -7,9 +7,9 @@ import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.QuotePricingMessa
 import java.util.List;
 import java.util.stream.Collectors;
 
-class PricingMessagePrettyPrint {
+public class PricingMessagePrettyPrint {
 
-    static String prettyPrint(String delimiter, final List<PricingMessage> pricingMessages) {
+    public static String prettyPrint(String delimiter, final List<PricingMessage> pricingMessages) {
         return pricingMessages.stream().map(msg -> {
             if (msg instanceof QuotePricingMessage) {
                 QuotePricingMessage q = (QuotePricingMessage) msg;

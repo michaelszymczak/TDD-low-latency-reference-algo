@@ -1,8 +1,8 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.support.InputPermutations;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package com.michaelszymczak.sample.tddrefalgo.apps.marketmaker;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.OutputSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.SameOutputProperty;
 import org.junit.jupiter.api.Test;

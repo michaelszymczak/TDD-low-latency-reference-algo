@@ -4,7 +4,7 @@ import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThro
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.SimpleLowLatencyThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.Exposure;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.support.MarketEventsGenerator;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 
+import static com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagePrettyPrint.prettyPrint;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MiddleManAppExploratoryTest {
@@ -109,8 +110,8 @@ class MiddleManAppExploratoryTest {
                 .process(humanReadablePermutations, testedMiddleManApp);
 
         // Then
-        String referenceImplementationOutput = referenceImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
-        String testedImplementationOutput = testedImplementationSideEffects.receivedMessagesPrettyPrint(MESSAGE_DELIMITER);
+        String referenceImplementationOutput = prettyPrint(MESSAGE_DELIMITER, referenceImplementationSideEffects.receivedMessages());
+        String testedImplementationOutput = prettyPrint(MESSAGE_DELIMITER, testedImplementationSideEffects.receivedMessages());
 
         assertThat(humanReadablePermutations).isNotEmpty();
         assertThat(referenceImplementationOutput).isNotEmpty();
