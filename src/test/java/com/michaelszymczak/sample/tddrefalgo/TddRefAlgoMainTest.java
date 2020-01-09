@@ -8,7 +8,7 @@ class TddRefAlgoMainTest {
     @Test
     void shouldFoo() {
         assertEquals(
-                "QuotePricingMessage{isin='GB00BD0PCK97', priceTier=2, bidPrice=10098, bidPrice=10095}",
+                "Q/GB00BD0PCK97/2/10098/10095",
                 new TddRefAlgoMain().foo());
     }
 }

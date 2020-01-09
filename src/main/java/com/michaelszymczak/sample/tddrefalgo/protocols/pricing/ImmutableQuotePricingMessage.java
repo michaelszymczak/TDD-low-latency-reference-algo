@@ -1,8 +1,13 @@
 package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-public class ImmutableQuotePricingMessage implements QuotePricingMessage {
+public class ImmutableQuotePricingMessage implements QuotePricingMessage, Comparable<ImmutableQuotePricingMessage> {
+
+    private static final Comparator<ImmutableQuotePricingMessage> COMPARATOR = Comparator
+            .comparing(ImmutableQuotePricingMessage::isin)
+            .thenComparing(ImmutableQuotePricingMessage::priceTier);
 
     private final String isin;
     private final int priceTier;
@@ -61,11 +66,11 @@ public class ImmutableQuotePricingMessage implements QuotePricingMessage {
 
     @Override
     public String toString() {
-        return "QuotePricingMessage{" +
-                "isin='" + isin + '\'' +
-                ", priceTier=" + priceTier +
-                ", bidPrice=" + bidPrice +
-                ", bidPrice=" + askPrice +
-                '}';
+        return String.format("Q/%s/%d/%d/%d", isin().trim(), priceTier(), bidPrice(), askPrice());
+    }
+
+    @Override
+    public int compareTo(ImmutableQuotePricingMessage other) {
+        return COMPARATOR.compare(this, other);
     }
 }

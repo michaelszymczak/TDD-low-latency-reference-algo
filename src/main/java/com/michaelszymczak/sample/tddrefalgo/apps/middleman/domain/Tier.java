@@ -8,13 +8,15 @@ public class Tier {
 
     private static final List<Integer> VALUES = Collections.unmodifiableList(Arrays.asList(1, 2, 3, 4, 5));
 
-    static boolean isValid(int value)
-    {
+    public static boolean isValidForQuote(int value) {
         return value >= 1 && value <= 5;
     }
 
-    static List<Integer> allValues()
-    {
+    public static boolean isForCancel(int value) {
+        return value == 0;
+    }
+
+    static List<Integer> allValues() {
         return VALUES;
     }
 }

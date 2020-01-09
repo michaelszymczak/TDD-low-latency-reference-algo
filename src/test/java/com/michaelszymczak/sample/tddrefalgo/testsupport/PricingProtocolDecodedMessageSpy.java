@@ -32,16 +32,7 @@ public class PricingProtocolDecodedMessageSpy implements PricingProtocolListener
     }
 
     public String receivedMessagesPrettyPrint(final String delimiter) {
-        return pricingMessages.stream().map(msg -> {
-            if (msg instanceof QuotePricingMessage) {
-                QuotePricingMessage q = (QuotePricingMessage) msg;
-                return String.format("Q/%s/%d/%d/%d", q.isin().toString().trim(), q.priceTier(), q.bidPrice(), q.askPrice());
-            }
-            if (msg instanceof AckMessage) {
-                return "A";
-            }
-            return msg.toString();
-        }).collect(Collectors.joining(delimiter));
+        return PricingMessagePrettyPrint.prettyPrint(delimiter, pricingMessages);
     }
 
     public <T extends PricingMessage> List<T> receivedMessages(Class<T> type, Predicate<T> predicate) {
