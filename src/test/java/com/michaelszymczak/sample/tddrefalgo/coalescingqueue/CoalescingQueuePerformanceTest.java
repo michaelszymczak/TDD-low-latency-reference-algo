@@ -1,13 +1,14 @@
 package com.michaelszymczak.sample.tddrefalgo.coalescingqueue;
 
+import com.michaelszymczak.sample.tddrefalgo.coalescingqueue.perf.ComponentTestingTask;
 import net.openhft.chronicle.core.jlbh.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
 import java.util.stream.Stream;
 
-import static com.michaelszymczak.sample.tddrefalgo.coalescingqueue.CoalescingQueue.DROP_EVICTED_ELEMENT;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofNanos;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,7 @@ class CoalescingQueuePerformanceTest {
     void shouldBeOfAcceptableLatencyUnderHighLoad(CoalescingQueue<Object> queue) {
         //Given
         final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
-        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 20_000_000, 300_000);
+        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 5_000_000, 300_000);
         final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
 
         //When
@@ -79,7 +80,7 @@ class CoalescingQueuePerformanceTest {
                 .warmUpIterations(500_000)
                 .iterations(iterations) // 50_000 - for reference
                 .throughput(throughput) // 10_000 - for reference
-                .runs(5)
+                .runs(3)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
                 .jlbhTask(new ComponentTestingTask(sut));
@@ -91,76 +92,6 @@ class CoalescingQueuePerformanceTest {
 
     private Duration ms(int ms) {
         return ofMillis(ms);
-    }
-
-    class ComponentTestingTask implements JLBHTask {
-
-        private final CoalescingQueue<Object> sut;
-        private final StringBuilder key = new StringBuilder();
-        private final Object element = new Object();
-        private final ComputationEnforcer computationEnforcer = new ComputationEnforcer();
-
-        private JLBH jlbh;
-        private int iteration = 0;
-
-        ComponentTestingTask(final CoalescingQueue<Object> queue) {
-            this.sut = queue;
-        }
-
-        @Override
-        public void init(JLBH jlbh) {
-            this.jlbh = jlbh;
-        }
-
-        @Override
-        public void run(long startTimeNS) {
-            Object fakeResult = runOnce(sut, iteration++);
-            jlbh.sampleNanos(System.nanoTime() - startTimeNS);
-            computationEnforcer.process(fakeResult);
-        }
-
-        @Override
-        public void complete() {
-            assertThat(computationEnforcer.hasProcessed()).isTrue();
-        }
-
-
-        private Object runOnce(CoalescingQueue<Object> queue, final int iteration) {
-            Object fakeResult = null;
-            if (iteration % 128 == 0) {
-                while (queue.poll() != null) {
-                }
-                fakeResult = queue.poll();
-            } else if (iteration % 64 == 0) {
-                queue.poll();
-                queue.poll();
-                queue.poll();
-            } else if (iteration % 32 == 0) {
-                queue.add(key("keyPrefix", 10_000_000 + iteration), element, DROP_EVICTED_ELEMENT);
-            } else {
-                queue.add(key("keyPrefix", iteration), element, DROP_EVICTED_ELEMENT);
-            }
-            return fakeResult;
-        }
-
-
-        private CharSequence key(final String prefix, int i) {
-            key.setLength(0);
-            key.append(prefix).append(i);
-            return key;
-        }
-
-        private class ComputationEnforcer {
-            private Object object = new Object();
-
-            void process(Object object) {
-                this.object = object;
-            }
-
-            boolean hasProcessed() {
-                return object == null;
-            }
-        }
     }
 
 

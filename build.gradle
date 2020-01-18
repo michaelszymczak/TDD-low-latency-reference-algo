@@ -26,8 +26,8 @@ application {
 
 dependencies {
     implementation('org.agrona:agrona:1.1.0')
+    implementation('net.openhft:chronicle-core:1.11.8')
+    implementation('net.openhft:affinity:3.1.7')
     testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
     testImplementation('org.assertj:assertj-core:3.14.0')
-    testImplementation('net.openhft:chronicle-core:1.11.8')
-    testImplementation('net.openhft:affinity:3.1.7')
 }
