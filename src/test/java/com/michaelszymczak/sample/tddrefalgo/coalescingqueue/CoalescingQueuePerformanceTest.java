@@ -31,7 +31,7 @@ class CoalescingQueuePerformanceTest {
     void shouldBeOfAcceptableLatencyUnderHighLoad(CoalescingQueue<Object> queue) {
         //Given
         final JLBHResultConsumer results = JLBHResultConsumer.newThreadSafeInstance();
-        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 5_000_000, 1_000_000);
+        JLBHOptions jlbhOptions = parametersWhenTesting(queue, 20_000_000, 300_000);
         final JLBH jlbh = new JLBH(jlbhOptions, System.out, results);
 
         //When
@@ -76,10 +76,10 @@ class CoalescingQueuePerformanceTest {
 
     private JLBHOptions parametersWhenTesting(final CoalescingQueue<Object> sut, final int iterations, final int throughput) {
         return new JLBHOptions()
-                .warmUpIterations(50_000)
+                .warmUpIterations(500_000)
                 .iterations(iterations) // 50_000 - for reference
                 .throughput(throughput) // 10_000 - for reference
-                .runs(3)
+                .runs(5)
                 .recordOSJitter(true)
                 .accountForCoordinatedOmmission(true)
                 .jlbhTask(new ComponentTestingTask(sut));
