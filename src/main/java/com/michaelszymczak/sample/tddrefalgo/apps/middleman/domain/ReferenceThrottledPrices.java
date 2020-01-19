@@ -34,6 +34,11 @@ public class ReferenceThrottledPrices implements ThrottledPrices {
     }
 
     private void onUpdate(PriceContribution update) {
+        updateQueue(update);
+        tryPublishEnqueued();
+    }
+
+    private void updateQueue(PriceContribution update) {
         boolean replaced = false;
         for (int i = 0; i < awaitingContributions.size(); i++) {
             PriceContribution existing = awaitingContributions.get(i);
@@ -55,8 +60,6 @@ public class ReferenceThrottledPrices implements ThrottledPrices {
         if (!replaced) {
             awaitingContributions.offer(update);
         }
-
-        tryPublishEnqueued();
     }
 
     @Override

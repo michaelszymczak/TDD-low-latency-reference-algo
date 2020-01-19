@@ -40,25 +40,28 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     @Override
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        queue.add(
-                isin + "/" + tier,
-                new MutableQuotePricingMessage().set(isin, tier, bidPrice, askPrice),
-                DROP_EVICTED_ELEMENT
-        );
+        enqueue(isin + "/" + tier, isin, tier, bidPrice, askPrice);
         tryPublish();
     }
 
     @Override
     public void onCancel(CharSequence isin) {
-        for (int i = 0; i < POSSIBLE_TIERS.length; i++) {
-            int tier = POSSIBLE_TIERS[i];
-            queue.add(
-                    isin + "/" + tier,
-                    new MutableQuotePricingMessage().set(isin, 0, 0, 0),
-                    DROP_EVICTED_ELEMENT
-            );
-        }
+        enqueueCancelledAllTiers(isin);
         tryPublish();
+    }
+
+    private void enqueueCancelledAllTiers(CharSequence isin) {
+        for (int i = 0; i < POSSIBLE_TIERS.length; i++) {
+            enqueue(isin + "/" + POSSIBLE_TIERS[i], isin, 0, 0, 0);
+        }
+    }
+
+    private void enqueue(final String key, CharSequence isin, int tier, long bidPrice, long askPrice) {
+        queue.add(
+                key,
+                new MutableQuotePricingMessage().set(isin, tier, bidPrice, askPrice),
+                DROP_EVICTED_ELEMENT
+        );
     }
 
     @Override

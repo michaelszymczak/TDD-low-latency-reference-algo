@@ -31,9 +31,9 @@ public class ThrottledPricesLatencyMeasurement implements JLBHTask {
         new JLBH(
                 new JLBHOptions()
                         .warmUpIterations(1_000_000)
-                        .iterations(500_000)
+                        .iterations(1_000_000)
                         .throughput(100_000)
-                        .runs(3)
+                        .runs(4)
                         .recordOSJitter(true)
                         .accountForCoordinatedOmmission(true)
                         .jlbhTask(new ThrottledPricesLatencyMeasurement(generated)),
