@@ -83,6 +83,7 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
             } else {
                 publisher.publishQuote(msg.isin(), msg.priceTier(), msg.bidPrice(), msg.askPrice());
             }
+            pool.returnToPool(msg);
             inFlightMessages++;
         }
     }
