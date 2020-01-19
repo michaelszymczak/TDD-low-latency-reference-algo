@@ -32,7 +32,7 @@ class FooAppTest {
 
     @Test
     void shouldNotDoAnythingUnprompted() {
-        int read = app.onInput(in, IN_OFFSET, 0);
+        int read = app.onInput(in, IN_OFFSET, 0, false);
 
         assertEquals(IN_OFFSET, read);
         assertEquals(0, app.output().offset());
@@ -46,7 +46,7 @@ class FooAppTest {
                 new PricingProtocolEncoding.Encoder(FooApp.PRICING), heartbeat(nanoTime));
 
         // When
-        int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
+        int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET, false);
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decodeAll(
@@ -69,7 +69,7 @@ class FooAppTest {
                 "foo");
 
         // When
-        int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET);
+        int read = app.onInput(in, IN_OFFSET, inputEndPosition - IN_OFFSET, false);
 
         // Then
         dec.wrap(app.output().buffer(), app.output().offset(), app.output().length()).decodeAll(

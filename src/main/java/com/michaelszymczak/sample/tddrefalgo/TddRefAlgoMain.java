@@ -2,6 +2,9 @@ package com.michaelszymczak.sample.tddrefalgo;
 
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.MiddleManApp;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.SimpleLowLatencyThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.ThrottledPricesLatencyMeasurement;
 import com.michaelszymczak.sample.tddrefalgo.coalescingqueue.perf.ComponentTestingTask;
 import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
@@ -20,8 +23,16 @@ public class TddRefAlgoMain {
     public static void main(String[] args) {
         if (args.length > 0 && "perfQueue".equals(args[0])) {
             ComponentTestingTask.sampleRun();
+        } else if (args.length > 0 && "perfRefPricer".equals(args[0])) {
+            System.out.println("Reference implementation latency measurement");
+            ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+                    .withSut(publisher -> new ReferenceThrottledPrices(publisher, 500))
+                    .withGeneratedEvents(2));
         } else if (args.length > 0 && "perfPricer".equals(args[0])) {
-            System.out.println("PERF PRICER");
+            System.out.println("Reference implementation latency measurement");
+            ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+                    .withSut(publisher -> new SimpleLowLatencyThrottledPrices(publisher, 500))
+                    .withGeneratedEvents(2));
         } else {
             System.out.println(Arrays.toString(args));
             System.out.println(new TddRefAlgoMain(2).process(
@@ -38,7 +49,7 @@ public class TddRefAlgoMain {
 
     public TddRefAlgoMain(final int windowSize) {
         this.windowSize = windowSize;
-        middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, this.windowSize, true);
+        middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, this.windowSize);
     }
 
     public String process(final String messages) {

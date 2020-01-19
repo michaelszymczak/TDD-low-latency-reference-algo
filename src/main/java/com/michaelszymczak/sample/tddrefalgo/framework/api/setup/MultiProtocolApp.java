@@ -14,14 +14,12 @@ class MultiProtocolApp implements AppIO {
     private final DecodedAppMessageConsumer consumer;
     private final List<RegisteredApp<?, ?>> registeredApps = new ArrayList<>();
     private final AppPublisher appPublisher;
-    private final boolean readAsMuchAsPossibleInOneGo;
 
-    MultiProtocolApp(AppFactoryRegistry appFactoryRegistry, final boolean readAsMuchAsPossibleInOneGo) {
+    MultiProtocolApp(AppFactoryRegistry appFactoryRegistry) {
         this.appPublisher = new AppPublisher(appFactoryRegistry.getPublisherBufferCapacity());
         appFactoryRegistry.getAppFactories().stream().map(factory -> createApp(appPublisher, factory)).forEach(registeredApps::add);
         this.decoder = new LengthBasedMessageEncoding.Decoder();
         this.consumer = (payloadSchemaId, timeNs, buffer, offset, length) -> onMessage(payloadSchemaId, buffer, offset, length);
-        this.readAsMuchAsPossibleInOneGo = readAsMuchAsPossibleInOneGo;
     }
 
     private static <M> void decodeAndHandle(short payloadSchemaId, DirectBuffer buffer, int offset, int length, RegisteredApp<?, M> app) {
@@ -42,11 +40,11 @@ class MultiProtocolApp implements AppIO {
     }
 
     @Override
-    public int onInput(DirectBuffer input, int offset, int length) {
+    public int onInput(DirectBuffer input, int offset, int length, boolean canReturnEarly) {
         LengthBasedMessageEncoding.Decoder wrappedDecoder = decoder.wrap(input, offset, length);
-        return readAsMuchAsPossibleInOneGo ?
-                wrappedDecoder.decodeAll(consumer) :
-                wrappedDecoder.decodeNext(consumer);
+        return canReturnEarly ?
+                wrappedDecoder.decodeNext(consumer) :
+                wrappedDecoder.decodeAll(consumer);
     }
 
     @Override

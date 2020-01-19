@@ -48,7 +48,7 @@ public class MarketMakerApp implements AppIO {
     }
 
     @Override
-    public int onInput(DirectBuffer input, int offset, int length) {
+    public int onInput(DirectBuffer input, int offset, int length, boolean canReturnEarly) {
         return 0;
     }
 

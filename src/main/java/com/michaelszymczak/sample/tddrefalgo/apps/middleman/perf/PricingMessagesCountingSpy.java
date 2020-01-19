@@ -1,4 +1,4 @@
-package com.michaelszymczak.sample.tddrefalgo.testsupport;
+package com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf;
 
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.AckMessage;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.HeartbeatPricingMessage;

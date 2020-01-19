@@ -20,14 +20,13 @@ public class MiddleManApp implements AppIO {
 
     private final AppIO app;
 
-    public MiddleManApp(final int publisherCapacity, final int windowSize, final boolean readAsMuchAsPossibleInOneGo) {
-        this(publisherCapacity, readAsMuchAsPossibleInOneGo, throttledPricesPublisher ->
+    public MiddleManApp(final int publisherCapacity, final int windowSize) {
+        this(publisherCapacity, throttledPricesPublisher ->
                 new ReferenceThrottledPrices(throttledPricesPublisher, windowSize));
     }
 
     public MiddleManApp(
             final int publisherCapacity,
-            final boolean readAsMuchAsPossibleInOneGo,
             final Function<ThrottledPricesPublisher, ThrottledPrices> throttledPricesFactory) {
         app = AppFactory.createApp(new AppFactoryRegistry(publisherCapacity, Collections.singletonList(
                 new RegisteredAppFactory<>(
@@ -35,14 +34,13 @@ public class MiddleManApp implements AppIO {
                         new PricingProtocolEncoding.Decoder(),
                         new PricingProtocolEncoding.Encoder(PRICING_SCHEMA),
                         publisher -> new PriceUpdatesHandler(
-                                throttledPricesFactory.apply(new EncodingThrottledPricesPublisher(publisher)))))),
-                readAsMuchAsPossibleInOneGo
+                                throttledPricesFactory.apply(new EncodingThrottledPricesPublisher(publisher))))))
         );
     }
 
     @Override
-    public int onInput(DirectBuffer input, int offset, int length) {
-        return app.onInput(input, offset, length);
+    public int onInput(DirectBuffer input, int offset, int length, boolean canReturnEarly) {
+        return app.onInput(input, offset, length, canReturnEarly);
     }
 
     @Override

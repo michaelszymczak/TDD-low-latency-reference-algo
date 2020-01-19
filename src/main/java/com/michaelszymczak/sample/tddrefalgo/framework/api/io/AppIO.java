@@ -4,18 +4,16 @@ import org.agrona.DirectBuffer;
 
 public interface AppIO {
 
-    default void onInput(Output output)
-    {
-        onInput(output.buffer(), output.offset(), output.length());
+    default int onInput(Output output) {
+        return onInput(output.buffer(), output.offset(), output.length(), false);
     }
 
-    default void onSingleReaderInput(Output output)
-    {
+    default void onSingleReaderInput(Output output) {
         onInput(output);
         output.reset();
     }
 
-    int onInput(DirectBuffer input, int offset, int length);
+    int onInput(DirectBuffer input, int offset, int length, boolean canReturnEarly);
 
     Output output();
 }

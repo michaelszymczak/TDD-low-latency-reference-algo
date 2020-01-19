@@ -45,8 +45,8 @@ public class PongApp implements AppIO {
     }
 
     @Override
-    public int onInput(DirectBuffer input, int offset, int length) {
-        return app.onInput(input, offset, length);
+    public int onInput(DirectBuffer input, int offset, int length, boolean canReturnEarly) {
+        return app.onInput(input, offset, length, canReturnEarly);
     }
 
     @Override

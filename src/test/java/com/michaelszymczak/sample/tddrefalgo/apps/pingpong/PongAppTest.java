@@ -15,7 +15,7 @@ class PongAppTest {
     void shouldNotDoAnythingUnprompted() {
         PongApp app = new PongApp();
 
-        int read = app.onInput(in, IN_OFFSET, 0);
+        int read = app.onInput(in, IN_OFFSET, 0, false);
 
         assertEquals(IN_OFFSET, read);
         assertEquals(0, app.output().offset());
