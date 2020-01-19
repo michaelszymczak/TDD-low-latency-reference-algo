@@ -2,10 +2,12 @@ package com.michaelszymczak.sample.tddrefalgo.protocols.pricing;
 
 public class MutableQuotePricingMessage implements QuotePricingMessage {
 
+    private static final String NO_ISIN = "";
+
     private final StringBuilder isin = new StringBuilder();
-    private int priceTier;
-    private long bidPrice;
-    private long askPrice;
+    private int priceTier = -1;
+    private long bidPrice = -1;
+    private long askPrice = -1;
 
     public MutableQuotePricingMessage set(CharSequence isin, int priceTier, long bidPrice, long askPrice) {
         if (isin.length() > 12) {
@@ -37,5 +39,9 @@ public class MutableQuotePricingMessage implements QuotePricingMessage {
     @Override
     public long askPrice() {
         return askPrice;
+    }
+
+    public void clear() {
+        set(NO_ISIN, -1, -1, -1);
     }
 }

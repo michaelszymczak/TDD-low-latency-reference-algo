@@ -5,13 +5,14 @@ import com.michaelszymczak.sample.tddrefalgo.coalescingqueue.CoalescingQueue;
 import com.michaelszymczak.sample.tddrefalgo.coalescingqueue.LowLatencyCoalescingQueue;
 import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.MutableQuotePricingMessage;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-
-import static com.michaelszymczak.sample.tddrefalgo.coalescingqueue.CoalescingQueue.DROP_EVICTED_ELEMENT;
 
 public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     private static final int[] POSSIBLE_TIERS;
+    private static final String KEY_DELIMITER = "/";
 
     static {
         POSSIBLE_TIERS = new int[Tier.allValues().size()];
@@ -23,14 +24,18 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     private final ThrottledPricesPublisher publisher;
     private final int windowSize;
-    private final CoalescingQueue<MutableQuotePricingMessage> queue;
+    private final CoalescingQueue<MutableQuotePricingMessage> queue = new LowLatencyCoalescingQueue<>();
+    private final StringBuilder keyPlaceholder = new StringBuilder();
+    private final Deque<MutableQuotePricingMessage> messagePool = new ArrayDeque<>();
     private int inFlightMessages = 0;
-
+    private CoalescingQueue.EvictedElementListener<MutableQuotePricingMessage> returnToThePoolEvictedMessage = message -> {
+        message.clear();
+        messagePool.addFirst(message);
+    };
 
     public SimpleLowLatencyThrottledPrices(ThrottledPricesPublisher publisher, int windowSize) {
         this.publisher = publisher;
         this.windowSize = windowSize;
-        this.queue = new LowLatencyCoalescingQueue<>();
     }
 
     @Override
@@ -40,7 +45,13 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     @Override
     public void onQuoteUpdate(CharSequence isin, int tier, long bidPrice, long askPrice) {
-        enqueue(isin + "/" + tier, isin, tier, bidPrice, askPrice);
+        keyPlaceholder.setLength(0);
+        keyPlaceholder.append(isin).append(KEY_DELIMITER).append(tier);
+        queue.add(
+                keyPlaceholder,
+                newMessage().set(isin, tier, bidPrice, askPrice),
+                returnToThePoolEvictedMessage
+        );
         tryPublish();
     }
 
@@ -52,16 +63,14 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     private void enqueueCancelledAllTiers(CharSequence isin) {
         for (int i = 0; i < POSSIBLE_TIERS.length; i++) {
-            enqueue(isin + "/" + POSSIBLE_TIERS[i], isin, 0, 0, 0);
+            keyPlaceholder.setLength(0);
+            keyPlaceholder.append(isin).append(KEY_DELIMITER).append(POSSIBLE_TIERS[i]);
+            queue.add(
+                    keyPlaceholder,
+                    newMessage().set(isin, 0, 0, 0),
+                    returnToThePoolEvictedMessage
+            );
         }
-    }
-
-    private void enqueue(final String key, CharSequence isin, int tier, long bidPrice, long askPrice) {
-        queue.add(
-                key,
-                new MutableQuotePricingMessage().set(isin, tier, bidPrice, askPrice),
-                DROP_EVICTED_ELEMENT
-        );
     }
 
     @Override
@@ -88,4 +97,15 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
     private boolean isWindowFull() {
         return inFlightMessages >= windowSize;
     }
+
+
+    private MutableQuotePricingMessage newMessage() {
+        MutableQuotePricingMessage pooled = messagePool.pollFirst();
+        if (pooled == null) {
+            return new MutableQuotePricingMessage();
+        } else {
+            return pooled;
+        }
+    }
+
 }
