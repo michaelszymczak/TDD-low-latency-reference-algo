@@ -3,8 +3,8 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.Probabilities;
 import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
-import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
 import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
+import com.michaelszymczak.sample.tddrefalgo.testsupport.PricingMessagesCountingSpy;
 import com.michaelszymczak.sample.tddrefalgo.testsupport.RelativeNanoClockWithTimeFixedTo;
 import org.agrona.ExpandableArrayBuffer;
 import org.junit.jupiter.api.Disabled;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MiddleManAppPropertyTest {
 
-    private final MiddleManApp middleManApp = new MiddleManApp(1024, 1);
+    private final MiddleManApp middleManApp = new MiddleManApp(1024, 1, true);
     private final OutputSpy<PricingProtocolDecodedMessageSpy> outputSpy = OutputSpy.outputSpy();
     private final MarketMakerApp marketMakerApp = new MarketMakerApp(new RelativeNanoClockWithTimeFixedTo(12345L), 5 * 1024 * 1024);
 
@@ -59,7 +59,7 @@ class MiddleManAppPropertyTest {
         final int windowSize = (1000 / ackPerMilProbability);
         final MarketMakerApp app = generateMarketUpdates(publisherCapacity, rounds, priceUpdatesPerRound, ackPerMilProbability);
 
-        MiddleManApp middleManApp = new MiddleManApp(publisherCapacity, windowSize);
+        MiddleManApp middleManApp = new MiddleManApp(publisherCapacity, windowSize, true);
         range(1, rounds + 1).forEach(round -> {
             middleManApp.onInput(app.output(round));
             middleManApp.output().reset();
@@ -77,7 +77,7 @@ class MiddleManAppPropertyTest {
         final int windowSize = (1000 / ackPerMilProbability);
         final MarketMakerApp app = generateMarketUpdates(publisherCapacity, rounds, priceUpdatesPerRound, ackPerMilProbability);
 
-        MiddleManApp middleManApp = new MiddleManApp(publisherCapacity, windowSize);
+        MiddleManApp middleManApp = new MiddleManApp(publisherCapacity, windowSize, true);
         range(1, rounds + 1).forEach(round -> {
             middleManApp.onInput(app.output(round));
             middleManApp.output().reset();
@@ -106,8 +106,30 @@ class MiddleManAppPropertyTest {
     }
 
     @Test
+    @Timeout(10)
     @Disabled
-    void shouldHaveLowLatency() {
+    void shouldHaveLowLatencyWhenDownstreamServiceKeepsThePace() {
+        shouldHaveLowLatency(100);
+    }
 
+    @Test
+    @Timeout(10)
+    @Disabled
+    void shouldHaveLowLatencyWhenDownstreamServiceHasBurstyNature() {
+        shouldHaveLowLatency(2);
+    }
+
+    private void shouldHaveLowLatency(final int ackPerMilProbability) {
+        final int publisherCapacity = 5 * 1024 * 1024;
+        final int rounds = 10;
+        final int priceUpdatesPerRound = 50_000;
+        final int windowSize = (1000 / ackPerMilProbability);
+        final MarketMakerApp app = generateMarketUpdates(publisherCapacity, rounds, priceUpdatesPerRound, ackPerMilProbability);
+
+        MiddleManApp middleManApp = new MiddleManApp(publisherCapacity, windowSize, true);
+        range(1, rounds + 1).forEach(round -> {
+            middleManApp.onInput(app.output(round));
+            middleManApp.output().reset();
+        });
     }
 }

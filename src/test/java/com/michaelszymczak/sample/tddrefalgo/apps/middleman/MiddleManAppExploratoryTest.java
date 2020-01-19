@@ -29,9 +29,9 @@ class MiddleManAppExploratoryTest {
     private static final int PUBLISHER_CAPACITY = 5 * 1024 * 1024;
     private static final MarketEventsGenerator MARKET_EVENTS_GENERATOR = new MarketEventsGenerator(MESSAGE_DELIMITER, 4);
     private final Process process = new Process(PUBLISHER_CAPACITY, MESSAGE_DELIMITER, WINDOW_SIZE);
-    private MiddleManApp referenceMiddleManApp = new MiddleManApp(PUBLISHER_CAPACITY, throttledPricesPublisher ->
+    private MiddleManApp referenceMiddleManApp = new MiddleManApp(PUBLISHER_CAPACITY, true, throttledPricesPublisher ->
             new ReferenceThrottledPrices(throttledPricesPublisher, WINDOW_SIZE));
-    private MiddleManApp testedMiddleManApp = new MiddleManApp(PUBLISHER_CAPACITY, throttledPricesPublisher ->
+    private MiddleManApp testedMiddleManApp = new MiddleManApp(PUBLISHER_CAPACITY, true, throttledPricesPublisher ->
             new SimpleLowLatencyThrottledPrices(throttledPricesPublisher, WINDOW_SIZE)); // use SimpleLowLatencyThrottledPrices instead
 
     static List<String> humanReadablePermutations() {

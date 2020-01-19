@@ -38,7 +38,7 @@ public class TddRefAlgoMain {
 
     public TddRefAlgoMain(final int windowSize) {
         this.windowSize = windowSize;
-        middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, this.windowSize);
+        middleManApp = new MiddleManApp(PUBLISHER_CAPACITY, this.windowSize, true);
     }
 
     public String process(final String messages) {
