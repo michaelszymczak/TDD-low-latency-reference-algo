@@ -61,7 +61,7 @@ public class QuoteEncoding {
             stringBuilder.setLength(0);
             buffer.getStringWithoutLengthAscii(offset + ISIN_OFFSET, ISIN_LENGTH, stringBuilder);
             result.set(
-                    stringBuilder.toString(),
+                    stringBuilder,
                     buffer.getInt(offset + PRICE_TIER_OFFSET),
                     buffer.getLong(offset + BID_PRICE_OFFSET),
                     buffer.getLong(offset + ASK_PRICE_OFFSET)
