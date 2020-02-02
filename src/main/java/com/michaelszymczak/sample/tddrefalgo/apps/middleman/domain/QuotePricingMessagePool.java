@@ -5,7 +5,7 @@ import com.michaelszymczak.sample.tddrefalgo.protocols.pricing.MutableQuotePrici
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-class Pool {
+class QuotePricingMessagePool {
     private static final String KEY_DELIMITER = "/";
     private final Deque<MutableQuotePricingMessage> pool = new ArrayDeque<>();
     private final StringBuilder keyPlaceholder = new StringBuilder();

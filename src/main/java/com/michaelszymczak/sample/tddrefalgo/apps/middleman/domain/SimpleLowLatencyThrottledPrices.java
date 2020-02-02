@@ -22,9 +22,10 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
     private final ThrottledPricesPublisher publisher;
     private final int windowSize;
     private final CoalescingQueue<MutableQuotePricingMessage> queue = new LowLatencyCoalescingQueue<>();
+    private final QuotePricingMessagePool quotePricingMessagePool = new QuotePricingMessagePool();
+    private final CoalescingQueue.EvictedElementListener<MutableQuotePricingMessage> returnToPool = quotePricingMessagePool::returnToPool;
+
     private int inFlightMessages = 0;
-    private final Pool pool = new Pool();
-    private final CoalescingQueue.EvictedElementListener<MutableQuotePricingMessage> returnToPool = pool::returnToPool;
 
     public SimpleLowLatencyThrottledPrices(ThrottledPricesPublisher publisher, int windowSize) {
         this.publisher = publisher;
@@ -56,8 +57,8 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     private void enqueueQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
         queue.add(
-                pool.reusableKey(isin, tier),
-                pool.pooledMessage(isin, tier, bidPrice, askPrice),
+                quotePricingMessagePool.reusableKey(isin, tier),
+                quotePricingMessagePool.pooledMessage(isin, tier, bidPrice, askPrice),
                 returnToPool
         );
     }
@@ -65,8 +66,8 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
     private void enqueueCancelledAllTiers(CharSequence isin) {
         for (int i = 0; i < POSSIBLE_TIERS.length; i++) {
             queue.add(
-                    pool.reusableKey(isin, POSSIBLE_TIERS[i]),
-                    pool.pooledMessage(isin, 0, 0, 0),
+                    quotePricingMessagePool.reusableKey(isin, POSSIBLE_TIERS[i]),
+                    quotePricingMessagePool.pooledMessage(isin, 0, 0, 0),
                     returnToPool
             );
         }
@@ -83,7 +84,7 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
             } else {
                 publisher.publishQuote(msg.isin(), msg.priceTier(), msg.bidPrice(), msg.askPrice());
             }
-            pool.returnToPool(msg);
+            quotePricingMessagePool.returnToPool(msg);
             inFlightMessages++;
         }
     }
