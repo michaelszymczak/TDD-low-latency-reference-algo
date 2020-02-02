@@ -19,11 +19,16 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
         }
     }
 
+    private final CoalescingQueue<MutableQuotePricingMessage> queue = new LowLatencyCoalescingQueue<>();
+    private final Pool<MutableQuotePricingMessage> pool = new Pool<>(MutableQuotePricingMessage::new);
+    private final CoalescingQueue.EvictedElementListener<MutableQuotePricingMessage> returnToThePool = evictedElement -> {
+        evictedElement.clear();
+        pool.returnToPool(evictedElement);
+    };
+    private final StringIntReusableKey keyPlaceholder = new StringIntReusableKey("/");
+
     private final ThrottledPricesPublisher publisher;
     private final int windowSize;
-    private final CoalescingQueue<MutableQuotePricingMessage> queue = new LowLatencyCoalescingQueue<>();
-    private final QuotePricingMessagePool quotePricingMessagePool = new QuotePricingMessagePool();
-    private final CoalescingQueue.EvictedElementListener<MutableQuotePricingMessage> returnToPool = quotePricingMessagePool::returnToPool;
 
     private int inFlightMessages = 0;
 
@@ -57,36 +62,41 @@ public class SimpleLowLatencyThrottledPrices implements ThrottledPrices {
 
     private void enqueueQuote(CharSequence isin, int tier, long bidPrice, long askPrice) {
         queue.add(
-                quotePricingMessagePool.reusableKey(isin, tier),
-                quotePricingMessagePool.pooledMessage(isin, tier, bidPrice, askPrice),
-                returnToPool
+                keyPlaceholder.withParts(isin, tier),
+                pool.get().set(isin, tier, bidPrice, askPrice),
+                returnToThePool
         );
     }
 
     private void enqueueCancelledAllTiers(CharSequence isin) {
         for (int i = 0; i < POSSIBLE_TIERS.length; i++) {
             queue.add(
-                    quotePricingMessagePool.reusableKey(isin, POSSIBLE_TIERS[i]),
-                    quotePricingMessagePool.pooledMessage(isin, 0, 0, 0),
-                    returnToPool
+                    keyPlaceholder.withParts(isin, POSSIBLE_TIERS[i]),
+                    pool.get().set(isin, 0, 0, 0),
+                    returnToThePool
             );
         }
     }
 
     private void tryPublish() {
         while (!isWindowFull()) {
-            MutableQuotePricingMessage msg = queue.poll();
-            if (msg == null) {
+            MutableQuotePricingMessage nextMessage = queue.poll();
+            if (nextMessage == null) {
                 return;
             }
-            if (msg.priceTier() == 0 && msg.bidPrice() == 0 && msg.askPrice() == 0) {
-                publisher.publishCancel(msg.isin());
+            if (isCancel(nextMessage)) {
+                publisher.publishCancel(nextMessage.isin());
             } else {
-                publisher.publishQuote(msg.isin(), msg.priceTier(), msg.bidPrice(), msg.askPrice());
+                publisher.publishQuote(nextMessage.isin(), nextMessage.priceTier(), nextMessage.bidPrice(), nextMessage.askPrice());
             }
-            quotePricingMessagePool.returnToPool(msg);
+            nextMessage.clear();
+            pool.returnToPool(nextMessage);
             inFlightMessages++;
         }
+    }
+
+    private boolean isCancel(MutableQuotePricingMessage msg) {
+        return msg.priceTier() == 0 && msg.bidPrice() == 0 && msg.askPrice() == 0;
     }
 
     private boolean isWindowFull() {
