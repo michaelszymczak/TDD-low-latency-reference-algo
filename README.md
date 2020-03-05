@@ -29,7 +29,7 @@ $ make perfPricer
 
 BUILD SUCCESSFUL in 1s
 5 actionable tasks: 5 executed
-run with ./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfPricer
+run with ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricer
 --------------------------
 Reference implementation latency measurement
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".

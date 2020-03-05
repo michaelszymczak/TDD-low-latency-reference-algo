@@ -1,24 +1,24 @@
 run:
-	@./gradlew clean test distZip && unzip -q build/distributions/tdd-reference-algo.zip -d build/distributions
-	@echo "run with ./build/distributions/tdd-reference-algo/bin/tdd-reference-algo"
+	@./gradlew clean test distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
+	@echo "run with ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo"
 	@echo "--------------------------"
-	@./build/distributions/tdd-reference-algo/bin/tdd-reference-algo
+	@./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo
 
 perfQueue:
-	@./gradlew clean distZip && unzip -q build/distributions/tdd-reference-algo.zip -d build/distributions
-	@echo "run with ./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfQueue"
+	@./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
+	@echo "run with ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfQueue"
 	@echo "--------------------------"
-	@./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfQueue
+	@./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfQueue
 
 perfPricer:
-	@./gradlew clean distZip && unzip -q build/distributions/tdd-reference-algo.zip -d build/distributions
-	@echo "run with ./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfPricer"
+	@./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
+	@echo "run with ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricer"
 	@echo "--------------------------"
-	@./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfPricer
+	@./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricer
 
 perfRefPricer:
-	@./gradlew clean distZip && unzip -q build/distributions/tdd-reference-algo.zip -d build/distributions
-	@echo "run with ./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfRefPricer"
+	@./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
+	@echo "run with ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfRefPricer"
 	@echo "--------------------------"
-	@./build/distributions/tdd-reference-algo/bin/tdd-reference-algo perfRefPricer
+	@./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfRefPricer
 
