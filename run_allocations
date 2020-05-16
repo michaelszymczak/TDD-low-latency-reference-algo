@@ -8,11 +8,12 @@ function run_allocations
   local flame_graph=$2
   local opts=$3
   local mode=$4
+  local title=$5
   local sut_pid
   JAVA_OPTS="-XX:+PreserveFramePointer -XX:+PrintTLAB ${opts}" ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo ${mode} & sut_pid=$!
   sleep 2 
   echo "start profiling ${sut_pid}"
-  ${async_profiler_executable} -e alloc -d 10 -f "${flame_graph}" --title "Allocation profile" $(pgrep -f TddRefAlgoMain)
+  ${async_profiler_executable} -e alloc -d 10 -f "${flame_graph}" --title "${title}" $(pgrep -f TddRefAlgoMain)
   echo "profiling ${sut_pid} done"
   kill ${sut_pid}
 }
@@ -31,11 +32,11 @@ fi
 
 ./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
 echo "STARTING"
-run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations.svg" "" perfRefPricerAlloc
-run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations.svg" "" perfPricerAlloc
-run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-no-tlab.svg" "-XX:-UseTLAB" perfPricerAlloc
-run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfPricerAlloc
-run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfRefPricerAlloc
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations.svg" "" perfRefPricerAlloc "Allocation - many allocations, dynamic TLAB"
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations.svg" "" perfPricerAlloc "Allocation - few allocations, dynamic TLAB"
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-no-tlab.svg" "-XX:-UseTLAB" perfPricerAlloc "Allocation - few allocations, no TLAB"
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfPricerAlloc "Allocation - few allocations, minimal TLAB"
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfRefPricerAlloc "Allocation - many allocations, minimal TLAB"
 echo "ALL DONE"
 
 firefox /tmp/alloc-flame-graph-many-allocations.svg
