@@ -1,0 +1,45 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+function run_allocations
+{
+  local async_profiler_executable=$1
+  local flame_graph=$2
+  local opts=$3
+  local mode=$4
+  local sut_pid
+  JAVA_OPTS="-XX:+PreserveFramePointer -XX:+PrintTLAB ${opts}" ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo ${mode} & sut_pid=$!
+  sleep 2 
+  echo "start profiling ${sut_pid}"
+  ${async_profiler_executable} -e alloc -d 10 -f "${flame_graph}" --title "Allocation profile" $(pgrep -f TddRefAlgoMain)
+  echo "profiling ${sut_pid} done"
+  kill ${sut_pid}
+}
+
+async_profile_executable=${1:-}
+
+if [ -z "$async_profile_executable" ]
+then
+   echo "Usage: $0 path/to/async/profiler/executable (https://github.com/jvm-profiling-tools/async-profiler)"
+   echo "Example:"
+   echo "$0 ../async-profiler/profiler.sh"
+   exit 1
+fi
+
+
+
+./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions
+echo "STARTING"
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations.svg" "" perfRefPricerAlloc
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations.svg" "" perfPricerAlloc
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-no-tlab.svg" "-XX:-UseTLAB" perfPricerAlloc
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-few-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfPricerAlloc
+run_allocations "${async_profile_executable}" "/tmp/alloc-flame-graph-many-allocations-minimal-tlab.svg" "-XX:TLABSize=2k -XX:-ResizeTLAB" perfRefPricerAlloc
+echo "ALL DONE"
+
+firefox /tmp/alloc-flame-graph-many-allocations.svg
+firefox /tmp/alloc-flame-graph-few-allocations.svg
+firefox /tmp/alloc-flame-graph-few-allocations-no-tlab.svg
+firefox /tmp/alloc-flame-graph-few-allocations-minimal-tlab.svg
+firefox /tmp/alloc-flame-graph-many-allocations-minimal-tlab.svg

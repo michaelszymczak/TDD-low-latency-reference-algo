@@ -1,12 +1,12 @@
-To run:
+## To run:
 
     make
 
-To perQueue:
+## To perQueue:
 
     make perfQueue
 
-To generate flame graphs
+## To generate flame graphs
 
     sudo sysctl -w kernel.perf_event_paranoid=1
     sudo sysctl -w kernel.kptr_restrict=0
@@ -16,12 +16,28 @@ To generate flame graphs
     ./profiler.sh -e alloc -d 30 -f alloc-flame-graph3.svg --title "Allocation profile" --width 2000  $(pgrep -f TddRefAlgoMain)
 
 
-To measure allocations in simple throttled prices
+## To measure allocations
+
+Look at the example flame graphs in docs/
+
+I should take up to a minute to run in various modes. It will open a firefox (why not) with the results
+
+    ./run_allocations
+
+More resources re allocation:
+
+https://blogs.oracle.com/jonthecollector/the-real-thing
+
+https://shipilev.net/jvm/anatomy-quarks/4-tlab-allocation/
+
+https://github.com/iovisor/bpftrace
+
+To do things such as:
+
+`sudo bpftrace -e "u:$LIBJVM:_ZN15G1CollectedHeap22humongous_obj_allocateEm { @[ustack] = count() }"`
 
 
-    make perfPricer
-    ./profiler.sh -e alloc -d 30 -f simple-pricer-alloc-flame-graph3.svg --title "Allocation profile" --width 2000  $(pgrep -f TddRefAlgoMain)
-
+## Sample results for perfPricer
 Current results
 
 ```
