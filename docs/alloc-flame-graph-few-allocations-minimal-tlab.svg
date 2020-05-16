@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" width="1200" height="214" onload="init(evt)" viewBox="0 0 1200 214" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" width="1200" height="182" onload="init(evt)" viewBox="0 0 1200 182" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <style type="text/css">
 	text { font-family:Verdana; font-size:12px; fill:rgb(0,0,0); }
 	#search { opacity:0.1; cursor:pointer; }
@@ -327,67 +327,47 @@
 ]]>
 </script>
 <rect x="0" y="0" width="100%" height="100%" fill="rgb(240,240,220)"/>
-<text id="title" x="600" y="24">Allocation profile</text>
-<text id="details" x="10" y="197"> </text>
+<text id="title" x="600" y="24">Allocation - few allocations&#44; minimal TLAB</text>
+<text id="details" x="10" y="165"> </text>
 <text id="unzoom" x="10" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090" y="24">Search</text>
-<text id="matched" x="1090" y="197"> </text>
+<text id="matched" x="1090" y="165"> </text>
 <g id="frames">
 <g>
-<title>all (4 samples, 100.00%)</title><rect x="10.0" y="163.0" width="1180.0" height="15" fill="#fa7b7b" rx="2" ry="2"/>
-<text x="13.0" y="174.0">all</text>
+<title>all (4 samples, 100.00%)</title><rect x="10.0" y="131.0" width="1180.0" height="15" fill="#fa7b7b" rx="2" ry="2"/>
+<text x="13.0" y="142.0">all</text>
 </g>
 <g>
-<title>[no_Java_frame] (1 samples, 25.00%)</title><rect x="10.0" y="147.0" width="295.0" height="15" fill="#ec6969" rx="2" ry="2"/>
-<text x="13.0" y="158.0">[no_Java_frame]</text>
+<title>[no_Java_frame] (1 samples, 25.00%)</title><rect x="10.0" y="115.0" width="295.0" height="15" fill="#ec6969" rx="2" ry="2"/>
+<text x="13.0" y="126.0">[no_Java_frame]</text>
 </g>
 <g>
-<title>java.lang.String (1 samples, 25.00%)</title><rect x="10.0" y="131.0" width="295.0" height="15" fill="#67d5d5" rx="2" ry="2"/>
-<text x="13.0" y="142.0">java.lang.String</text>
+<title>java.lang.String (1 samples, 25.00%)</title><rect x="10.0" y="99.0" width="295.0" height="15" fill="#67d5d5" rx="2" ry="2"/>
+<text x="13.0" y="110.0">java.lang.String</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main (3 samples, 75.00%)</title><rect x="305.0" y="147.0" width="885.0" height="15" fill="#67f867" rx="2" ry="2"/>
-<text x="308.0" y="158.0">com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main</text>
+<title>com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main (3 samples, 75.00%)</title><rect x="305.0" y="115.0" width="885.0" height="15" fill="#67f867" rx="2" ry="2"/>
+<text x="308.0" y="126.0">com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run (3 samples, 75.00%)</title><rect x="305.0" y="131.0" width="885.0" height="15" fill="#6bfc6b" rx="2" ry="2"/>
-<text x="308.0" y="142.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run (3 samples, 75.00%)</title><rect x="305.0" y="99.0" width="885.0" height="15" fill="#6bfc6b" rx="2" ry="2"/>
+<text x="308.0" y="110.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.printProgress (3 samples, 75.00%)</title><rect x="305.0" y="115.0" width="885.0" height="15" fill="#55e655" rx="2" ry="2"/>
-<text x="308.0" y="126.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.printProgress</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.printProgress (3 samples, 75.00%)</title><rect x="305.0" y="83.0" width="885.0" height="15" fill="#55e655" rx="2" ry="2"/>
+<text x="308.0" y="94.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.printProgress</text>
 </g>
 <g>
-<title>java/lang/StringBuilder.&lt;init&gt; (1 samples, 25.00%)</title><rect x="305.0" y="99.0" width="295.0" height="15" fill="#5aeb5a" rx="2" ry="2"/>
-<text x="308.0" y="110.0">java/lang/StringBuilder.&lt;init&gt;</text>
+<title>java/lang/StringBuilder.&lt;init&gt; (3 samples, 75.00%)</title><rect x="305.0" y="67.0" width="885.0" height="15" fill="#5aeb5a" rx="2" ry="2"/>
+<text x="308.0" y="78.0">java/lang/StringBuilder.&lt;init&gt;</text>
 </g>
 <g>
-<title>java/lang/AbstractStringBuilder.&lt;init&gt; (1 samples, 25.00%)</title><rect x="305.0" y="83.0" width="295.0" height="15" fill="#67f867" rx="2" ry="2"/>
-<text x="308.0" y="94.0">java/lang/AbstractStringBuilder.&lt;init&gt;</text>
+<title>java/lang/AbstractStringBuilder.&lt;init&gt; (3 samples, 75.00%)</title><rect x="305.0" y="51.0" width="885.0" height="15" fill="#67f867" rx="2" ry="2"/>
+<text x="308.0" y="62.0">java/lang/AbstractStringBuilder.&lt;init&gt;</text>
 </g>
 <g>
-<title>char[] (1 samples, 25.00%)</title><rect x="305.0" y="67.0" width="295.0" height="15" fill="#58c6c6" rx="2" ry="2"/>
-<text x="308.0" y="78.0">char[]</text>
-</g>
-<g>
-<title>java/lang/StringBuilder.append (2 samples, 50.00%)</title><rect x="600.0" y="99.0" width="590.0" height="15" fill="#60f160" rx="2" ry="2"/>
-<text x="603.0" y="110.0">java/lang/StringBuilder.append</text>
-</g>
-<g>
-<title>java/lang/AbstractStringBuilder.append (2 samples, 50.00%)</title><rect x="600.0" y="83.0" width="590.0" height="15" fill="#5eef5e" rx="2" ry="2"/>
-<text x="603.0" y="94.0">java/lang/AbstractStringBuilder.append</text>
-</g>
-<g>
-<title>java/lang/AbstractStringBuilder.ensureCapacityInternal (2 samples, 50.00%)</title><rect x="600.0" y="67.0" width="590.0" height="15" fill="#62f362" rx="2" ry="2"/>
-<text x="603.0" y="78.0">java/lang/AbstractStringBuilder.ensureCapacityInternal</text>
-</g>
-<g>
-<title>java/util/Arrays.copyOf (2 samples, 50.00%)</title><rect x="600.0" y="51.0" width="590.0" height="15" fill="#5aeb5a" rx="2" ry="2"/>
-<text x="603.0" y="62.0">java/util/Arrays.copyOf</text>
-</g>
-<g>
-<title>char[] (2 samples, 50.00%)</title><rect x="600.0" y="35.0" width="590.0" height="15" fill="#5fcdcd" rx="2" ry="2"/>
-<text x="603.0" y="46.0">char[]</text>
+<title>char[] (3 samples, 75.00%)</title><rect x="305.0" y="35.0" width="885.0" height="15" fill="#58c6c6" rx="2" ry="2"/>
+<text x="308.0" y="46.0">char[]</text>
 </g>
 </g>
 </svg>

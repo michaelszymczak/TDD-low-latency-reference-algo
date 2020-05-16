@@ -327,187 +327,227 @@
 ]]>
 </script>
 <rect x="0" y="0" width="100%" height="100%" fill="rgb(240,240,220)"/>
-<text id="title" x="600" y="24">Allocation profile</text>
+<text id="title" x="600" y="24">Allocation - many allocations&#44; minimal TLAB</text>
 <text id="details" x="10" y="405"> </text>
 <text id="unzoom" x="10" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090" y="24">Search</text>
 <text id="matched" x="1090" y="405"> </text>
 <g id="frames">
 <g>
-<title>all (18,141 samples, 100.00%)</title><rect x="10.0" y="371.0" width="1180.0" height="15" fill="#fa7b7b" rx="2" ry="2"/>
+<title>all (18,347 samples, 100.00%)</title><rect x="10.0" y="371.0" width="1180.0" height="15" fill="#fa7b7b" rx="2" ry="2"/>
 <text x="13.0" y="382.0">all</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main (18,140 samples, 99.99%)</title><rect x="10.1" y="355.0" width="1179.9" height="15" fill="#5bec5b" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main (18,346 samples, 99.99%)</title><rect x="10.1" y="355.0" width="1179.9" height="15" fill="#5bec5b" rx="2" ry="2"/>
 <text x="13.1" y="366.0">com/michaelszymczak/sample/tddrefalgo/TddRefAlgoMain.main</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run (18,140 samples, 99.99%)</title><rect x="10.1" y="339.0" width="1179.9" height="15" fill="#67f867" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run (18,346 samples, 99.99%)</title><rect x="10.1" y="339.0" width="1179.9" height="15" fill="#67f867" rx="2" ry="2"/>
 <text x="13.1" y="350.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.run</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.doWork (18,137 samples, 99.98%)</title><rect x="10.1" y="323.0" width="1179.7" height="15" fill="#67f867" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.doWork (18,337 samples, 99.95%)</title><rect x="10.1" y="323.0" width="1179.3" height="15" fill="#67f867" rx="2" ry="2"/>
 <text x="13.1" y="334.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.doWork</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/MarketActivitySimulation.processSingleMessage (18,137 samples, 99.98%)</title><rect x="10.1" y="307.0" width="1179.7" height="15" fill="#6bfc6b" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/MarketActivitySimulation.processSingleMessage (18,337 samples, 99.95%)</title><rect x="10.1" y="307.0" width="1179.3" height="15" fill="#6bfc6b" rx="2" ry="2"/>
 <text x="13.1" y="318.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/MarketActivitySimulation.processSingleMessage</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/MiddleManApp.onInput (18,137 samples, 99.98%)</title><rect x="10.1" y="291.0" width="1179.7" height="15" fill="#55e655" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/MiddleManApp.onInput (18,337 samples, 99.95%)</title><rect x="10.1" y="291.0" width="1179.3" height="15" fill="#55e655" rx="2" ry="2"/>
 <text x="13.1" y="302.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/MiddleManApp.onInput</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onInput (18,137 samples, 99.98%)</title><rect x="10.1" y="275.0" width="1179.7" height="15" fill="#5aeb5a" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onInput (18,337 samples, 99.95%)</title><rect x="10.1" y="275.0" width="1179.3" height="15" fill="#5aeb5a" rx="2" ry="2"/>
 <text x="13.1" y="286.0">com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onInput</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/encoding/LengthBasedMessageEncoding$Decoder.decodeNext (18,137 samples, 99.98%)</title><rect x="10.1" y="259.0" width="1179.7" height="15" fill="#67f867" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/encoding/LengthBasedMessageEncoding$Decoder.decodeNext (18,337 samples, 99.95%)</title><rect x="10.1" y="259.0" width="1179.3" height="15" fill="#67f867" rx="2" ry="2"/>
 <text x="13.1" y="270.0">com/michaelszymczak/sample/tddrefalgo/framework/encoding/LengthBasedMessageEncoding$Decoder.decodeNext</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp$$Lambda$7/1029991479.onMessage (18,137 samples, 99.98%)</title><rect x="10.1" y="243.0" width="1179.7" height="15" fill="#58e958" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp$$Lambda$7/1029991479.onMessage (18,337 samples, 99.95%)</title><rect x="10.1" y="243.0" width="1179.3" height="15" fill="#58e958" rx="2" ry="2"/>
 <text x="13.1" y="254.0">com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp$$Lambda$7/1029991479.onMessage</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.lambda$new$1 (18,137 samples, 99.98%)</title><rect x="10.1" y="227.0" width="1179.7" height="15" fill="#60f160" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.lambda$new$1 (18,337 samples, 99.95%)</title><rect x="10.1" y="227.0" width="1179.3" height="15" fill="#60f160" rx="2" ry="2"/>
 <text x="13.1" y="238.0">com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.lambda$new$1</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onMessage (18,137 samples, 99.98%)</title><rect x="10.1" y="211.0" width="1179.7" height="15" fill="#5eef5e" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onMessage (18,337 samples, 99.95%)</title><rect x="10.1" y="211.0" width="1179.3" height="15" fill="#5eef5e" rx="2" ry="2"/>
 <text x="13.1" y="222.0">com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.onMessage</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.decodeAndHandle (18,137 samples, 99.98%)</title><rect x="10.1" y="195.0" width="1179.7" height="15" fill="#62f362" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.decodeAndHandle (18,337 samples, 99.95%)</title><rect x="10.1" y="195.0" width="1179.3" height="15" fill="#62f362" rx="2" ry="2"/>
 <text x="13.1" y="206.0">com/michaelszymczak/sample/tddrefalgo/framework/api/setup/MultiProtocolApp.decodeAndHandle</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode (18,137 samples, 99.98%)</title><rect x="10.1" y="179.0" width="1179.7" height="15" fill="#5aeb5a" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode (18,337 samples, 99.95%)</title><rect x="10.1" y="179.0" width="1179.3" height="15" fill="#5aeb5a" rx="2" ry="2"/>
 <text x="13.1" y="190.0">com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode (18,137 samples, 99.98%)</title><rect x="10.1" y="163.0" width="1179.7" height="15" fill="#5ff05f" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode (18,337 samples, 99.95%)</title><rect x="10.1" y="163.0" width="1179.3" height="15" fill="#5ff05f" rx="2" ry="2"/>
 <text x="13.1" y="174.0">com/michaelszymczak/sample/tddrefalgo/protocols/pricing/PricingProtocolEncoding$Decoder.decode</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/PriceUpdatesHandler.onMessage (18,137 samples, 99.98%)</title><rect x="10.1" y="147.0" width="1179.7" height="15" fill="#6cfd6c" rx="2" ry="2"/>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/PriceUpdatesHandler.onMessage (18,337 samples, 99.95%)</title><rect x="10.1" y="147.0" width="1179.3" height="15" fill="#6cfd6c" rx="2" ry="2"/>
 <text x="13.1" y="158.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/PriceUpdatesHandler.onMessage</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onCancel (4,704 samples, 25.93%)</title><rect x="10.1" y="131.0" width="305.9" height="15" fill="#6bfc6b" rx="2" ry="2"/>
-<text x="13.1" y="142.0">com/michaelszymczak/sample/tddrefalgo/app..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onCancel (4,805 samples, 26.19%)</title><rect x="10.1" y="131.0" width="309.0" height="15" fill="#6bfc6b" rx="2" ry="2"/>
+<text x="13.1" y="142.0">com/michaelszymczak/sample/tddrefalgo/apps..</text>
 </g>
 <g>
-<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Cancel (649 samples, 3.58%)</title><rect x="10.1" y="115.0" width="42.2" height="15" fill="#63d1d1" rx="2" ry="2"/>
+<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Cancel (659 samples, 3.59%)</title><rect x="10.1" y="115.0" width="42.3" height="15" fill="#63d1d1" rx="2" ry="2"/>
 <text x="13.1" y="126.0">com...</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Cancel.&lt;init&gt; (2,941 samples, 16.21%)</title><rect x="52.3" y="115.0" width="191.3" height="15" fill="#65f665" rx="2" ry="2"/>
-<text x="55.3" y="126.0">com/michaelszymczak/sampl..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Cancel.&lt;init&gt; (2,928 samples, 15.96%)</title><rect x="52.4" y="115.0" width="188.4" height="15" fill="#65f665" rx="2" ry="2"/>
+<text x="55.4" y="126.0">com/michaelszymczak/samp..</text>
 </g>
 <g>
-<title>java/lang/StringBuilder.toString (2,941 samples, 16.21%)</title><rect x="52.3" y="99.0" width="191.3" height="15" fill="#54e554" rx="2" ry="2"/>
-<text x="55.3" y="110.0">java/lang/StringBuilder.t..</text>
+<title>java/lang/StringBuilder.toString (2,928 samples, 15.96%)</title><rect x="52.4" y="99.0" width="188.4" height="15" fill="#54e554" rx="2" ry="2"/>
+<text x="55.4" y="110.0">java/lang/StringBuilder...</text>
 </g>
 <g>
-<title>java.lang.String (1,122 samples, 6.18%)</title><rect x="52.3" y="83.0" width="73.0" height="15" fill="#62d0d0" rx="2" ry="2"/>
-<text x="55.3" y="94.0">java.lan..</text>
+<title>java.lang.String (1,183 samples, 6.45%)</title><rect x="52.4" y="83.0" width="76.1" height="15" fill="#62d0d0" rx="2" ry="2"/>
+<text x="55.4" y="94.0">java.lan..</text>
 </g>
 <g>
-<title>java/lang/String.&lt;init&gt; (1,819 samples, 10.03%)</title><rect x="125.3" y="83.0" width="118.3" height="15" fill="#50e150" rx="2" ry="2"/>
-<text x="128.3" y="94.0">java/lang/Stri..</text>
+<title>java/lang/String.&lt;init&gt; (1,745 samples, 9.51%)</title><rect x="128.5" y="83.0" width="112.3" height="15" fill="#50e150" rx="2" ry="2"/>
+<text x="131.5" y="94.0">java/lang/Stri..</text>
 </g>
 <g>
-<title>java/util/Arrays.copyOfRange (1,819 samples, 10.03%)</title><rect x="125.3" y="67.0" width="118.3" height="15" fill="#57e857" rx="2" ry="2"/>
-<text x="128.3" y="78.0">java/util/Arra..</text>
+<title>java/util/Arrays.copyOfRange (1,745 samples, 9.51%)</title><rect x="128.5" y="67.0" width="112.3" height="15" fill="#57e857" rx="2" ry="2"/>
+<text x="131.5" y="78.0">java/util/Arra..</text>
 </g>
 <g>
-<title>char[] (1,819 samples, 10.03%)</title><rect x="125.3" y="51.0" width="118.3" height="15" fill="#54c2c2" rx="2" ry="2"/>
-<text x="128.3" y="62.0">char[]</text>
+<title>char[] (1,745 samples, 9.51%)</title><rect x="128.5" y="51.0" width="112.3" height="15" fill="#54c2c2" rx="2" ry="2"/>
+<text x="131.5" y="62.0">char[]</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onUpdate (1,114 samples, 6.14%)</title><rect x="243.6" y="115.0" width="72.4" height="15" fill="#68f968" rx="2" ry="2"/>
-<text x="246.6" y="126.0">com/mich..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onUpdate (1,218 samples, 6.64%)</title><rect x="240.8" y="115.0" width="78.3" height="15" fill="#68f968" rx="2" ry="2"/>
+<text x="243.8" y="126.0">com/micha..</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.updateQueue (1,114 samples, 6.14%)</title><rect x="243.6" y="99.0" width="72.4" height="15" fill="#54e554" rx="2" ry="2"/>
-<text x="246.6" y="110.0">com/mich..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.updateQueue (1,218 samples, 6.64%)</title><rect x="240.8" y="99.0" width="78.3" height="15" fill="#54e554" rx="2" ry="2"/>
+<text x="243.8" y="110.0">com/micha..</text>
 </g>
 <g>
-<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Empty (427 samples, 2.35%)</title><rect x="243.6" y="83.0" width="27.8" height="15" fill="#5ccaca" rx="2" ry="2"/>
-<text x="246.6" y="94.0">c..</text>
+<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Empty (405 samples, 2.21%)</title><rect x="240.8" y="83.0" width="26.0" height="15" fill="#5ccaca" rx="2" ry="2"/>
+<text x="243.8" y="94.0">c..</text>
 </g>
 <g>
-<title>java/util/LinkedList.offer (687 samples, 3.79%)</title><rect x="271.4" y="83.0" width="44.6" height="15" fill="#53e453" rx="2" ry="2"/>
-<text x="274.4" y="94.0">java..</text>
+<title>java/util/LinkedList.offer (813 samples, 4.43%)</title><rect x="266.8" y="83.0" width="52.3" height="15" fill="#53e453" rx="2" ry="2"/>
+<text x="269.8" y="94.0">java/..</text>
 </g>
 <g>
-<title>java/util/LinkedList.add (687 samples, 3.79%)</title><rect x="271.4" y="67.0" width="44.6" height="15" fill="#53e453" rx="2" ry="2"/>
-<text x="274.4" y="78.0">java..</text>
+<title>java/util/LinkedList.add (813 samples, 4.43%)</title><rect x="266.8" y="67.0" width="52.3" height="15" fill="#53e453" rx="2" ry="2"/>
+<text x="269.8" y="78.0">java/..</text>
 </g>
 <g>
-<title>java/util/LinkedList.linkLast (687 samples, 3.79%)</title><rect x="271.4" y="51.0" width="44.6" height="15" fill="#6dfe6d" rx="2" ry="2"/>
-<text x="274.4" y="62.0">java..</text>
+<title>java/util/LinkedList.linkLast (813 samples, 4.43%)</title><rect x="266.8" y="51.0" width="52.3" height="15" fill="#6dfe6d" rx="2" ry="2"/>
+<text x="269.8" y="62.0">java/..</text>
 </g>
 <g>
-<title>java.util.LinkedList$Node (687 samples, 3.79%)</title><rect x="271.4" y="35.0" width="44.6" height="15" fill="#56c4c4" rx="2" ry="2"/>
-<text x="274.4" y="46.0">java..</text>
+<title>java.util.LinkedList$Node (813 samples, 4.43%)</title><rect x="266.8" y="35.0" width="52.3" height="15" fill="#56c4c4" rx="2" ry="2"/>
+<text x="269.8" y="46.0">java...</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onQuoteUpdate (13,433 samples, 74.05%)</title><rect x="316.0" y="131.0" width="873.8" height="15" fill="#5ff05f" rx="2" ry="2"/>
-<text x="319.0" y="142.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onQuoteUpdate</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onQuoteUpdate (13,532 samples, 73.76%)</title><rect x="319.1" y="131.0" width="870.3" height="15" fill="#5ff05f" rx="2" ry="2"/>
+<text x="322.1" y="142.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onQuoteUpdate</text>
 </g>
 <g>
-<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Quote (4,151 samples, 22.88%)</title><rect x="316.0" y="115.0" width="270.0" height="15" fill="#69d7d7" rx="2" ry="2"/>
-<text x="319.0" y="126.0">com.michaelszymczak.sample.tddrefalg..</text>
+<title>com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.Quote (4,217 samples, 22.98%)</title><rect x="319.1" y="115.0" width="271.2" height="15" fill="#69d7d7" rx="2" ry="2"/>
+<text x="322.1" y="126.0">com.michaelszymczak.sample.tddrefalg..</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Quote.&lt;init&gt; (6,957 samples, 38.35%)</title><rect x="586.0" y="115.0" width="452.6" height="15" fill="#62f362" rx="2" ry="2"/>
-<text x="589.0" y="126.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Qu..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Quote.&lt;init&gt; (6,971 samples, 38.00%)</title><rect x="590.3" y="115.0" width="448.4" height="15" fill="#62f362" rx="2" ry="2"/>
+<text x="593.3" y="126.0">com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/Qu..</text>
 </g>
 <g>
-<title>java/lang/StringBuilder.toString (6,957 samples, 38.35%)</title><rect x="586.0" y="99.0" width="452.6" height="15" fill="#58e958" rx="2" ry="2"/>
-<text x="589.0" y="110.0">java/lang/StringBuilder.toString</text>
+<title>java/lang/StringBuilder.toString (6,971 samples, 38.00%)</title><rect x="590.3" y="99.0" width="448.4" height="15" fill="#58e958" rx="2" ry="2"/>
+<text x="593.3" y="110.0">java/lang/StringBuilder.toString</text>
 </g>
 <g>
-<title>java.lang.String (2,571 samples, 14.17%)</title><rect x="586.0" y="83.0" width="167.3" height="15" fill="#63d1d1" rx="2" ry="2"/>
-<text x="589.0" y="94.0">java.lang.String</text>
+<title>java.lang.String (2,588 samples, 14.11%)</title><rect x="590.3" y="83.0" width="166.5" height="15" fill="#63d1d1" rx="2" ry="2"/>
+<text x="593.3" y="94.0">java.lang.String</text>
 </g>
 <g>
-<title>java/lang/String.&lt;init&gt; (4,386 samples, 24.18%)</title><rect x="753.3" y="83.0" width="285.3" height="15" fill="#5ff05f" rx="2" ry="2"/>
-<text x="756.3" y="94.0">java/lang/String.&lt;init&gt;</text>
+<title>java/lang/String.&lt;init&gt; (4,383 samples, 23.89%)</title><rect x="756.8" y="83.0" width="281.9" height="15" fill="#5ff05f" rx="2" ry="2"/>
+<text x="759.8" y="94.0">java/lang/String.&lt;init&gt;</text>
 </g>
 <g>
-<title>java/util/Arrays.copyOfRange (4,386 samples, 24.18%)</title><rect x="753.3" y="67.0" width="285.3" height="15" fill="#5eef5e" rx="2" ry="2"/>
-<text x="756.3" y="78.0">java/util/Arrays.copyOfRange</text>
+<title>java/util/Arrays.copyOfRange (4,383 samples, 23.89%)</title><rect x="756.8" y="67.0" width="281.9" height="15" fill="#5eef5e" rx="2" ry="2"/>
+<text x="759.8" y="78.0">java/util/Arrays.copyOfRange</text>
 </g>
 <g>
-<title>char[] (4,386 samples, 24.18%)</title><rect x="753.3" y="51.0" width="285.3" height="15" fill="#6ddbdb" rx="2" ry="2"/>
-<text x="756.3" y="62.0">char[]</text>
+<title>char[] (4,383 samples, 23.89%)</title><rect x="756.8" y="51.0" width="281.9" height="15" fill="#6ddbdb" rx="2" ry="2"/>
+<text x="759.8" y="62.0">char[]</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onUpdate (2,325 samples, 12.82%)</title><rect x="1038.6" y="115.0" width="151.2" height="15" fill="#58e958" rx="2" ry="2"/>
-<text x="1041.6" y="126.0">com/michaelszymczak..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.onUpdate (2,344 samples, 12.78%)</title><rect x="1038.7" y="115.0" width="150.7" height="15" fill="#58e958" rx="2" ry="2"/>
+<text x="1041.7" y="126.0">com/michaelszymczak..</text>
 </g>
 <g>
-<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.updateQueue (2,325 samples, 12.82%)</title><rect x="1038.6" y="99.0" width="151.2" height="15" fill="#67f867" rx="2" ry="2"/>
-<text x="1041.6" y="110.0">com/michaelszymczak..</text>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/domain/ReferenceThrottledPrices.updateQueue (2,344 samples, 12.78%)</title><rect x="1038.7" y="99.0" width="150.7" height="15" fill="#67f867" rx="2" ry="2"/>
+<text x="1041.7" y="110.0">com/michaelszymczak..</text>
 </g>
 <g>
-<title>java/util/LinkedList.offer (2,325 samples, 12.82%)</title><rect x="1038.6" y="83.0" width="151.2" height="15" fill="#5ff05f" rx="2" ry="2"/>
-<text x="1041.6" y="94.0">java/util/LinkedLis..</text>
+<title>java/util/LinkedList.offer (2,344 samples, 12.78%)</title><rect x="1038.7" y="83.0" width="150.7" height="15" fill="#5ff05f" rx="2" ry="2"/>
+<text x="1041.7" y="94.0">java/util/LinkedLis..</text>
 </g>
 <g>
-<title>java/util/LinkedList.add (2,325 samples, 12.82%)</title><rect x="1038.6" y="67.0" width="151.2" height="15" fill="#67f867" rx="2" ry="2"/>
-<text x="1041.6" y="78.0">java/util/LinkedLis..</text>
+<title>java/util/LinkedList.add (2,344 samples, 12.78%)</title><rect x="1038.7" y="67.0" width="150.7" height="15" fill="#67f867" rx="2" ry="2"/>
+<text x="1041.7" y="78.0">java/util/LinkedLis..</text>
 </g>
 <g>
-<title>java/util/LinkedList.linkLast (2,325 samples, 12.82%)</title><rect x="1038.6" y="51.0" width="151.2" height="15" fill="#5ced5c" rx="2" ry="2"/>
-<text x="1041.6" y="62.0">java/util/LinkedLis..</text>
+<title>java/util/LinkedList.linkLast (2,344 samples, 12.78%)</title><rect x="1038.7" y="51.0" width="150.7" height="15" fill="#5ced5c" rx="2" ry="2"/>
+<text x="1041.7" y="62.0">java/util/LinkedLis..</text>
 </g>
 <g>
-<title>java.util.LinkedList$Node (2,325 samples, 12.82%)</title><rect x="1038.6" y="35.0" width="151.2" height="15" fill="#6ad8d8" rx="2" ry="2"/>
-<text x="1041.6" y="46.0">java.util.LinkedLis..</text>
+<title>java.util.LinkedList$Node (2,344 samples, 12.78%)</title><rect x="1038.7" y="35.0" width="150.7" height="15" fill="#6ad8d8" rx="2" ry="2"/>
+<text x="1041.7" y="46.0">java.util.LinkedLis..</text>
+</g>
+<g>
+<title>com/michaelszymczak/sample/tddrefalgo/apps/middleman/perf/ThrottledPricesAllocationsMeasurement.printProgress (9 samples, 0.05%)</title><rect x="1189.4" y="323.0" width="0.6" height="15" fill="#58e958" rx="2" ry="2"/>
+<text x="1192.4" y="334.0"></text>
+</g>
+<g>
+<title>java/lang/StringBuilder.append (4 samples, 0.02%)</title><rect x="1189.4" y="307.0" width="0.3" height="15" fill="#5aeb5a" rx="2" ry="2"/>
+<text x="1192.4" y="318.0"></text>
+</g>
+<g>
+<title>java/lang/AbstractStringBuilder.append (4 samples, 0.02%)</title><rect x="1189.4" y="291.0" width="0.3" height="15" fill="#68f968" rx="2" ry="2"/>
+<text x="1192.4" y="302.0"></text>
+</g>
+<g>
+<title>java/lang/AbstractStringBuilder.ensureCapacityInternal (4 samples, 0.02%)</title><rect x="1189.4" y="275.0" width="0.3" height="15" fill="#6bfc6b" rx="2" ry="2"/>
+<text x="1192.4" y="286.0"></text>
+</g>
+<g>
+<title>java/util/Arrays.copyOf (4 samples, 0.02%)</title><rect x="1189.4" y="259.0" width="0.3" height="15" fill="#52e352" rx="2" ry="2"/>
+<text x="1192.4" y="270.0"></text>
+</g>
+<g>
+<title>char[] (4 samples, 0.02%)</title><rect x="1189.4" y="243.0" width="0.3" height="15" fill="#fd9900" rx="2" ry="2"/>
+<text x="1192.4" y="254.0"></text>
+</g>
+<g>
+<title>java/lang/StringBuilder.toString (5 samples, 0.03%)</title><rect x="1189.7" y="307.0" width="0.3" height="15" fill="#5ff05f" rx="2" ry="2"/>
+<text x="1192.7" y="318.0"></text>
+</g>
+<g>
+<title>java/lang/String.&lt;init&gt; (5 samples, 0.03%)</title><rect x="1189.7" y="291.0" width="0.3" height="15" fill="#52e352" rx="2" ry="2"/>
+<text x="1192.7" y="302.0"></text>
+</g>
+<g>
+<title>java/util/Arrays.copyOfRange (5 samples, 0.03%)</title><rect x="1189.7" y="275.0" width="0.3" height="15" fill="#55e655" rx="2" ry="2"/>
+<text x="1192.7" y="286.0"></text>
+</g>
+<g>
+<title>char[] (5 samples, 0.03%)</title><rect x="1189.7" y="259.0" width="0.3" height="15" fill="#63d1d1" rx="2" ry="2"/>
+<text x="1192.7" y="270.0"></text>
 </g>
 </g>
 </svg>
