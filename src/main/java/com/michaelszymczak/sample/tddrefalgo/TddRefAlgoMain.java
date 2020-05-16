@@ -4,6 +4,8 @@ import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.MiddleManApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.SimpleLowLatencyThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.MarketActivitySimulation;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.ThrottledPricesAllocationsMeasurement;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.ThrottledPricesLatencyMeasurement;
 import com.michaelszymczak.sample.tddrefalgo.coalescingqueue.perf.ComponentTestingTask;
 import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
@@ -25,14 +27,24 @@ public class TddRefAlgoMain {
             ComponentTestingTask.sampleRun();
         } else if (args.length > 0 && "perfRefPricer".equals(args[0])) {
             System.out.println("Reference implementation latency measurement");
-            ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+            ThrottledPricesLatencyMeasurement.run(new MarketActivitySimulation()
                     .withSut(publisher -> new ReferenceThrottledPrices(publisher, 500))
                     .withGeneratedEvents(2));
         } else if (args.length > 0 && "perfPricer".equals(args[0])) {
-            System.out.println("Reference implementation latency measurement");
-            ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+            System.out.println("Implementation latency measurement");
+            ThrottledPricesLatencyMeasurement.run(new MarketActivitySimulation()
                     .withSut(publisher -> new SimpleLowLatencyThrottledPrices(publisher, 500))
                     .withGeneratedEvents(2));
+        } else if (args.length > 0 && "perfRefPricerAlloc".equals(args[0])) {
+            System.out.println("Reference implementation allocations measurement");
+            ThrottledPricesAllocationsMeasurement.run(new MarketActivitySimulation()
+                    .withSut(publisher -> new ReferenceThrottledPrices(publisher, 500))
+                    .withGeneratedEvents(2), 1_000_000, 10_000);
+        } else if (args.length > 0 && "perfPricerAlloc".equals(args[0])) {
+            System.out.println("Reference implementation allocations measurement");
+            ThrottledPricesAllocationsMeasurement.run(new MarketActivitySimulation()
+                    .withSut(publisher -> new SimpleLowLatencyThrottledPrices(publisher, 500))
+                    .withGeneratedEvents(2), 1_000_000_000, 1_000_000);
         } else {
             System.out.println(Arrays.toString(args));
             System.out.println(new TddRefAlgoMain(2).process(

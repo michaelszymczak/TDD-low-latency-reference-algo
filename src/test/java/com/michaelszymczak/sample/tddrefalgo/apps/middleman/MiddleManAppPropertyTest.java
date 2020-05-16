@@ -3,6 +3,7 @@ package com.michaelszymczak.sample.tddrefalgo.apps.middleman;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.MarketMakerApp;
 import com.michaelszymczak.sample.tddrefalgo.apps.marketmaker.support.MarketUpdatesGenerator;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.domain.ReferenceThrottledPrices;
+import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.MarketActivitySimulation;
 import com.michaelszymczak.sample.tddrefalgo.apps.middleman.perf.ThrottledPricesLatencyMeasurement;
 import com.michaelszymczak.sample.tddrefalgo.support.OutputSpy;
 import com.michaelszymczak.sample.tddrefalgo.support.PricingProtocolDecodedMessageSpy;
@@ -86,7 +87,7 @@ class MiddleManAppPropertyTest {
 
     @Test
     void shouldHaveLowLatencyWhenDownstreamServiceKeepsThePace() {
-        ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+        ThrottledPricesLatencyMeasurement.run(new MarketActivitySimulation()
                 .withSut(publisher -> new ReferenceThrottledPrices(publisher, 10))
                 .withGeneratedEvents(100));
     }
@@ -94,7 +95,7 @@ class MiddleManAppPropertyTest {
     @Test
     @Disabled
     void shouldHaveLowLatencyWhenDownstreamServiceHasBurstyNature() {
-        ThrottledPricesLatencyMeasurement.run(new ThrottledPricesLatencyMeasurement.MarketActivitySimulation()
+        ThrottledPricesLatencyMeasurement.run(new MarketActivitySimulation()
                 .withSut(publisher -> new ReferenceThrottledPrices(publisher, 500))
                 .withGeneratedEvents(2));
     }
