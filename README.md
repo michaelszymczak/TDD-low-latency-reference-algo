@@ -37,6 +37,70 @@ To do things such as:
 `sudo bpftrace -e "u:$LIBJVM:_ZN15G1CollectedHeap22humongous_obj_allocateEm { @[ustack] = count() }"`
 
 
+### Use BBF tools to measure allocations.
+
+
+WARNING: Do noy use this in production, the ExtendedDTraceProbes flag significantly slows down the app.
+
+1. Install the tools
+
+`sudo apt install bpftrac bpfcc-tools`
+
+2. Check java version:
+
+`echo $JAVA_HOME`
+
+Example output: /usr/lib/jvm/java-8-openjdk-amd64
+
+3. Check if the version of JVM has all required probes (if you distribution is compiled with --enable-dtrace etc.)
+
+`find "${JAVA_HOME}" -name libjvm.so -exec readelf -n {} +| grep -A2 NT_STAPSDT | wc -l`
+Example ouptut: 2247
+
+If is 0, it means that this distro is of no use, find more useful one or compile one yourself.
+
+4. Build and run a sample app
+
+```
+./gradlew clean distZip && unzip -q build/distributions/TDD-low-latency-reference-algo.zip -d build/distributions                                                                     
+JAVA_OPTS="-XX:+PrintTLAB -XX:+PreserveFramePointer -XX:+ExtendedDTraceProbes" ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricerAlloc
+```
+
+4. While running
+
+`sudo uobjnew -l java `pgrep -f TddRefAlgoMain` 5`
+
+Sample output:
+
+Ignore Bytes - it does not allocation size reporting does not work properly, at least in my version built 2018-10-09).
+
+```
+Tracing allocations in process 21381 (language: java)... Ctrl-C to quit.
+
+NAME/TYPE                      # ALLOCS      # BYTES
+
+NAME/TYPE                      # ALLOCS      # BYTES
+b'[C'                                 3            0
+b'java/nio/HeapCharBuffer'            2            0
+b'java/lang/StringBuilder'            1            0
+b'java/lang/String'                   1            0
+
+NAME/TYPE                      # ALLOCS      # BYTES
+
+NAME/TYPE                      # ALLOCS      # BYTES
+
+NAME/TYPE                      # ALLOCS      # BYTES
+b'[C'                                 3            0
+b'java/nio/HeapCharBuffer'            2            0
+b'java/lang/StringBuilder'            1            0
+b'java/lang/String'                   1            0
+
+```
+
+As you can see, it can detect even infrequent allocations
+
+
+
 ## Sample results for perfPricer
 Current results
 
