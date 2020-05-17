@@ -59,6 +59,19 @@ Example ouptut: 2247
 
 If is 0, it means that this distro is of no use, find more useful one or compile one yourself.
 
+
+You can install a version that supports it
+
+```
+wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+# run sudo apt-get install -y software-properties-common if the command above not found
+sudo apt-get install adoptopenjdk-11-hotspot
+
+# after installation standard things, such as 'sudo update-alternatives --config java' or 'export JAVA_HOME ...'
+```
+
+
 4. Build and run a sample app
 
 ```
@@ -66,7 +79,7 @@ If is 0, it means that this distro is of no use, find more useful one or compile
 JAVA_OPTS="-XX:+PrintTLAB -XX:+PreserveFramePointer -XX:+ExtendedDTraceProbes" ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricerAlloc
 ```
 
-4. While running
+5. While running
 
 `sudo uobjnew -l java `pgrep -f TddRefAlgoMain` 5`
 
@@ -99,6 +112,12 @@ b'java/lang/String'                   1            0
 
 As you can see, it can detect even infrequent allocations
 
+
+### Available probes
+
+When the java app is running:
+
+`tplist-bpfcc -p `pgrep -f TddRefAlgoMain`
 
 
 ## Sample results for perfPricer
