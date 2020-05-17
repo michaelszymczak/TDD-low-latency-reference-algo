@@ -174,3 +174,15 @@ worst:        143.36       159.74       129.02       129.02        13.70
 -------------------------------------------------------------------------------------------------------------------
 
 ```
+
+
+## Use BPF trace
+
+Example run for Java8
+
+`JAVA_OPTS="-XX:+PrintTLAB -XX:+PrintGC -XX:+PreserveFramePointer -XX:+ExtendedDTraceProbes" ./build/distributions/TDD-low-latency-reference-algo/bin/TDD-low-latency-reference-algo perfPricerAlloc`
+
+Print all java events as they occur
+
+`sudo bpftrace -e 'uprobe:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so:*,uprobe:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjava.so:* { printf("%s\n", probe); }'`
+
