@@ -81,7 +81,9 @@ JAVA_OPTS="-XX:+PrintTLAB -XX:+PreserveFramePointer -XX:+ExtendedDTraceProbes" .
 
 5. While running
 
-`sudo uobjnew -l java `pgrep -f TddRefAlgoMain` 5`
+```
+sudo uobjnew -l java `pgrep -f TddRefAlgoMain` 5
+```
 
 Sample output:
 
